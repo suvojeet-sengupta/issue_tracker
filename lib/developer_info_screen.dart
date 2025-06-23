@@ -322,7 +322,7 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                         _buildContactItem(
                           icon: Icons.code,
                           title: 'GitHub',
-                          subtitle: 'github.com/suvojit213',
+                          subtitle: 'suvojit213',
                           onTap: () =>
                               _launchURL('https://github.com/suvojit213'),
                         ),

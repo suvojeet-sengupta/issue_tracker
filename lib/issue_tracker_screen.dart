@@ -147,8 +147,37 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
   }
 
   _openGoogleForm() async {
-    final Uri googleFormUrl = Uri.parse(
-        "https://docs.google.com/forms/d/e/1FAIpQLSdeWylhfFaHmM3osSGRbxh9S_XvnAEPCIhTemuh-I7-LNds_w/viewform?usp=sharing");
+    final String crmIdEntryId = "1005447471";
+    final String advisorNameEntryId = "44222229";
+    final String startTimeHourEntryId = "1521239602_hour";
+    final String startTimeMinuteEntryId = "1521239602_minute";
+    final String endTimeHourEntryId = "701130970_hour";
+    final String endTimeMinuteEntryId = "701130970_minute";
+    final String tlNameEntryId = "115861300";
+    final String organizationEntryId = "313975949";
+
+    final String encodedCrmId = Uri.encodeComponent(_crmId);
+    final String encodedAdvisorName = Uri.encodeComponent(_advisorName);
+    final String encodedTlName = Uri.encodeComponent(_tlName);
+    final String encodedOrganization = Uri.encodeComponent("DISH"); // Default to DISH
+
+    final String startTimeHour = _issueStartTime?.hour.toString().padLeft(2, '0') ?? "";
+    final String startTimeMinute = _issueStartTime?.minute.toString().padLeft(2, '0') ?? "";
+    final String endTimeHour = _issueEndTime?.hour.toString().padLeft(2, '0') ?? "";
+    final String endTimeMinute = _issueEndTime?.minute.toString().padLeft(2, '0') ?? "";
+
+    String url = "https://docs.google.com/forms/d/e/1FAIpQLSdeWylhfFaHmM3osSGRbxh9S_XvnAEPCIhTemuh-I7-LNds_w/viewform?usp=pp_url";
+    url += "&entry." + crmIdEntryId + "=" + encodedCrmId;
+    url += "&entry." + advisorNameEntryId + "=" + encodedAdvisorName;
+    url += "&entry." + startTimeHourEntryId + "=" + startTimeHour;
+    url += "&entry." + startTimeMinuteEntryId + "=" + startTimeMinute;
+    url += "&entry." + endTimeHourEntryId + "=" + endTimeHour;
+    url += "&entry." + endTimeMinuteEntryId + "=" + endTimeMinute;
+    url += "&entry." + tlNameEntryId + "=" + encodedTlName;
+    url += "&entry." + organizationEntryId + "=" + encodedOrganization;
+
+    final Uri googleFormUrl = Uri.parse(url);
+
     if (!await launchUrl(googleFormUrl)) {
       throw Exception("Could not launch $googleFormUrl");
     }
