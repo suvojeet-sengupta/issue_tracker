@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -8,18 +7,39 @@ class IssueTrackerScreen extends StatefulWidget {
   _IssueTrackerScreenState createState() => _IssueTrackerScreenState();
 }
 
-class _IssueTrackerScreenState extends State<IssueTrackerScreen> {
+class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProviderStateMixin {
   String _crmId = "";
   String _tlName = "";
   String _advisorName = "";
 
   TimeOfDay? _issueStartTime;
   TimeOfDay? _issueEndTime;
+  
+  late AnimationController _animationController;
+  late Animation<double> _slideAnimation;
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    _slideAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOutCubic,
+    ));
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   _loadUserData() async {
@@ -38,6 +58,19 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFF2E7D8A),
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null) {
       setState(() {
@@ -67,20 +100,57 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> {
       history.add(entry);
       await prefs.setStringList("issueHistory", history);
 
-      // Redirect to Google Form
-      final Uri _googleFormUrl = Uri.parse(
-          "https://docs.google.com/forms/d/e/1FAIpQLSdeWylhfFaHmM3osSGRbxh9S_XvnAEPCIhTemuh-I7-LNds_w/viewform?usp=sharing");
-      if (!await launchUrl(_googleFormUrl)) {
-        throw Exception("Could not launch $_googleFormUrl");
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Issue submitted and form opened!")),
+      // Show success dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            title: Row(
+              children: [
+                Icon(
+                  Icons.check_circle,
+                  color: Colors.green,
+                  size: 28,
+                ),
+                const SizedBox(width: 12),
+                const Text('Success!'),
+              ],
+            ),
+            content: const Text('Issue has been recorded successfully. Opening Google Form...'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _openGoogleForm();
+                },
+                child: const Text('Continue'),
+              ),
+            ],
+          );
+        },
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please select both start and end times.")),
+        SnackBar(
+          content: const Text("Please select both start and end times."),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
       );
+    }
+  }
+
+  _openGoogleForm() async {
+    final Uri googleFormUrl = Uri.parse(
+        "https://docs.google.com/forms/d/e/1FAIpQLSdeWylhfFaHmM3osSGRbxh9S_XvnAEPCIhTemuh-I7-LNds_w/viewform?usp=sharing");
+    if (!await launchUrl(googleFormUrl)) {
+      throw Exception("Could not launch $googleFormUrl");
     }
   }
 
@@ -88,41 +158,265 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Fill Issue Tracker"),
+        title: const Text(
+          'Fill Issue Tracker',
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 20,
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("CRM ID: $_crmId"),
-            Text("Team Leader: $_tlName"),
-            Text("Advisor Name: $_advisorName"),
-            SizedBox(height: 20),
-            ListTile(
-              title: Text("Issue Start Time: "),
-              trailing: Text(_issueStartTime == null
-                  ? "Select Time"
-                  : _issueStartTime!.format(context)),
-              onTap: () => _selectTime(context, true),
+      body: SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0, 0.3),
+          end: Offset.zero,
+        ).animate(_slideAnimation),
+        child: FadeTransition(
+          opacity: _slideAnimation,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header Card
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'User Information',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF2E7D8A),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        _buildInfoRow(Icons.badge, 'CRM ID', _crmId),
+                        const SizedBox(height: 12),
+                        _buildInfoRow(Icons.person, 'Team Leader', _tlName),
+                        const SizedBox(height: 12),
+                        _buildInfoRow(Icons.supervisor_account, 'Advisor Name', _advisorName),
+                      ],
+                    ),
+                  ),
+                ),
+                
+                const SizedBox(height: 24),
+                
+                // Time Selection Section
+                const Text(
+                  'Issue Timing',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF2E7D8A),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                
+                _buildTimeSelector(
+                  icon: Icons.play_circle_outline,
+                  title: 'Issue Start Time',
+                  time: _issueStartTime,
+                  onTap: () => _selectTime(context, true),
+                  color: const Color(0xFF4CAF50),
+                ),
+                
+                const SizedBox(height: 16),
+                
+                _buildTimeSelector(
+                  icon: Icons.stop_circle_outlined,
+                  title: 'Issue End Time',
+                  time: _issueEndTime,
+                  onTap: () => _selectTime(context, false),
+                  color: const Color(0xFFF44336),
+                ),
+                
+                const SizedBox(height: 32),
+                
+                // Submit Button
+                Container(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: _isFormValid() ? _submitIssue : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _isFormValid() 
+                          ? const Color(0xFF2E7D8A) 
+                          : Colors.grey[300],
+                      foregroundColor: _isFormValid() 
+                          ? Colors.white 
+                          : Colors.grey[600],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: _isFormValid() ? 4 : 0,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.send,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Submit Issue and Open Form',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Info Card
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF2E7D8A).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: const Color(0xFF2E7D8A).withOpacity(0.3),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        color: const Color(0xFF2E7D8A),
+                        size: 20,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'After submitting, you will be redirected to a Google Form to provide additional details.',
+                          style: TextStyle(
+                            color: const Color(0xFF2E7D8A),
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            ListTile(
-              title: Text("Issue End Time: "),
-              trailing: Text(_issueEndTime == null
-                  ? "Select Time"
-                  : _issueEndTime!.format(context)),
-              onTap: () => _selectTime(context, false),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _isFormValid() ? _submitIssue : null,
-              child: Text("Submit Issue and Open Form"),
-            ),
-          ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String label, String value) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          color: const Color(0xFF2E7D8A),
+          size: 20,
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Text(
+                value.isNotEmpty ? value : 'Not set',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTimeSelector({
+    required IconData icon,
+    required String title,
+    required TimeOfDay? time,
+    required VoidCallback onTap,
+    required Color color,
+  }) {
+    return Card(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Row(
+            children: [
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  icon,
+                  color: color,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      time == null ? 'Select Time' : time.format(context),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: time == null ? Colors.grey : const Color(0xFF2E7D8A),
+                        fontWeight: time == null ? FontWeight.normal : FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.access_time,
+                color: Colors.grey[400],
+                size: 20,
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
-
 
