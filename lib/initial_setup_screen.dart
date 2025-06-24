@@ -6,24 +6,31 @@ class InitialSetupScreen extends StatefulWidget {
   _InitialSetupScreenState createState() => _InitialSetupScreenState();
 }
 
-class _InitialSetupScreenState extends State<InitialSetupScreen> with TickerProviderStateMixin {
+class _InitialSetupScreenState extends State<InitialSetupScreen>
+    with TickerProviderStateMixin {
   final _crmIdController = TextEditingController();
   final _advisorNameController = TextEditingController();
   String _selectedTlName = 'Manish Kumar';
   bool _showOtherTlNameField = false;
   final _otherTlNameController = TextEditingController();
-  String _selectedOrganization = 'DISH'; // New: Default organization
+  String _selectedOrganization = 'DISH';
 
   late AnimationController _animationController;
+  late AnimationController _buttonController;
   late Animation<double> _slideAnimation;
   late Animation<double> _fadeAnimation;
+  late Animation<double> _buttonScale;
 
   @override
   void initState() {
     super.initState();
     _loadSavedData();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
+    _buttonController = AnimationController(
+      duration: const Duration(milliseconds: 150),
       vsync: this,
     );
     _slideAnimation = Tween<double>(
@@ -40,12 +47,20 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> with TickerProv
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
+    _buttonScale = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(
+      parent: _buttonController,
+      curve: Curves.easeInOut,
+    ));
     _animationController.forward();
   }
 
   @override
   void dispose() {
     _animationController.dispose();
+    _buttonController.dispose();
     _crmIdController.dispose();
     _advisorNameController.dispose();
     _otherTlNameController.dispose();
@@ -62,30 +77,41 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> with TickerProv
         _showOtherTlNameField = true;
         _otherTlNameController.text = prefs.getString("otherTlName") ?? '';
       }
-      _selectedOrganization = prefs.getString("organization") ?? "DISH"; // Load saved organization
+      _selectedOrganization = prefs.getString("organization") ?? "DISH";
     });
   }
 
   bool _isFormValid() {
     return _crmIdController.text.isNotEmpty &&
-           _advisorNameController.text.isNotEmpty &&
-           (_selectedTlName != 'Other' || _otherTlNameController.text.isNotEmpty);
+        _advisorNameController.text.isNotEmpty &&
+        (_selectedTlName != 'Other' || _otherTlNameController.text.isNotEmpty);
   }
 
   _saveData() async {
     if (!_isFormValid()) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Please fill in all required fields'),
-          backgroundColor: Colors.red,
+          content: Row(
+            children: [
+              const Icon(Icons.warning_rounded, color: Colors.white),
+              const SizedBox(width: 12),
+              const Text('Please fill in all required fields'),
+            ],
+          ),
+          backgroundColor: const Color(0xFFEF4444),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(12),
           ),
+          margin: const EdgeInsets.all(16),
         ),
       );
       return;
     }
+
+    _buttonController.forward().then((_) {
+      _buttonController.reverse();
+    });
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('crmId', _crmIdController.text);
@@ -96,196 +122,281 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> with TickerProv
     } else {
       await prefs.remove("otherTlName");
     }
-    await prefs.setString("organization", _selectedOrganization); // Save selected organization
-    
+    await prefs.setString("organization", _selectedOrganization);
+
     Navigator.pushReplacementNamed(context, '/home');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 20),
-                
-                // Header Section
-                SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0, -0.5),
-                    end: Offset.zero,
-                  ).animate(_slideAnimation),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [Color(0xFF2E7D8A), Color(0xFF4A90E2)],
-                          ),
-                          borderRadius: BorderRadius.circular(25),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 15,
-                              offset: const Offset(0, 8),
-                            ),
-                          ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(25),
-                          child: Image.asset(
-                            'assets/images/app_logo.png',
-                            width: 80,
-                            height: 80,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      const Text(
-                        'Welcome to Issue Tracker',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF2E7D8A),
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Let\'s set up your profile to get started',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-                
-                const SizedBox(height: 40),
-                
-                // Form Section
-                SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0, 0.3),
-                    end: Offset.zero,
-                  ).animate(_slideAnimation),
-                  child: Card(
-                    elevation: 8,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF1E3A8A),
+              Color(0xFF3B82F6),
+              Color(0xFFF8FAFC),
+            ],
+            stops: [0.0, 0.4, 1.0],
+          ),
+        ),
+        child: SafeArea(
+          child: FadeTransition(
+            opacity: _fadeAnimation,
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0, 0.3),
+                end: Offset.zero,
+              ).animate(_slideAnimation),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20),
+
+                    // Welcome Header
+                    Center(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Setup Information',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF2E7D8A),
+                          Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.white.withOpacity(0.9),
+                                  Colors.white.withOpacity(0.7),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(24),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 10),
+                                ),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(24),
+                              child: Image.asset(
+                                'assets/images/app_logo.png',
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.contain,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Icon(
+                                    Icons.track_changes_rounded,
+                                    size: 50,
+                                    color: Color(0xFF1E3A8A),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                           const SizedBox(height: 24),
-                          
-                          // CRM ID Field
-                          _buildInputField(
-                            controller: _crmIdController,
-                            label: 'CRM ID',
-                            icon: Icons.badge,
-                            hint: 'Enter your CRM ID',
+                          const Text(
+                            'Welcome to',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                          
-                          const SizedBox(height: 20),
-                          
-                          // Team Leader Dropdown
-                          _buildDropdownField(),
-                          
-                          // Other TL Name Field (conditional)
-                          if (_showOtherTlNameField) ...[
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Issue Tracker Pro',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Let\'s set up your profile to get started',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.8),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 40),
+
+                    // Setup Form
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(28),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [
+                                        Color(0xFF1E3A8A),
+                                        Color(0xFF3B82F6)
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Icon(
+                                    Icons.person_add_rounded,
+                                    color: Colors.white,
+                                    size: 24,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                const Text(
+                                  'Profile Setup',
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF1E3A8A),
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            const SizedBox(height: 32),
+
+                            // CRM ID Field
+                            _buildEnhancedTextField(
+                              controller: _crmIdController,
+                              label: 'CRM ID',
+                              icon: Icons.badge_outlined,
+                              hint: 'Enter your CRM ID',
+                            ),
+
                             const SizedBox(height: 20),
-                            _buildInputField(
-                              controller: _otherTlNameController,
-                              label: 'Other Team Leader Name',
-                              icon: Icons.person_add,
-                              hint: 'Enter team leader name',
+
+                            // Advisor Name Field
+                            _buildEnhancedTextField(
+                              controller: _advisorNameController,
+                              label: 'Advisor Name',
+                              icon: Icons.person_outline,
+                              hint: 'Enter your advisor name',
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            // Team Leader Dropdown
+                            _buildTeamLeaderDropdown(),
+
+                            // Other TL Name Field (conditional)
+                            if (_showOtherTlNameField) ...[
+                              const SizedBox(height: 20),
+                              _buildEnhancedTextField(
+                                controller: _otherTlNameController,
+                                label: 'Other Team Leader Name',
+                                icon: Icons.supervisor_account_outlined,
+                                hint: 'Enter team leader name',
+                              ),
+                            ],
+
+                            const SizedBox(height: 20),
+
+                            // Organization Dropdown
+                            _buildOrganizationDropdown(),
+
+                            const SizedBox(height: 32),
+
+                            // Save Button
+                            ScaleTransition(
+                              scale: _buttonScale,
+                              child: Container(
+                                width: double.infinity,
+                                height: 64,
+                                decoration: BoxDecoration(
+                                  gradient: _isFormValid()
+                                      ? const LinearGradient(
+                                          colors: [
+                                            Color(0xFF1E3A8A),
+                                            Color(0xFF3B82F6)
+                                          ],
+                                        )
+                                      : null,
+                                  color:
+                                      _isFormValid() ? null : Colors.grey[300],
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: _isFormValid()
+                                      ? [
+                                          BoxShadow(
+                                            color: const Color(0xFF1E3A8A)
+                                                .withOpacity(0.3),
+                                            blurRadius: 15,
+                                            offset: const Offset(0, 8),
+                                          ),
+                                        ]
+                                      : null,
+                                ),
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: _isFormValid() ? _saveData : null,
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Center(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.check_circle_rounded,
+                                            size: 24,
+                                            color: _isFormValid()
+                                                ? Colors.white
+                                                : Colors.grey[600],
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Text(
+                                            'Complete Setup',
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: _isFormValid()
+                                                  ? Colors.white
+                                                  : Colors.grey[600],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
-                          
-                          const SizedBox(height: 20),
-                          
-                          // Advisor Name Field
-                          _buildInputField(
-                            controller: _advisorNameController,
-                            label: 'Advisor Name',
-                            icon: Icons.supervisor_account,
-                            hint: 'Enter advisor name',
-                          ),
-                          
-                          const SizedBox(height: 20),
-                          
-                          // Organization Dropdown
-                          _buildOrganizationDropdownField(),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                
-                const SizedBox(height: 32),
-                
-                // Save Button
-                SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0, 0.5),
-                    end: Offset.zero,
-                  ).animate(_slideAnimation),
-                  child: Container(
-                    width: double.infinity,
-                    height: 56,
-                    child: ElevatedButton(
-                      onPressed: _saveData,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2E7D8A),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
                         ),
-                        elevation: 4,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.check_circle_outline, size: 20),
-                          const SizedBox(width: 8),
-                          const Text(
-                            'Save and Continue',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
                       ),
                     ),
-                  ),
+
+                    const SizedBox(height: 32),
+                  ],
                 ),
-                
-                const SizedBox(height: 20),
-              ],
+              ),
             ),
           ),
         ),
@@ -293,7 +404,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> with TickerProv
     );
   }
 
-  Widget _buildInputField({
+  Widget _buildEnhancedTextField({
     required TextEditingController controller,
     required String label,
     required IconData icon,
@@ -305,99 +416,135 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> with TickerProv
         Text(
           label,
           style: const TextStyle(
-            fontSize: 14,
+            fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF2E7D8A),
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller,
-          decoration: InputDecoration(
-            hintText: hint,
-            prefixIcon: Icon(
-              icon,
-              color: const Color(0xFF2E7D8A),
-              size: 20,
-            ),
-            filled: true,
-            fillColor: Colors.grey[50],
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF2E7D8A), width: 2),
-            ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          ),
-          onChanged: (value) => setState(() {}),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDropdownField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Team Leader Name',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF2E7D8A),
+            color: Color(0xFF1E3A8A),
           ),
         ),
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            color: Colors.grey[50],
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE0E0E0)),
+            color: const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: const Color(0xFFE2E8F0),
+              width: 1.5,
+            ),
+          ),
+          child: TextField(
+            controller: controller,
+            onChanged: (value) => setState(() {}),
+            decoration: InputDecoration(
+              hintText: hint,
+              prefixIcon: Container(
+                margin: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E3A8A).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  icon,
+                  color: const Color(0xFF1E3A8A),
+                  size: 20,
+                ),
+              ),
+              border: InputBorder.none,
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              hintStyle: TextStyle(
+                color: Colors.grey[500],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF1E3A8A),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTeamLeaderDropdown() {
+    List<String> tlOptions = [
+      'Manish Kumar',
+      'Aniket Patel',
+      'Imran Khan',
+      'Ravi',
+      'Gajendra',
+      'Suyash Upadhyay',
+      'Randhir Kumar',
+      'Subham Kumar',
+      'Karan',
+      'Rohit',
+      'Shilpa',
+      'Vipin',
+      'Sonu',
+      'Other'
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Team Leader',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF1E3A8A),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: const Color(0xFFE2E8F0),
+              width: 1.5,
+            ),
           ),
           child: DropdownButtonFormField<String>(
             value: _selectedTlName,
-            decoration: const InputDecoration(
-              prefixIcon: Icon(
-                Icons.person,
-                color: Color(0xFF2E7D8A),
-                size: 20,
-              ),
+            decoration: InputDecoration(
               border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              prefixIcon: Container(
+                margin: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E3A8A).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.supervisor_account_outlined,
+                  color: Color(0xFF1E3A8A),
+                  size: 20,
+                ),
+              ),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             ),
-            items: <String>[
-              'Manish Kumar',
-              'Imran Khan',
-              'Ravi',
-              'Ankush',
-              'Gajendra',
-              'Suyash Upadhyay',
-              'Aniket',
-              'Randhir Kumar',
-              'Shubham Kumar',
-              'Karan',
-              'Rohit',
-              'Shilpa',
-              'Vipin',
-              'Sonu',
-              'Other',
-            ].map<DropdownMenuItem<String>>((String value) {
+            items: tlOptions.map((String value) {
               return DropdownMenuItem<String>(
                 value: value,
-                child: Text(value),
+                child: Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF1E3A8A),
+                  ),
+                ),
               );
             }).toList(),
             onChanged: (String? newValue) {
               setState(() {
                 _selectedTlName = newValue!;
-                _showOtherTlNameField = (newValue == 'Other');
+                _showOtherTlNameField = newValue == 'Other';
                 if (!_showOtherTlNameField) {
                   _otherTlNameController.clear();
                 }
@@ -409,43 +556,62 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> with TickerProv
     );
   }
 
-  Widget _buildOrganizationDropdownField() {
+  Widget _buildOrganizationDropdown() {
+    List<String> orgOptions = ['DISH', 'D2H'];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
           'Organization',
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF2E7D8A),
+            color: Color(0xFF1E3A8A),
           ),
         ),
         const SizedBox(height: 8),
         Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            color: Colors.grey[50],
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE0E0E0)),
+            color: const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: const Color(0xFFE2E8F0),
+              width: 1.5,
+            ),
           ),
           child: DropdownButtonFormField<String>(
             value: _selectedOrganization,
-            decoration: const InputDecoration(
-              prefixIcon: Icon(
-                Icons.business,
-                color: Color(0xFF2E7D8A),
-                size: 20,
-              ),
+            decoration: InputDecoration(
               border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              prefixIcon: Container(
+                margin: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E3A8A).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.business_outlined,
+                  color: Color(0xFF1E3A8A),
+                  size: 20,
+                ),
+              ),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             ),
-            items: <String>[
-              'DISH',
-              'D2H',
-            ].map<DropdownMenuItem<String>>((String value) {
+            items: orgOptions.map((String value) {
               return DropdownMenuItem<String>(
                 value: value,
-                child: Text(value),
+                child: Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF1E3A8A),
+                  ),
+                ),
               );
             }).toList(),
             onChanged: (String? newValue) {
@@ -459,4 +625,3 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> with TickerProv
     );
   }
 }
-

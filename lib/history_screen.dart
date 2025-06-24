@@ -9,14 +9,20 @@ class HistoryScreen extends StatefulWidget {
 class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateMixin {
   List<String> _issueHistory = [];
   late AnimationController _animationController;
+  late AnimationController _listController;
   late Animation<double> _fadeAnimation;
+  late Animation<double> _slideAnimation;
 
   @override
   void initState() {
     super.initState();
     _loadHistory();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+    _listController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
     _fadeAnimation = Tween<double>(
@@ -26,12 +32,21 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
+    _slideAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _listController,
+      curve: Curves.easeOutCubic,
+    ));
     _animationController.forward();
+    _listController.forward();
   }
 
   @override
   void dispose() {
     _animationController.dispose();
+    _listController.dispose();
     super.dispose();
   }
 
@@ -39,7 +54,6 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       _issueHistory = prefs.getStringList("issueHistory") ?? [];
-      // Reverse to show latest first
       _issueHistory = _issueHistory.reversed.toList();
     });
   }
@@ -47,27 +61,50 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
   _clearHistory() async {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20),
           ),
           title: Row(
             children: [
-              Icon(
-                Icons.warning_amber_rounded,
-                color: Colors.orange,
-                size: 28,
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.warning_amber_rounded,
+                  color: Colors.orange,
+                  size: 32,
+                ),
               ),
-              const SizedBox(width: 12),
-              const Text('Clear History'),
+              const SizedBox(width: 16),
+              const Text(
+                'Clear History',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1E3A8A),
+                ),
+              ),
             ],
           ),
-          content: const Text('Are you sure you want to clear all issue history? This action cannot be undone.'),
+          content: const Text(
+            'Are you sure you want to clear all issue history? This action cannot be undone.',
+            style: TextStyle(fontSize: 16),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -79,18 +116,28 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: const Text('History cleared successfully'),
-                    backgroundColor: Colors.green,
+                    content: Row(
+                      children: [
+                        const Icon(Icons.check_circle_rounded, color: Colors.white),
+                        const SizedBox(width: 12),
+                        const Text('History cleared successfully'),
+                      ],
+                    ),
+                    backgroundColor: const Color(0xFF059669),
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(12),
                     ),
+                    margin: const EdgeInsets.all(16),
                   ),
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
+                backgroundColor: const Color(0xFFEF4444),
                 foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               child: const Text('Clear'),
             ),
@@ -100,279 +147,355 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
     );
   }
 
-  Map<String, String> _parseHistoryEntry(String entry) {
-    Map<String, String> parsed = {};
-    List<String> parts = entry.split(', ');
-    
-    for (String part in parts) {
-      List<String> keyValue = part.split(': ');
-      if (keyValue.length == 2) {
-        parsed[keyValue[0]] = keyValue[1];
-      }
-    }
-    
-    return parsed;
-  }
-
-  String _formatDateTime(String isoString) {
-    try {
-      DateTime dateTime = DateTime.parse(isoString);
-      return '${dateTime.day}/${dateTime.month}/${dateTime.year} at ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
-    } catch (e) {
-      return isoString;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Issue History',
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 20,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF1E3A8A),
+              Color(0xFFF8FAFC),
+            ],
+            stops: [0.0, 0.3],
           ),
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () => Navigator.pop(context),
-        ),
-        actions: [
-          if (_issueHistory.isNotEmpty)
-            IconButton(
-              icon: const Icon(Icons.delete_outline),
-              onPressed: _clearHistory,
-            ),
-        ],
-      ),
-      body: FadeTransition(
-        opacity: _fadeAnimation,
-        child: _issueHistory.isEmpty
-            ? _buildEmptyState()
-            : Column(
-                children: [
-                  // Summary Card
-                  Container(
-                    margin: const EdgeInsets.all(16),
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [Color(0xFF2E7D8A), Color(0xFF4A90E2)],
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Custom App Bar
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+                        onPressed: () => Navigator.pop(context),
+                      ),
                     ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Icon(
-                            Icons.analytics_outlined,
-                            color: Colors.white,
-                            size: 24,
-                          ),
+                    const SizedBox(width: 16),
+                    const Expanded(
+                      child: Text(
+                        'Issue History',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Total Issues Recorded',
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Text(
-                                '${_issueHistory.length}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
+                      ),
+                    ),
+                    if (_issueHistory.isNotEmpty)
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      ],
-                    ),
-                  ),
-                  
-                  // History List
-                  Expanded(
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: _issueHistory.length,
-                      itemBuilder: (context, index) {
-                        Map<String, String> issueData = _parseHistoryEntry(_issueHistory[index]);
-                        
-                        return Card(
-                          margin: const EdgeInsets.only(bottom: 12),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      width: 40,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFF2E7D8A).withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          '${_issueHistory.length - index}',
-                                          style: const TextStyle(
-                                            color: Color(0xFF2E7D8A),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Issue #${_issueHistory.length - index}',
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          if (issueData['Fill Time'] != null)
-                                            Text(
-                                              'Recorded on ${_formatDateTime(issueData['Fill Time']!)}',
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                
-                                const SizedBox(height: 16),
-                                
-                                _buildDetailRow(Icons.badge, 'CRM ID', issueData['CRM ID'] ?? 'N/A'),
-                                const SizedBox(height: 8),
-                                _buildDetailRow(Icons.person, 'Team Leader', issueData['TL Name'] ?? 'N/A'),
-                                const SizedBox(height: 8),
-                                _buildDetailRow(Icons.supervisor_account, 'Advisor', issueData['Advisor Name'] ?? 'N/A'),
-                                
-                                const SizedBox(height: 12),
-                                
-                                Container(
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[50],
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: _buildTimeInfo(
-                                          Icons.play_circle_outline,
-                                          'Start',
-                                          issueData['Start Time'] ?? 'N/A',
-                                          const Color(0xFF4CAF50),
-                                        ),
-                                      ),
-                                      Container(
-                                        width: 1,
-                                        height: 30,
-                                        color: Colors.grey[300],
-                                      ),
-                                      Expanded(
-                                        child: _buildTimeInfo(
-                                          Icons.stop_circle_outlined,
-                                          'End',
-                                          issueData['End Time'] ?? 'N/A',
-                                          const Color(0xFFF44336),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
+                        child: IconButton(
+                          icon: const Icon(Icons.delete_outline_rounded, color: Colors.white),
+                          onPressed: _clearHistory,
+                        ),
+                      ),
+                  ],
+                ),
               ),
+              
+              // Content
+              Expanded(
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: _issueHistory.isEmpty
+                      ? _buildEmptyState()
+                      : _buildHistoryList(),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildEmptyState() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              color: const Color(0xFF2E7D8A).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(60),
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    const Color(0xFF1E3A8A).withOpacity(0.1),
+                    const Color(0xFF3B82F6).withOpacity(0.05),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(60),
+              ),
+              child: const Icon(
+                Icons.history_rounded,
+                size: 60,
+                color: Color(0xFF1E3A8A),
+              ),
             ),
-            child: const Icon(
-              Icons.history,
-              size: 60,
-              color: Color(0xFF2E7D8A),
+            const SizedBox(height: 32),
+            const Text(
+              'No History Yet',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1E3A8A),
+              ),
             ),
-          ),
-          const SizedBox(height: 24),
-          const Text(
-            'No Issues Recorded Yet',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF2E7D8A),
+            const SizedBox(height: 12),
+            Text(
+              'Your issue tracking history will appear here once you start recording issues.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Start tracking issues to see them here',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey,
+            const SizedBox(height: 32),
+            ElevatedButton.icon(
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(Icons.add_task_rounded),
+              label: const Text('Record First Issue'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1E3A8A),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                elevation: 4,
+              ),
             ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 32),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/issue_tracker');
-            },
-            child: const Text('Record First Issue'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHistoryList() {
+    return SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(0, 0.3),
+        end: Offset.zero,
+      ).animate(_slideAnimation),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Stats Card
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
+                ),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF1E3A8A).withOpacity(0.3),
+                    blurRadius: 15,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.analytics_rounded,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Total Issues Recorded',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${_issueHistory.length}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: 24),
+            
+            const Text(
+              'Recent Issues',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1E3A8A),
+              ),
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // History List
+            Expanded(
+              child: ListView.builder(
+                itemCount: _issueHistory.length,
+                itemBuilder: (context, index) {
+                  return AnimatedContainer(
+                    duration: Duration(milliseconds: 300 + (index * 100)),
+                    curve: Curves.easeOutCubic,
+                    child: _buildHistoryItem(_issueHistory[index], index),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHistoryItem(String entry, int index) {
+    // Parse the entry to extract information
+    Map<String, String> parsedEntry = _parseHistoryEntry(entry);
+    
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 15,
+            offset: const Offset(0, 6),
           ),
         ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header with issue number and date
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    'Issue #${_issueHistory.length - index}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                if (parsedEntry['Fill Time'] != null)
+                  Text(
+                    _formatDate(parsedEntry['Fill Time']!),
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+              ],
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // Issue details
+            _buildDetailRow(Icons.badge_outlined, 'CRM ID', parsedEntry['CRM ID'] ?? 'N/A'),
+            const SizedBox(height: 12),
+            _buildDetailRow(Icons.supervisor_account_outlined, 'Team Leader', parsedEntry['TL Name'] ?? 'N/A'),
+            const SizedBox(height: 12),
+            _buildDetailRow(Icons.person_outline, 'Advisor', parsedEntry['Advisor Name'] ?? 'N/A'),
+            
+            const SizedBox(height: 16),
+            
+            // Time information
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0xFFE2E8F0),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _buildTimeInfo(
+                      Icons.play_circle_outline_rounded,
+                      'Start Time',
+                      parsedEntry['Start Time'] ?? 'N/A',
+                      const Color(0xFF059669),
+                    ),
+                  ),
+                  Container(
+                    width: 1,
+                    height: 40,
+                    color: const Color(0xFFE2E8F0),
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                  ),
+                  Expanded(
+                    child: _buildTimeInfo(
+                      Icons.stop_circle_outlined,
+                      'End Time',
+                      parsedEntry['End Time'] ?? 'N/A',
+                      const Color(0xFFEF4444),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -380,17 +503,24 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
   Widget _buildDetailRow(IconData icon, String label, String value) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 16,
-          color: const Color(0xFF2E7D8A),
+        Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1E3A8A).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Icon(
+            icon,
+            color: const Color(0xFF1E3A8A),
+            size: 16,
+          ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 12),
         Text(
           '$label: ',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
-            color: Colors.grey,
+            color: Colors.grey[600],
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -399,7 +529,8 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
             value,
             style: const TextStyle(
               fontSize: 14,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF1E3A8A),
             ),
           ),
         ),
@@ -420,19 +551,44 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
           label,
           style: TextStyle(
             fontSize: 12,
-            color: color,
+            color: Colors.grey[600],
             fontWeight: FontWeight.w500,
           ),
         ),
+        const SizedBox(height: 2),
         Text(
           time,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.bold,
+            color: color,
           ),
         ),
       ],
     );
+  }
+
+  Map<String, String> _parseHistoryEntry(String entry) {
+    Map<String, String> parsed = {};
+    List<String> parts = entry.split(', ');
+    
+    for (String part in parts) {
+      List<String> keyValue = part.split(': ');
+      if (keyValue.length == 2) {
+        parsed[keyValue[0]] = keyValue[1];
+      }
+    }
+    
+    return parsed;
+  }
+
+  String _formatDate(String isoString) {
+    try {
+      DateTime dateTime = DateTime.parse(isoString);
+      return '${dateTime.day}/${dateTime.month}/${dateTime.year} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+    } catch (e) {
+      return 'Invalid Date';
+    }
   }
 }
 

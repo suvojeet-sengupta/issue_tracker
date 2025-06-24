@@ -12,11 +12,10 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
   String _crmId = "";
   String _tlName = "";
   String _advisorName = "";
-  String _organization = ""; // New: To store selected organization
-  String _selectedIssueExplanation = "Mobile Phone Hang"; // Default value
-  String _selectedReason = "Voice Issue"; // Default value
+  String _organization = "";
+  String _selectedIssueExplanation = "Mobile Phone Hang";
+  String _selectedReason = "Voice Issue";
 
-  // Changed from TimeOfDay to separate hour and minute variables
   int? _issueStartHour;
   int? _issueStartMinute;
   String _issueStartPeriod = "AM";
@@ -26,14 +25,21 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
   String _issueEndPeriod = "AM";
   
   late AnimationController _animationController;
+  late AnimationController _buttonController;
   late Animation<double> _slideAnimation;
+  late Animation<double> _fadeAnimation;
+  late Animation<double> _buttonScale;
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+    _buttonController = AnimationController(
+      duration: const Duration(milliseconds: 150),
       vsync: this,
     );
     _slideAnimation = Tween<double>(
@@ -43,12 +49,27 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
       parent: _animationController,
       curve: Curves.easeOutCubic,
     ));
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+    _buttonScale = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(
+      parent: _buttonController,
+      curve: Curves.easeInOut,
+    ));
     _animationController.forward();
   }
 
   @override
   void dispose() {
     _animationController.dispose();
+    _buttonController.dispose();
     super.dispose();
   }
 
@@ -61,11 +82,10 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
         _tlName = prefs.getString("otherTlName") ?? "";
       }
       _advisorName = prefs.getString("advisorName") ?? "";
-      _organization = prefs.getString("organization") ?? "DISH"; // Load saved organization
+      _organization = prefs.getString("organization") ?? "DISH";
     });
   }
 
-  // Helper method to convert 12-hour format to TimeOfDay for compatibility
   TimeOfDay? _getStartTimeOfDay() {
     if (_issueStartHour == null || _issueStartMinute == null) return null;
     int hour24 = _issueStartHour!;
@@ -100,6 +120,10 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
 
   _submitIssue() async {
     if (_isFormValid()) {
+      _buttonController.forward().then((_) {
+        _buttonController.reverse();
+      });
+
       SharedPreferences prefs = await SharedPreferences.getInstance();
       List<String> history = prefs.getStringList("issueHistory") ?? [];
 
@@ -114,32 +138,54 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
       history.add(entry);
       await prefs.setStringList("issueHistory", history);
 
-      // Show success dialog
       showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(20),
             ),
             title: Row(
               children: [
-                Icon(
-                  Icons.check_circle,
-                  color: Colors.green,
-                  size: 28,
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.check_circle_rounded,
+                    color: Colors.green,
+                    size: 32,
+                  ),
                 ),
-                const SizedBox(width: 12),
-                const Text("Success!"),
+                const SizedBox(width: 16),
+                const Text(
+                  "Success!",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1E3A8A),
+                  ),
+                ),
               ],
             ),
-            content: const Text("Issue has been recorded successfully. Opening Google Form..."),
+            content: const Text(
+              "Issue has been recorded successfully. Opening Google Form for additional details...",
+              style: TextStyle(fontSize: 16),
+            ),
             actions: [
-              TextButton(
+              ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                   _openGoogleForm();
                 },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1E3A8A),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
                 child: const Text("Continue"),
               ),
             ],
@@ -149,12 +195,19 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text("Please select both start and end times."),
-          backgroundColor: Colors.red,
+          content: Row(
+            children: [
+              const Icon(Icons.warning_rounded, color: Colors.white),
+              const SizedBox(width: 12),
+              const Text("Please select both start and end times."),
+            ],
+          ),
+          backgroundColor: const Color(0xFFEF4444),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(12),
           ),
+          margin: const EdgeInsets.all(16),
         ),
       );
     }
@@ -224,224 +277,350 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Fill Issue Tracker',
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 20,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF1E3A8A),
+              Color(0xFFF8FAFC),
+            ],
+            stops: [0.0, 0.3],
           ),
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: SlideTransition(
-        position: Tween<Offset>(
-          begin: const Offset(0, 0.3),
-          end: Offset.zero,
-        ).animate(_slideAnimation),
-        child: FadeTransition(
-          opacity: _slideAnimation,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header Card
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'User Information',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF2E7D8A),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        _buildInfoRow(Icons.badge, 'CRM ID', _crmId),
-                        const SizedBox(height: 12),
-                        _buildInfoRow(Icons.person, 'Team Leader', _tlName),
-                        const SizedBox(height: 12),
-                        _buildInfoRow(Icons.supervisor_account, 'Advisor Name', _advisorName),
-                      ],
-                    ),
-                  ),
-                ),
-                
-                const SizedBox(height: 24),
-                
-                // Time Selection Section
-                const Text(
-                  'Issue Timing',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF2E7D8A),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                
-                _buildNormalTimeSelector(
-                  icon: Icons.play_circle_outline,
-                  title: 'Issue Start Time',
-                  hour: _issueStartHour,
-                  minute: _issueStartMinute,
-                  period: _issueStartPeriod,
-                  onHourChanged: (value) => setState(() => _issueStartHour = value),
-                  onMinuteChanged: (value) => setState(() => _issueStartMinute = value),
-                  onPeriodChanged: (value) => setState(() => _issueStartPeriod = value!),
-                  color: const Color(0xFF4CAF50),
-                ),
-                
-                const SizedBox(height: 16),
-                
-                _buildNormalTimeSelector(
-                  icon: Icons.stop_circle_outlined,
-                  title: 'Issue End Time',
-                  hour: _issueEndHour,
-                  minute: _issueEndMinute,
-                  period: _issueEndPeriod,
-                  onHourChanged: (value) => setState(() => _issueEndHour = value),
-                  onMinuteChanged: (value) => setState(() => _issueEndMinute = value),
-                  onPeriodChanged: (value) => setState(() => _issueEndPeriod = value!),
-                  color: const Color(0xFFF44336),
-                ),
-                
-                const SizedBox(height: 32),
-
-                // Explain Issue Dropdown
-                _buildIssueExplanationDropdownField(),
-
-                const SizedBox(height: 24),
-
-                // Reason Section
-                _buildReasonSelection(),
-
-                const SizedBox(height: 32),
-                
-                // Submit Button
-                Container(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: _isFormValid() ? _submitIssue : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _isFormValid() 
-                          ? const Color(0xFF2E7D8A) 
-                          : Colors.grey[300],
-                      foregroundColor: _isFormValid() 
-                          ? Colors.white 
-                          : Colors.grey[600],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      elevation: _isFormValid() ? 4 : 0,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.send,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          'Submit Issue and Open Form',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                
-                const SizedBox(height: 16),
-                
-                // Info Card
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF2E7D8A).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: const Color(0xFF2E7D8A).withOpacity(0.3),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.info_outline,
-                        color: const Color(0xFF2E7D8A),
-                        size: 20,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          'After submitting, you will be redirected to a Google Form to provide additional details.',
-                          style: TextStyle(
-                            color: const Color(0xFF2E7D8A),
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(IconData icon, String label, String value) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          color: const Color(0xFF2E7D8A),
-          size: 20,
-        ),
-        const SizedBox(width: 12),
-        Expanded(
+        child: SafeArea(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
-                  fontWeight: FontWeight.w500,
+              // Custom App Bar
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    const Text(
+                      'Fill Issue Tracker',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Text(
-                value.isNotEmpty ? value : 'Not set',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+              
+              // Content
+              Expanded(
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0, 0.3),
+                    end: Offset.zero,
+                  ).animate(_slideAnimation),
+                  child: FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // User Information Card
+                          _buildEnhancedCard(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        gradient: const LinearGradient(
+                                          colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: const Icon(
+                                        Icons.person_outline_rounded,
+                                        color: Colors.white,
+                                        size: 24,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    const Text(
+                                      'User Information',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF1E3A8A),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 20),
+                                _buildEnhancedInfoRow(Icons.badge_outlined, 'CRM ID', _crmId),
+                                const SizedBox(height: 12),
+                                _buildEnhancedInfoRow(Icons.supervisor_account_outlined, 'Team Leader', _tlName),
+                                const SizedBox(height: 12),
+                                _buildEnhancedInfoRow(Icons.person_outline, 'Advisor Name', _advisorName),
+                              ],
+                            ),
+                          ),
+                          
+                          const SizedBox(height: 24),
+                          
+                          // Time Selection Section
+                          const Text(
+                            'Issue Timing',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF1E3A8A),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          
+                          _buildEnhancedTimeSelector(
+                            icon: Icons.play_circle_outline_rounded,
+                            title: 'Issue Start Time',
+                            hour: _issueStartHour,
+                            minute: _issueStartMinute,
+                            period: _issueStartPeriod,
+                            onHourChanged: (value) => setState(() => _issueStartHour = value),
+                            onMinuteChanged: (value) => setState(() => _issueStartMinute = value),
+                            onPeriodChanged: (value) => setState(() => _issueStartPeriod = value!),
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF059669), Color(0xFF10B981)],
+                            ),
+                          ),
+                          
+                          const SizedBox(height: 16),
+                          
+                          _buildEnhancedTimeSelector(
+                            icon: Icons.stop_circle_outlined,
+                            title: 'Issue End Time',
+                            hour: _issueEndHour,
+                            minute: _issueEndMinute,
+                            period: _issueEndPeriod,
+                            onHourChanged: (value) => setState(() => _issueEndHour = value),
+                            onMinuteChanged: (value) => setState(() => _issueEndMinute = value),
+                            onPeriodChanged: (value) => setState(() => _issueEndPeriod = value!),
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFFEF4444), Color(0xFFF87171)],
+                            ),
+                          ),
+                          
+                          const SizedBox(height: 24),
+
+                          // Issue Explanation
+                          _buildIssueExplanationDropdownField(),
+
+                          const SizedBox(height: 24),
+
+                          // Reason Section
+                          _buildReasonSelection(),
+
+                          const SizedBox(height: 32),
+                          
+                          // Submit Button
+                          ScaleTransition(
+                            scale: _buttonScale,
+                            child: Container(
+                              width: double.infinity,
+                              height: 64,
+                              decoration: BoxDecoration(
+                                gradient: _isFormValid() 
+                                    ? const LinearGradient(
+                                        colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
+                                      )
+                                    : null,
+                                color: _isFormValid() ? null : Colors.grey[300],
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: _isFormValid() ? [
+                                  BoxShadow(
+                                    color: const Color(0xFF1E3A8A).withOpacity(0.3),
+                                    blurRadius: 15,
+                                    offset: const Offset(0, 8),
+                                  ),
+                                ] : null,
+                              ),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  onTap: _isFormValid() ? _submitIssue : null,
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Center(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.send_rounded,
+                                          size: 24,
+                                          color: _isFormValid() ? Colors.white : Colors.grey[600],
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Text(
+                                          'Submit Issue and Open Form',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: _isFormValid() ? Colors.white : Colors.grey[600],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          
+                          const SizedBox(height: 20),
+                          
+                          // Info Card
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  const Color(0xFF1E3A8A).withOpacity(0.1),
+                                  const Color(0xFF3B82F6).withOpacity(0.05),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: const Color(0xFF1E3A8A).withOpacity(0.2),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF1E3A8A).withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Icon(
+                                    Icons.info_outline_rounded,
+                                    color: Color(0xFF1E3A8A),
+                                    size: 20,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Text(
+                                    'After submitting, you will be redirected to a Google Form to provide additional details.',
+                                    style: TextStyle(
+                                      color: const Color(0xFF1E3A8A),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
         ),
-      ],
+      ),
     );
   }
 
-  // New normal time selector widget with dropdowns
-  Widget _buildNormalTimeSelector({
+  Widget _buildEnhancedCard({required Widget child}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: child,
+      ),
+    );
+  }
+
+  Widget _buildEnhancedInfoRow(IconData icon, String label, String value) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: const Color(0xFFE2E8F0),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1E3A8A).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              icon,
+              color: const Color(0xFF1E3A8A),
+              size: 18,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value.isNotEmpty ? value : 'Not set',
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF1E3A8A),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEnhancedTimeSelector({
     required IconData icon,
     required String title,
     required int? hour,
@@ -450,187 +629,186 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
     required Function(int?) onHourChanged,
     required Function(int?) onMinuteChanged,
     required Function(String?) onPeriodChanged,
-    required Color color,
+    required Gradient gradient,
   }) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    icon,
-                    color: color,
-                    size: 24,
-                  ),
+    return _buildEnhancedCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  gradient: gradient,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: gradient.colors.first.withOpacity(0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        _formatTime(hour, minute, period),
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: (hour == null || minute == null) ? Colors.grey : const Color(0xFF2E7D8A),
-                          fontWeight: (hour == null || minute == null) ? FontWeight.normal : FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
+                child: Icon(
+                  icon,
+                  color: Colors.white,
+                  size: 28,
                 ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                // Hour Dropdown
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Hour',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w500,
-                        ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1E3A8A),
                       ),
-                      const SizedBox(height: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[50],
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: const Color(0xFFE0E0E0)),
-                        ),
-                        child: DropdownButtonFormField<int>(
-                          value: hour,
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(vertical: 8),
-                          ),
-                          hint: const Text('Hour'),
-                          items: List.generate(12, (index) => index + 1).map((int value) {
-                            return DropdownMenuItem<int>(
-                              value: value,
-                              child: Text(value.toString().padLeft(2, '0')),
-                            );
-                          }).toList(),
-                          onChanged: onHourChanged,
-                        ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      _formatTime(hour, minute, period),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: (hour == null || minute == null) ? Colors.grey[500] : gradient.colors.first,
+                        fontWeight: FontWeight.w600,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 12),
-                // Minute Dropdown
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Minute',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[50],
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: const Color(0xFFE0E0E0)),
-                        ),
-                        child: DropdownButtonFormField<int>(
-                          value: minute,
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(vertical: 8),
-                          ),
-                          hint: const Text('Min'),
-                          items: List.generate(60, (index) => index).map((int value) {
-                            return DropdownMenuItem<int>(
-                              value: value,
-                              child: Text(value.toString().padLeft(2, '0')),
-                            );
-                          }).toList(),
-                          onChanged: onMinuteChanged,
-                        ),
-                      ),
-                    ],
-                  ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: _buildTimeDropdown(
+                  label: 'Hour',
+                  value: hour,
+                  items: List.generate(12, (index) => index + 1),
+                  onChanged: onHourChanged,
                 ),
-                const SizedBox(width: 12),
-                // AM/PM Dropdown
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Period',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[50],
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: const Color(0xFFE0E0E0)),
-                        ),
-                        child: DropdownButtonFormField<String>(
-                          value: period,
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(vertical: 8),
-                          ),
-                          items: ['AM', 'PM'].map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          onChanged: onPeriodChanged,
-                        ),
-                      ),
-                    ],
-                  ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                flex: 2,
+                child: _buildTimeDropdown(
+                  label: 'Minute',
+                  value: minute,
+                  items: List.generate(60, (index) => index),
+                  onChanged: onMinuteChanged,
                 ),
-              ],
-            ),
-          ],
-        ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                flex: 1,
+                child: _buildPeriodDropdown(
+                  label: 'Period',
+                  value: period,
+                  onChanged: onPeriodChanged,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
+    );
+  }
+
+  Widget _buildTimeDropdown({
+    required String label,
+    required int? value,
+    required List<int> items,
+    required Function(int?) onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[600],
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
+          ),
+          child: DropdownButtonFormField<int>(
+            value: value,
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(vertical: 12),
+            ),
+            hint: Text(label),
+            items: items.map((int item) {
+              return DropdownMenuItem<int>(
+                value: item,
+                child: Text(item.toString().padLeft(2, '0')),
+              );
+            }).toList(),
+            onChanged: onChanged,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPeriodDropdown({
+    required String label,
+    required String value,
+    required Function(String?) onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[600],
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
+          ),
+          child: DropdownButtonFormField<String>(
+            value: value,
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(vertical: 12),
+            ),
+            items: ['AM', 'PM'].map((String item) {
+              return DropdownMenuItem<String>(
+                value: item,
+                child: Text(item),
+              );
+            }).toList(),
+            onChanged: onChanged,
+          ),
+        ),
+      ],
     );
   }
 
@@ -653,36 +831,38 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
         const Text(
           "Explain Issue",
           style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF2E7D8A),
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF1E3A8A),
           ),
         ),
         const SizedBox(height: 16),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: Colors.grey[50],
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE0E0E0)),
-          ),
-          child: DropdownButtonFormField<String>(
-            value: _selectedIssueExplanation,
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              prefixIcon: Icon(Icons.help_outline, color: Color(0xFF2E7D8A)),
+        _buildEnhancedCard(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
-            items: issueOptions.map((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {
-                _selectedIssueExplanation = newValue!;
-              });
-            },
+            child: DropdownButtonFormField<String>(
+              value: _selectedIssueExplanation,
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                prefixIcon: Icon(Icons.help_outline_rounded, color: Color(0xFF1E3A8A)),
+              ),
+              items: issueOptions.map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  _selectedIssueExplanation = newValue!;
+                });
+              },
+            ),
           ),
         ),
       ],
@@ -696,46 +876,71 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
         const Text(
           "Reason",
           style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF2E7D8A),
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF1E3A8A),
           ),
         ),
         const SizedBox(height: 16),
-        Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                RadioListTile<String>(
-                  title: const Text("Voice Issue"),
-                  value: "Voice Issue",
-                  groupValue: _selectedReason,
-                  onChanged: (String? value) {
-                    setState(() {
-                      _selectedReason = value!;
-                    });
-                  },
-                ),
-                RadioListTile<String>(
-                  title: const Text("System issue (Network , Asset & Aspect /WDE issue)"),
-                  value: "System issue (Network , Asset & Aspect /WDE issue)",
-                  groupValue: _selectedReason,
-                  onChanged: (String? value) {
-                    setState(() {
-                      _selectedReason = value!;
-                    });
-                  },
-                ),
-              ],
-            ),
+        _buildEnhancedCard(
+          child: Column(
+            children: [
+              _buildRadioOption(
+                title: "Voice Issue",
+                value: "Voice Issue",
+                groupValue: _selectedReason,
+                onChanged: (String? value) {
+                  setState(() {
+                    _selectedReason = value!;
+                  });
+                },
+              ),
+              const SizedBox(height: 8),
+              _buildRadioOption(
+                title: "System issue (Network, Asset & Aspect/WDE issue)",
+                value: "System issue (Network , Asset & Aspect /WDE issue)",
+                groupValue: _selectedReason,
+                onChanged: (String? value) {
+                  setState(() {
+                    _selectedReason = value!;
+                  });
+                },
+              ),
+            ],
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildRadioOption({
+    required String title,
+    required String value,
+    required String groupValue,
+    required Function(String?) onChanged,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: value == groupValue ? const Color(0xFF1E3A8A).withOpacity(0.1) : const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: value == groupValue ? const Color(0xFF1E3A8A) : const Color(0xFFE2E8F0),
+          width: value == groupValue ? 2 : 1,
+        ),
+      ),
+      child: RadioListTile<String>(
+        title: Text(
+          title,
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+            color: value == groupValue ? const Color(0xFF1E3A8A) : Colors.grey[700],
+          ),
+        ),
+        value: value,
+        groupValue: groupValue,
+        onChanged: onChanged,
+        activeColor: const Color(0xFF1E3A8A),
+      ),
     );
   }
 }
