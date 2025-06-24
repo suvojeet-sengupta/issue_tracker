@@ -12,7 +12,8 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> with TickerProv
   String _selectedTlName = 'Manish Kumar';
   bool _showOtherTlNameField = false;
   final _otherTlNameController = TextEditingController();
-  
+  String _selectedOrganization = 'DISH'; // New: Default organization
+
   late AnimationController _animationController;
   late Animation<double> _slideAnimation;
   late Animation<double> _fadeAnimation;
@@ -54,13 +55,14 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> with TickerProv
   _loadSavedData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      _crmIdController.text = prefs.getString('crmId') ?? '';
-      _advisorNameController.text = prefs.getString('advisorName') ?? '';
-      _selectedTlName = prefs.getString('tlName') ?? 'Manish Kumar';
+      _crmIdController.text = prefs.getString("crmId") ?? '';
+      _advisorNameController.text = prefs.getString("advisorName") ?? '';
+      _selectedTlName = prefs.getString("tlName") ?? 'Manish Kumar';
       if (_selectedTlName == 'Other') {
         _showOtherTlNameField = true;
-        _otherTlNameController.text = prefs.getString('otherTlName') ?? '';
+        _otherTlNameController.text = prefs.getString("otherTlName") ?? '';
       }
+      _selectedOrganization = prefs.getString("organization") ?? "DISH"; // Load saved organization
     });
   }
 
@@ -88,12 +90,13 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> with TickerProv
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('crmId', _crmIdController.text);
     await prefs.setString('advisorName', _advisorNameController.text);
-    await prefs.setString('tlName', _selectedTlName);
+    await prefs.setString("tlName", _selectedTlName);
     if (_showOtherTlNameField) {
-      await prefs.setString('otherTlName', _otherTlNameController.text);
+      await prefs.setString("otherTlName", _otherTlNameController.text);
     } else {
-      await prefs.remove('otherTlName');
+      await prefs.remove("otherTlName");
     }
+    await prefs.setString("organization", _selectedOrganization); // Save selected organization
     
     Navigator.pushReplacementNamed(context, '/home');
   }
@@ -231,6 +234,11 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> with TickerProv
                             icon: Icons.supervisor_account,
                             hint: 'Enter advisor name',
                           ),
+                          
+                          const SizedBox(height: 20),
+                          
+                          // Organization Dropdown
+                          _buildOrganizationDropdownField(),
                         ],
                       ),
                     ),
@@ -393,6 +401,56 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> with TickerProv
                 if (!_showOtherTlNameField) {
                   _otherTlNameController.clear();
                 }
+              });
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildOrganizationDropdownField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Organization',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF2E7D8A),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFFE0E0E0)),
+          ),
+          child: DropdownButtonFormField<String>(
+            value: _selectedOrganization,
+            decoration: const InputDecoration(
+              prefixIcon: Icon(
+                Icons.business,
+                color: Color(0xFF2E7D8A),
+                size: 20,
+              ),
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            ),
+            items: <String>[
+              'DISH',
+              'D2H',
+            ].map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              setState(() {
+                _selectedOrganization = newValue!;
               });
             },
           ),

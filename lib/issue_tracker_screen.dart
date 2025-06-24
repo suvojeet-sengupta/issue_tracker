@@ -11,6 +11,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
   String _crmId = "";
   String _tlName = "";
   String _advisorName = "";
+  String _organization = ""; // New: To store selected organization
 
   TimeOfDay? _issueStartTime;
   TimeOfDay? _issueEndTime;
@@ -51,6 +52,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
         _tlName = prefs.getString("otherTlName") ?? "";
       }
       _advisorName = prefs.getString("advisorName") ?? "";
+      _organization = prefs.getString("organization") ?? "DISH"; // Load saved organization
     });
   }
 
@@ -116,17 +118,17 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
                   size: 28,
                 ),
                 const SizedBox(width: 12),
-                const Text('Success!'),
+                const Text("Success!"),
               ],
             ),
-            content: const Text('Issue has been recorded successfully. Opening Google Form...'),
+            content: const Text("Issue has been recorded successfully. Opening Google Form..."),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                   _openGoogleForm();
                 },
-                child: const Text('Continue'),
+                child: const Text("Continue"),
               ),
             ],
           );
@@ -155,16 +157,27 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
     final String endTimeMinuteEntryId = "701130970_minute";
     final String tlNameEntryId = "115861300";
     final String organizationEntryId = "313975949";
+    final String startDateYearEntryId = "702818104_year";
+    final String startDateMonthEntryId = "702818104_month";
+    final String startDateDayEntryId = "702818104_day";
+    final String endDateYearEntryId = "514450388_year";
+    final String endDateMonthEntryId = "514450388_month";
+    final String endDateDayEntryId = "514450388_day";
 
     final String encodedCrmId = Uri.encodeComponent(_crmId);
     final String encodedAdvisorName = Uri.encodeComponent(_advisorName);
     final String encodedTlName = Uri.encodeComponent(_tlName);
-    final String encodedOrganization = Uri.encodeComponent("DISH"); // Default to DISH
+    final String encodedOrganization = Uri.encodeComponent(_organization);
 
     final String startTimeHour = _issueStartTime?.hour.toString().padLeft(2, '0') ?? "";
     final String startTimeMinute = _issueStartTime?.minute.toString().padLeft(2, '0') ?? "";
     final String endTimeHour = _issueEndTime?.hour.toString().padLeft(2, '0') ?? "";
     final String endTimeMinute = _issueEndTime?.minute.toString().padLeft(2, '0') ?? "";
+
+    final DateTime now = DateTime.now();
+    final String currentYear = now.year.toString();
+    final String currentMonth = now.month.toString();
+    final String currentDay = now.day.toString();
 
     String url = "https://docs.google.com/forms/d/e/1FAIpQLSdeWylhfFaHmM3osSGRbxh9S_XvnAEPCIhTemuh-I7-LNds_w/viewform?usp=pp_url";
     url += "&entry." + crmIdEntryId + "=" + encodedCrmId;
@@ -175,6 +188,12 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
     url += "&entry." + endTimeMinuteEntryId + "=" + endTimeMinute;
     url += "&entry." + tlNameEntryId + "=" + encodedTlName;
     url += "&entry." + organizationEntryId + "=" + encodedOrganization;
+    url += "&entry." + startDateYearEntryId + "=" + currentYear;
+    url += "&entry." + startDateMonthEntryId + "=" + currentMonth;
+    url += "&entry." + startDateDayEntryId + "=" + currentDay;
+    url += "&entry." + endDateYearEntryId + "=" + currentYear;
+    url += "&entry." + endDateMonthEntryId + "=" + currentMonth;
+    url += "&entry." + endDateDayEntryId + "=" + currentDay;
 
     final Uri googleFormUrl = Uri.parse(url);
 
@@ -448,4 +467,5 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
     );
   }
 }
+
 
