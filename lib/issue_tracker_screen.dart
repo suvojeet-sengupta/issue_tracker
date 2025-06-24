@@ -16,8 +16,14 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
   String _selectedIssueExplanation = "Mobile Phone Hang"; // Default value
   String _selectedReason = "Voice Issue"; // Default value
 
-  TimeOfDay? _issueStartTime;
-  TimeOfDay? _issueEndTime;
+  // Changed from TimeOfDay to separate hour and minute variables
+  int? _issueStartHour;
+  int? _issueStartMinute;
+  String _issueStartPeriod = "AM";
+  
+  int? _issueEndHour;
+  int? _issueEndMinute;
+  String _issueEndPeriod = "AM";
   
   late AnimationController _animationController;
   late Animation<double> _slideAnimation;
@@ -59,37 +65,37 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
     });
   }
 
-  Future<void> _selectTime(BuildContext context, bool isStartTime) async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Color(0xFF2E7D8A),
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: Colors.black,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (picked != null) {
-      setState(() {
-        if (isStartTime) {
-          _issueStartTime = picked;
-        } else {
-          _issueEndTime = picked;
-        }
-      });
+  // Helper method to convert 12-hour format to TimeOfDay for compatibility
+  TimeOfDay? _getStartTimeOfDay() {
+    if (_issueStartHour == null || _issueStartMinute == null) return null;
+    int hour24 = _issueStartHour!;
+    if (_issueStartPeriod == "PM" && hour24 != 12) {
+      hour24 += 12;
+    } else if (_issueStartPeriod == "AM" && hour24 == 12) {
+      hour24 = 0;
     }
+    return TimeOfDay(hour: hour24, minute: _issueStartMinute!);
+  }
+
+  TimeOfDay? _getEndTimeOfDay() {
+    if (_issueEndHour == null || _issueEndMinute == null) return null;
+    int hour24 = _issueEndHour!;
+    if (_issueEndPeriod == "PM" && hour24 != 12) {
+      hour24 += 12;
+    } else if (_issueEndPeriod == "AM" && hour24 == 12) {
+      hour24 = 0;
+    }
+    return TimeOfDay(hour: hour24, minute: _issueEndMinute!);
+  }
+
+  String _formatTime(int? hour, int? minute, String period) {
+    if (hour == null || minute == null) return "Select Time";
+    return "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
   }
 
   bool _isFormValid() {
-    return _issueStartTime != null && _issueEndTime != null;
+    return _issueStartHour != null && _issueStartMinute != null &&
+           _issueEndHour != null && _issueEndMinute != null;
   }
 
   _submitIssue() async {
@@ -97,9 +103,12 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
       SharedPreferences prefs = await SharedPreferences.getInstance();
       List<String> history = prefs.getStringList("issueHistory") ?? [];
 
+      TimeOfDay? startTime = _getStartTimeOfDay();
+      TimeOfDay? endTime = _getEndTimeOfDay();
+
       String entry = 
           "CRM ID: $_crmId, TL Name: $_tlName, Advisor Name: $_advisorName, "
-          "Start Time: ${_issueStartTime!.format(context)}, End Time: ${_issueEndTime!.format(context)}, "
+          "Start Time: ${startTime!.format(context)}, End Time: ${endTime!.format(context)}, "
           "Fill Time: ${DateTime.now().toIso8601String()}";
 
       history.add(entry);
@@ -176,10 +185,13 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
     final String encodedIssueExplanation = Uri.encodeComponent(_selectedIssueExplanation);
     final String encodedReason = Uri.encodeComponent(_selectedReason);
 
-    final String startTimeHour = _issueStartTime?.hour.toString().padLeft(2, '0') ?? "";
-    final String startTimeMinute = _issueStartTime?.minute.toString().padLeft(2, '0') ?? "";
-    final String endTimeHour = _issueEndTime?.hour.toString().padLeft(2, '0') ?? "";
-    final String endTimeMinute = _issueEndTime?.minute.toString().padLeft(2, '0') ?? "";
+    TimeOfDay? startTime = _getStartTimeOfDay();
+    TimeOfDay? endTime = _getEndTimeOfDay();
+
+    final String startTimeHour = startTime?.hour.toString().padLeft(2, '0') ?? "";
+    final String startTimeMinute = startTime?.minute.toString().padLeft(2, '0') ?? "";
+    final String endTimeHour = endTime?.hour.toString().padLeft(2, '0') ?? "";
+    final String endTimeMinute = endTime?.minute.toString().padLeft(2, '0') ?? "";
 
     final DateTime now = DateTime.now();
     final String currentYear = now.year.toString();
@@ -276,21 +288,29 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
                 ),
                 const SizedBox(height: 16),
                 
-                _buildTimeSelector(
+                _buildNormalTimeSelector(
                   icon: Icons.play_circle_outline,
                   title: 'Issue Start Time',
-                  time: _issueStartTime,
-                  onTap: () => _selectTime(context, true),
+                  hour: _issueStartHour,
+                  minute: _issueStartMinute,
+                  period: _issueStartPeriod,
+                  onHourChanged: (value) => setState(() => _issueStartHour = value),
+                  onMinuteChanged: (value) => setState(() => _issueStartMinute = value),
+                  onPeriodChanged: (value) => setState(() => _issueStartPeriod = value!),
                   color: const Color(0xFF4CAF50),
                 ),
                 
                 const SizedBox(height: 16),
                 
-                _buildTimeSelector(
+                _buildNormalTimeSelector(
                   icon: Icons.stop_circle_outlined,
                   title: 'Issue End Time',
-                  time: _issueEndTime,
-                  onTap: () => _selectTime(context, false),
+                  hour: _issueEndHour,
+                  minute: _issueEndMinute,
+                  period: _issueEndPeriod,
+                  onHourChanged: (value) => setState(() => _issueEndHour = value),
+                  onMinuteChanged: (value) => setState(() => _issueEndMinute = value),
+                  onPeriodChanged: (value) => setState(() => _issueEndPeriod = value!),
                   color: const Color(0xFFF44336),
                 ),
                 
@@ -420,65 +440,195 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
     );
   }
 
-  Widget _buildTimeSelector({
+  // New normal time selector widget with dropdowns
+  Widget _buildNormalTimeSelector({
     required IconData icon,
     required String title,
-    required TimeOfDay? time,
-    required VoidCallback onTap,
+    required int? hour,
+    required int? minute,
+    required String period,
+    required Function(int?) onHourChanged,
+    required Function(int?) onMinuteChanged,
+    required Function(String?) onPeriodChanged,
     required Color color,
   }) {
     return Card(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: color,
+                    size: 24,
+                  ),
                 ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      time == null ? 'Select Time' : time.format(context),
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: time == null ? Colors.grey : const Color(0xFF2E7D8A),
-                        fontWeight: time == null ? FontWeight.normal : FontWeight.w500,
+                      const SizedBox(height: 4),
+                      Text(
+                        _formatTime(hour, minute, period),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: (hour == null || minute == null) ? Colors.grey : const Color(0xFF2E7D8A),
+                          fontWeight: (hour == null || minute == null) ? FontWeight.normal : FontWeight.w500,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Icon(
-                Icons.access_time,
-                color: Colors.grey[400],
-                size: 20,
-              ),
-            ],
-          ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                // Hour Dropdown
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Hour',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[50],
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: const Color(0xFFE0E0E0)),
+                        ),
+                        child: DropdownButtonFormField<int>(
+                          value: hour,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(vertical: 8),
+                          ),
+                          hint: const Text('Hour'),
+                          items: List.generate(12, (index) => index + 1).map((int value) {
+                            return DropdownMenuItem<int>(
+                              value: value,
+                              child: Text(value.toString().padLeft(2, '0')),
+                            );
+                          }).toList(),
+                          onChanged: onHourChanged,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // Minute Dropdown
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Minute',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[50],
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: const Color(0xFFE0E0E0)),
+                        ),
+                        child: DropdownButtonFormField<int>(
+                          value: minute,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(vertical: 8),
+                          ),
+                          hint: const Text('Min'),
+                          items: List.generate(60, (index) => index).map((int value) {
+                            return DropdownMenuItem<int>(
+                              value: value,
+                              child: Text(value.toString().padLeft(2, '0')),
+                            );
+                          }).toList(),
+                          onChanged: onMinuteChanged,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // AM/PM Dropdown
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Period',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[50],
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: const Color(0xFFE0E0E0)),
+                        ),
+                        child: DropdownButtonFormField<String>(
+                          value: period,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(vertical: 8),
+                          ),
+                          items: ['AM', 'PM'].map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: onPeriodChanged,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
