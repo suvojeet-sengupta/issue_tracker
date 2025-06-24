@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:issue_tracker_app/google_form_webview_screen.dart';
 
 class IssueTrackerScreen extends StatefulWidget {
   @override
@@ -195,11 +196,9 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
     url += "&entry." + endDateMonthEntryId + "=" + currentMonth;
     url += "&entry." + endDateDayEntryId + "=" + currentDay;
 
-    final Uri googleFormUrl = Uri.parse(url);
+    final Uri googleFormUri = Uri.parse(url);
 
-    if (!await launchUrl(googleFormUrl)) {
-      throw Exception("Could not launch $googleFormUrl");
-    }
+    Navigator.push(context, MaterialPageRoute(builder: (context) => GoogleFormWebviewScreen(formUrl: googleFormUri.toString())));
   }
 
   @override
@@ -467,5 +466,4 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
     );
   }
 }
-
 

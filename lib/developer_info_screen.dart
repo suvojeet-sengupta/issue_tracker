@@ -349,7 +349,7 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                   child: Column(
                     children: [
                       const Text(
-                        '© 2024 Suvojeet Sengupta',
+                        '© 2025 Suvojeet Sengupta',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey,
