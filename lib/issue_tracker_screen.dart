@@ -13,6 +13,8 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
   String _tlName = "";
   String _advisorName = "";
   String _organization = ""; // New: To store selected organization
+  String _selectedIssueExplanation = "Mobile Phone Hang"; // Default value
+  String _selectedReason = "Voice Issue"; // Default value
 
   TimeOfDay? _issueStartTime;
   TimeOfDay? _issueEndTime;
@@ -164,11 +166,15 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
     final String endDateYearEntryId = "514450388_year";
     final String endDateMonthEntryId = "514450388_month";
     final String endDateDayEntryId = "514450388_day";
+    final String explainIssueEntryId = "1211413190";
+    final String reasonEntryId = "1231067802";
 
     final String encodedCrmId = Uri.encodeComponent(_crmId);
     final String encodedAdvisorName = Uri.encodeComponent(_advisorName);
     final String encodedTlName = Uri.encodeComponent(_tlName);
     final String encodedOrganization = Uri.encodeComponent(_organization);
+    final String encodedIssueExplanation = Uri.encodeComponent(_selectedIssueExplanation);
+    final String encodedReason = Uri.encodeComponent(_selectedReason);
 
     final String startTimeHour = _issueStartTime?.hour.toString().padLeft(2, '0') ?? "";
     final String startTimeMinute = _issueStartTime?.minute.toString().padLeft(2, '0') ?? "";
@@ -195,6 +201,8 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
     url += "&entry." + endDateYearEntryId + "=" + currentYear;
     url += "&entry." + endDateMonthEntryId + "=" + currentMonth;
     url += "&entry." + endDateDayEntryId + "=" + currentDay;
+    url += "&entry." + explainIssueEntryId + "=" + encodedIssueExplanation;
+    url += "&entry." + reasonEntryId + "=" + encodedReason;
 
     final Uri googleFormUri = Uri.parse(url);
 
@@ -286,6 +294,16 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
                   color: const Color(0xFFF44336),
                 ),
                 
+                const SizedBox(height: 32),
+
+                // Explain Issue Dropdown
+                _buildIssueExplanationDropdownField(),
+
+                const SizedBox(height: 24),
+
+                // Reason Section
+                _buildReasonSelection(),
+
                 const SizedBox(height: 32),
                 
                 // Submit Button
@@ -463,6 +481,111 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildIssueExplanationDropdownField() {
+    List<String> issueOptions = [
+      "Electricity Issue/Power Failure",
+      "Head Phone Issue",
+      "Wifi Stopped Working",
+      "System Hang / Voice Issue",
+      "Voice Issue / Cx Voice Not Audible",
+      "Mobile Phone Hang",
+      "Auto Call Drop",
+      "Aspect / WDE issue",
+      "Mobile Network Connectivity",
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Explain Issue",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF2E7D8A),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFFE0E0E0)),
+          ),
+          child: DropdownButtonFormField<String>(
+            value: _selectedIssueExplanation,
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              prefixIcon: Icon(Icons.help_outline, color: Color(0xFF2E7D8A)),
+            ),
+            items: issueOptions.map((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              setState(() {
+                _selectedIssueExplanation = newValue!;
+              });
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildReasonSelection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Reason",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF2E7D8A),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Card(
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                RadioListTile<String>(
+                  title: const Text("Voice Issue"),
+                  value: "Voice Issue",
+                  groupValue: _selectedReason,
+                  onChanged: (String? value) {
+                    setState(() {
+                      _selectedReason = value!;
+                    });
+                  },
+                ),
+                RadioListTile<String>(
+                  title: const Text("System issue (Network , Asset & Aspect /WDE issue)"),
+                  value: "System issue (Network , Asset & Aspect /WDE issue)",
+                  groupValue: _selectedReason,
+                  onChanged: (String? value) {
+                    setState(() {
+                      _selectedReason = value!;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
