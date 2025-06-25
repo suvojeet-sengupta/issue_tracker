@@ -471,7 +471,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
   Widget _buildTeamLeaderDropdown() {
     List<String> tlOptions = [
       'Manish Kumar',
-      'Aniket Patel',
+      'Aniket',
       'Imran Khan',
       'Ravi',
       'Gajendra',
