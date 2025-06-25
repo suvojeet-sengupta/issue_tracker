@@ -453,6 +453,57 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
             _buildDetailRow(Icons.supervisor_account_outlined, 'Team Leader', parsedEntry['TL Name'] ?? 'N/A'),
             const SizedBox(height: 12),
             _buildDetailRow(Icons.person_outline, 'Advisor', parsedEntry['Advisor Name'] ?? 'N/A'),
+            const SizedBox(height: 12),
+            _buildDetailRow(Icons.business_outlined, 'Organization', parsedEntry['Organization'] ?? 'N/A'),
+            
+            const SizedBox(height: 16),
+            
+            // Issue Information Section
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF0F9FF),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0xFF3B82F6).withOpacity(0.2),
+                  width: 1,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF3B82F6).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Icon(
+                          Icons.report_problem_outlined,
+                          color: Color(0xFF3B82F6),
+                          size: 16,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'Issue Details',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF3B82F6),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  _buildIssueDetailRow('Issue Type', parsedEntry['Issue Explanation'] ?? 'N/A'),
+                  const SizedBox(height: 8),
+                  _buildIssueDetailRow('Reason', parsedEntry['Reason'] ?? 'N/A'),
+                ],
+              ),
+            ),
             
             const SizedBox(height: 16),
             
@@ -562,6 +613,32 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
             fontSize: 14,
             fontWeight: FontWeight.bold,
             color: color,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildIssueDetailRow(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '$label: ',
+          style: TextStyle(
+            fontSize: 13,
+            color: Colors.grey[600],
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF3B82F6),
+            ),
           ),
         ),
       ],

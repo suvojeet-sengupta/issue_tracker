@@ -132,8 +132,9 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
 
       String entry = 
           "CRM ID: $_crmId, TL Name: $_tlName, Advisor Name: $_advisorName, "
-          "Start Time: ${startTime!.format(context)}, End Time: ${endTime!.format(context)}, "
-          "Fill Time: ${DateTime.now().toIso8601String()}";
+          "Organization: $_organization, Issue Explanation: $_selectedIssueExplanation, "
+          "Reason: $_selectedReason, Start Time: ${startTime!.format(context)}, "
+          "End Time: ${endTime!.format(context)}, Fill Time: ${DateTime.now().toIso8601String()}";
 
       history.add(entry);
       await prefs.setStringList("issueHistory", history);
