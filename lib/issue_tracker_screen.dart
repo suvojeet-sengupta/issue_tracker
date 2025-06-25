@@ -8,22 +8,23 @@ class IssueTrackerScreen extends StatefulWidget {
   _IssueTrackerScreenState createState() => _IssueTrackerScreenState();
 }
 
-class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProviderStateMixin {
+class _IssueTrackerScreenState extends State<IssueTrackerScreen>
+    with TickerProviderStateMixin {
   String _crmId = "";
   String _tlName = "";
   String _advisorName = "";
   String _organization = "";
-  String _selectedIssueExplanation = "Mobile Phone Hang";
-  String _selectedReason = "Voice Issue";
+  String _selectedIssueExplanation = "System Hang / Voice Issue";
+  String _selectedReason = "System issue (Network , Asset & Aspect /WDE issue)";
 
   int? _issueStartHour;
   int? _issueStartMinute;
   String _issueStartPeriod = "AM";
-  
+
   int? _issueEndHour;
   int? _issueEndMinute;
   String _issueEndPeriod = "AM";
-  
+
   late AnimationController _animationController;
   late AnimationController _buttonController;
   late Animation<double> _slideAnimation;
@@ -114,8 +115,10 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
   }
 
   bool _isFormValid() {
-    return _issueStartHour != null && _issueStartMinute != null &&
-           _issueEndHour != null && _issueEndMinute != null;
+    return _issueStartHour != null &&
+        _issueStartMinute != null &&
+        _issueEndHour != null &&
+        _issueEndMinute != null;
   }
 
   _submitIssue() async {
@@ -130,7 +133,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
       TimeOfDay? startTime = _getStartTimeOfDay();
       TimeOfDay? endTime = _getEndTimeOfDay();
 
-      String entry = 
+      String entry =
           "CRM ID: $_crmId, TL Name: $_tlName, Advisor Name: $_advisorName, "
           "Organization: $_organization, Issue Explanation: $_selectedIssueExplanation, "
           "Reason: $_selectedReason, Start Time: ${startTime!.format(context)}, "
@@ -172,7 +175,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
               ],
             ),
             content: const Text(
-              "Issue has been recorded successfully. Opening Google Form for additional details...",
+              "Issue has been recorded successfully. Opening Google Please Verify Form And Submit...",
               style: TextStyle(fontSize: 16),
             ),
             actions: [
@@ -236,23 +239,28 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
     final String encodedAdvisorName = Uri.encodeComponent(_advisorName);
     final String encodedTlName = Uri.encodeComponent(_tlName);
     final String encodedOrganization = Uri.encodeComponent(_organization);
-    final String encodedIssueExplanation = Uri.encodeComponent(_selectedIssueExplanation);
+    final String encodedIssueExplanation =
+        Uri.encodeComponent(_selectedIssueExplanation);
     final String encodedReason = Uri.encodeComponent(_selectedReason);
 
     TimeOfDay? startTime = _getStartTimeOfDay();
     TimeOfDay? endTime = _getEndTimeOfDay();
 
-    final String startTimeHour = startTime?.hour.toString().padLeft(2, '0') ?? "";
-    final String startTimeMinute = startTime?.minute.toString().padLeft(2, '0') ?? "";
+    final String startTimeHour =
+        startTime?.hour.toString().padLeft(2, '0') ?? "";
+    final String startTimeMinute =
+        startTime?.minute.toString().padLeft(2, '0') ?? "";
     final String endTimeHour = endTime?.hour.toString().padLeft(2, '0') ?? "";
-    final String endTimeMinute = endTime?.minute.toString().padLeft(2, '0') ?? "";
+    final String endTimeMinute =
+        endTime?.minute.toString().padLeft(2, '0') ?? "";
 
     final DateTime now = DateTime.now();
     final String currentYear = now.year.toString();
     final String currentMonth = now.month.toString();
     final String currentDay = now.day.toString();
 
-    String url = "https://docs.google.com/forms/d/e/1FAIpQLSdeWylhfFaHmM3osSGRbxh9S_XvnAEPCIhTemuh-I7-LNds_w/viewform?usp=pp_url";
+    String url =
+        "https://docs.google.com/forms/d/e/1FAIpQLSdeWylhfFaHmM3osSGRbxh9S_XvnAEPCIhTemuh-I7-LNds_w/viewform?usp=pp_url";
     url += "&entry." + crmIdEntryId + "=" + encodedCrmId;
     url += "&entry." + advisorNameEntryId + "=" + encodedAdvisorName;
     url += "&entry." + startTimeHourEntryId + "=" + startTimeHour;
@@ -272,7 +280,11 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
 
     final Uri googleFormUri = Uri.parse(url);
 
-    Navigator.push(context, MaterialPageRoute(builder: (context) => GoogleFormWebviewScreen(formUrl: googleFormUri.toString())));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                GoogleFormWebviewScreen(formUrl: googleFormUri.toString())));
   }
 
   @override
@@ -304,7 +316,8 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: IconButton(
-                        icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+                        icon: const Icon(Icons.arrow_back_ios_rounded,
+                            color: Colors.white),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ),
@@ -320,7 +333,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
                   ],
                 ),
               ),
-              
+
               // Content
               Expanded(
                 child: SlideTransition(
@@ -346,7 +359,10 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
                                       padding: const EdgeInsets.all(12),
                                       decoration: BoxDecoration(
                                         gradient: const LinearGradient(
-                                          colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
+                                          colors: [
+                                            Color(0xFF1E3A8A),
+                                            Color(0xFF3B82F6)
+                                          ],
                                         ),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
@@ -368,17 +384,22 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
                                   ],
                                 ),
                                 const SizedBox(height: 20),
-                                _buildEnhancedInfoRow(Icons.badge_outlined, 'CRM ID', _crmId),
+                                _buildEnhancedInfoRow(
+                                    Icons.badge_outlined, 'CRM ID', _crmId),
                                 const SizedBox(height: 12),
-                                _buildEnhancedInfoRow(Icons.supervisor_account_outlined, 'Team Leader', _tlName),
+                                _buildEnhancedInfoRow(
+                                    Icons.supervisor_account_outlined,
+                                    'Team Leader',
+                                    _tlName),
                                 const SizedBox(height: 12),
-                                _buildEnhancedInfoRow(Icons.person_outline, 'Advisor Name', _advisorName),
+                                _buildEnhancedInfoRow(Icons.person_outline,
+                                    'Advisor Name', _advisorName),
                               ],
                             ),
                           ),
-                          
+
                           const SizedBox(height: 24),
-                          
+
                           // Time Selection Section
                           const Text(
                             'Issue Timing',
@@ -389,37 +410,43 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
                             ),
                           ),
                           const SizedBox(height: 16),
-                          
+
                           _buildEnhancedTimeSelector(
                             icon: Icons.play_circle_outline_rounded,
                             title: 'Issue Start Time',
                             hour: _issueStartHour,
                             minute: _issueStartMinute,
                             period: _issueStartPeriod,
-                            onHourChanged: (value) => setState(() => _issueStartHour = value),
-                            onMinuteChanged: (value) => setState(() => _issueStartMinute = value),
-                            onPeriodChanged: (value) => setState(() => _issueStartPeriod = value!),
+                            onHourChanged: (value) =>
+                                setState(() => _issueStartHour = value),
+                            onMinuteChanged: (value) =>
+                                setState(() => _issueStartMinute = value),
+                            onPeriodChanged: (value) =>
+                                setState(() => _issueStartPeriod = value!),
                             gradient: const LinearGradient(
                               colors: [Color(0xFF059669), Color(0xFF10B981)],
                             ),
                           ),
-                          
+
                           const SizedBox(height: 16),
-                          
+
                           _buildEnhancedTimeSelector(
                             icon: Icons.stop_circle_outlined,
                             title: 'Issue End Time',
                             hour: _issueEndHour,
                             minute: _issueEndMinute,
                             period: _issueEndPeriod,
-                            onHourChanged: (value) => setState(() => _issueEndHour = value),
-                            onMinuteChanged: (value) => setState(() => _issueEndMinute = value),
-                            onPeriodChanged: (value) => setState(() => _issueEndPeriod = value!),
+                            onHourChanged: (value) =>
+                                setState(() => _issueEndHour = value),
+                            onMinuteChanged: (value) =>
+                                setState(() => _issueEndMinute = value),
+                            onPeriodChanged: (value) =>
+                                setState(() => _issueEndPeriod = value!),
                             gradient: const LinearGradient(
                               colors: [Color(0xFFEF4444), Color(0xFFF87171)],
                             ),
                           ),
-                          
+
                           const SizedBox(height: 24),
 
                           // Issue Explanation
@@ -431,7 +458,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
                           _buildReasonSelection(),
 
                           const SizedBox(height: 32),
-                          
+
                           // Submit Button
                           ScaleTransition(
                             scale: _buttonScale,
@@ -439,20 +466,26 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
                               width: double.infinity,
                               height: 64,
                               decoration: BoxDecoration(
-                                gradient: _isFormValid() 
+                                gradient: _isFormValid()
                                     ? const LinearGradient(
-                                        colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
+                                        colors: [
+                                          Color(0xFF1E3A8A),
+                                          Color(0xFF3B82F6)
+                                        ],
                                       )
                                     : null,
                                 color: _isFormValid() ? null : Colors.grey[300],
                                 borderRadius: BorderRadius.circular(20),
-                                boxShadow: _isFormValid() ? [
-                                  BoxShadow(
-                                    color: const Color(0xFF1E3A8A).withOpacity(0.3),
-                                    blurRadius: 15,
-                                    offset: const Offset(0, 8),
-                                  ),
-                                ] : null,
+                                boxShadow: _isFormValid()
+                                    ? [
+                                        BoxShadow(
+                                          color: const Color(0xFF1E3A8A)
+                                              .withOpacity(0.3),
+                                          blurRadius: 15,
+                                          offset: const Offset(0, 8),
+                                        ),
+                                      ]
+                                    : null,
                               ),
                               child: Material(
                                 color: Colors.transparent,
@@ -461,12 +494,15 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
                                   borderRadius: BorderRadius.circular(20),
                                   child: Center(
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Icon(
                                           Icons.send_rounded,
                                           size: 24,
-                                          color: _isFormValid() ? Colors.white : Colors.grey[600],
+                                          color: _isFormValid()
+                                              ? Colors.white
+                                              : Colors.grey[600],
                                         ),
                                         const SizedBox(width: 12),
                                         Text(
@@ -474,7 +510,9 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
                                           style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
-                                            color: _isFormValid() ? Colors.white : Colors.grey[600],
+                                            color: _isFormValid()
+                                                ? Colors.white
+                                                : Colors.grey[600],
                                           ),
                                         ),
                                       ],
@@ -484,9 +522,9 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
                               ),
                             ),
                           ),
-                          
+
                           const SizedBox(height: 20),
-                          
+
                           // Info Card
                           Container(
                             width: double.infinity,
@@ -509,7 +547,8 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
                                 Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF1E3A8A).withOpacity(0.1),
+                                    color: const Color(0xFF1E3A8A)
+                                        .withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: const Icon(
@@ -521,7 +560,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
                                 const SizedBox(width: 16),
                                 Expanded(
                                   child: Text(
-                                    'After submitting, you will be redirected to a Google Form to provide additional details.',
+                                    'After submitting, you will be redirected to a Google Form Please Confirm additional details And Submit.',
                                     style: TextStyle(
                                       color: const Color(0xFF1E3A8A),
                                       fontSize: 14,
@@ -676,7 +715,9 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
                       _formatTime(hour, minute, period),
                       style: TextStyle(
                         fontSize: 16,
-                        color: (hour == null || minute == null) ? Colors.grey[500] : gradient.colors.first,
+                        color: (hour == null || minute == null)
+                            ? Colors.grey[500]
+                            : gradient.colors.first,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -850,7 +891,8 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
               value: _selectedIssueExplanation,
               decoration: const InputDecoration(
                 border: InputBorder.none,
-                prefixIcon: Icon(Icons.help_outline_rounded, color: Color(0xFF1E3A8A)),
+                prefixIcon:
+                    Icon(Icons.help_outline_rounded, color: Color(0xFF1E3A8A)),
               ),
               items: issueOptions.map((String value) {
                 return DropdownMenuItem<String>(
@@ -922,10 +964,14 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: value == groupValue ? const Color(0xFF1E3A8A).withOpacity(0.1) : const Color(0xFFF8FAFC),
+        color: value == groupValue
+            ? const Color(0xFF1E3A8A).withOpacity(0.1)
+            : const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: value == groupValue ? const Color(0xFF1E3A8A) : const Color(0xFFE2E8F0),
+          color: value == groupValue
+              ? const Color(0xFF1E3A8A)
+              : const Color(0xFFE2E8F0),
           width: value == groupValue ? 2 : 1,
         ),
       ),
@@ -934,7 +980,9 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
           title,
           style: TextStyle(
             fontWeight: FontWeight.w500,
-            color: value == groupValue ? const Color(0xFF1E3A8A) : Colors.grey[700],
+            color: value == groupValue
+                ? const Color(0xFF1E3A8A)
+                : Colors.grey[700],
           ),
         ),
         value: value,
@@ -945,4 +993,3 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen> with TickerProv
     );
   }
 }
-
