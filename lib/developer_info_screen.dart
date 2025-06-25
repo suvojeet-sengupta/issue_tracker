@@ -184,10 +184,14 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                                         ),
                                       ],
                                     ),
-                                    child: const Icon(
-                                      Icons.person_rounded,
-                                      size: 70,
-                                      color: Colors.white,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(70),
+                                      child: Image.asset(
+                                        'assets/images/developer_profile.jpg',
+                                        fit: BoxFit.cover,
+                                        width: 140,
+                                        height: 140,
+                                      ),
                                     ),
                                   ),
                                 ),
