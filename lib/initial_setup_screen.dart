@@ -209,7 +209,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                           ),
                           const SizedBox(height: 8),
                           const Text(
-                            'Issue Tracker Pro',
+                            'Issue Tracker App',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 32,

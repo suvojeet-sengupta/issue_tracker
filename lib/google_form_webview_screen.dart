@@ -4,10 +4,12 @@ import 'package:webview_flutter/webview_flutter.dart';
 class GoogleFormWebviewScreen extends StatefulWidget {
   final String formUrl;
 
-  const GoogleFormWebviewScreen({Key? key, required this.formUrl}) : super(key: key);
+  const GoogleFormWebviewScreen({Key? key, required this.formUrl})
+      : super(key: key);
 
   @override
-  State<GoogleFormWebviewScreen> createState() => _GoogleFormWebviewScreenState();
+  State<GoogleFormWebviewScreen> createState() =>
+      _GoogleFormWebviewScreenState();
 }
 
 class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
@@ -36,7 +38,7 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Google Form'),
+        title: const Text('Issue Tracker Form'),
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.of(context).pop(),
@@ -54,5 +56,3 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
     );
   }
 }
-
-

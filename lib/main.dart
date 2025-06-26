@@ -35,7 +35,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Issue Tracker Pro',
+      title: 'Issue Tracker App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
@@ -93,7 +93,8 @@ class _MyAppState extends State<MyApp> {
             borderRadius: BorderRadius.circular(16),
             borderSide: const BorderSide(color: Color(0xFF1E3A8A), width: 2),
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         ),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
@@ -213,7 +214,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          'Issue Tracker Pro',
+                          'Issue Tracker App',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 28,
@@ -226,7 +227,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: IconButton(
-                            icon: const Icon(Icons.info_outline, color: Colors.white),
+                            icon: const Icon(Icons.info_outline,
+                                color: Colors.white),
                             onPressed: () {
                               Navigator.pushNamed(context, '/developer_info');
                             },
@@ -234,9 +236,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         ),
                       ],
                     ),
-                    
+
                     const SizedBox(height: 32),
-                    
+
                     // Hero Section with Logo
                     Container(
                       width: double.infinity,
@@ -268,12 +270,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               height: 100,
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
-                                  colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
+                                  colors: [
+                                    Color(0xFF1E3A8A),
+                                    Color(0xFF3B82F6)
+                                  ],
                                 ),
                                 borderRadius: BorderRadius.circular(24),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFF1E3A8A).withOpacity(0.3),
+                                    color: const Color(0xFF1E3A8A)
+                                        .withOpacity(0.3),
                                     blurRadius: 15,
                                     offset: const Offset(0, 8),
                                   ),
@@ -320,9 +326,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         ],
                       ),
                     ),
-                    
+
                     const SizedBox(height: 32),
-                    
+
                     // User Information Card with Enhanced Design
                     Container(
                       decoration: BoxDecoration(
@@ -347,7 +353,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   padding: const EdgeInsets.all(12),
                                   decoration: BoxDecoration(
                                     gradient: const LinearGradient(
-                                      colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
+                                      colors: [
+                                        Color(0xFF1E3A8A),
+                                        Color(0xFF3B82F6)
+                                      ],
                                     ),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -369,18 +378,23 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               ],
                             ),
                             const SizedBox(height: 24),
-                            _buildEnhancedInfoRow(Icons.badge_outlined, 'CRM ID', _crmId),
+                            _buildEnhancedInfoRow(
+                                Icons.badge_outlined, 'CRM ID', _crmId),
                             const SizedBox(height: 16),
-                            _buildEnhancedInfoRow(Icons.supervisor_account_outlined, 'Team Leader', _tlName),
+                            _buildEnhancedInfoRow(
+                                Icons.supervisor_account_outlined,
+                                'Team Leader',
+                                _tlName),
                             const SizedBox(height: 16),
-                            _buildEnhancedInfoRow(Icons.person_outline, 'Advisor Name', _advisorName),
+                            _buildEnhancedInfoRow(Icons.person_outline,
+                                'Advisor Name', _advisorName),
                           ],
                         ),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 32),
-                    
+
                     // Quick Actions Section
                     const Text(
                       'Quick Actions',
@@ -391,11 +405,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    
+
                     _buildEnhancedActionCard(
                       icon: Icons.add_task_rounded,
                       title: 'Fill Issue Tracker',
-                      subtitle: 'Record a new issue with precise timing details',
+                      subtitle:
+                          'Record a new issue with precise timing details',
                       onTap: () {
                         Navigator.pushNamed(context, '/issue_tracker');
                       },
@@ -403,13 +418,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
                       ),
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     _buildEnhancedActionCard(
                       icon: Icons.history_rounded,
                       title: 'View History',
-                      subtitle: 'Browse and manage your previously recorded issues',
+                      subtitle:
+                          'Browse and manage your previously recorded issues',
                       onTap: () {
                         Navigator.pushNamed(context, '/history');
                       },
@@ -417,7 +433,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         colors: [Color(0xFF059669), Color(0xFF10B981)],
                       ),
                     ),
-                    
+
                     const SizedBox(height: 32),
                   ],
                 ),
@@ -581,4 +597,3 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 }
-

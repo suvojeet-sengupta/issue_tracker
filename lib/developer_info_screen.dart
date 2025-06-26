@@ -110,7 +110,8 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: IconButton(
-                        icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+                        icon: const Icon(Icons.arrow_back_ios_rounded,
+                            color: Colors.white),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ),
@@ -126,7 +127,7 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                   ],
                 ),
               ),
-              
+
               // Content
               Expanded(
                 child: FadeTransition(
@@ -173,12 +174,16 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                                     height: 140,
                                     decoration: BoxDecoration(
                                       gradient: const LinearGradient(
-                                        colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
+                                        colors: [
+                                          Color(0xFF1E3A8A),
+                                          Color(0xFF3B82F6)
+                                        ],
                                       ),
                                       borderRadius: BorderRadius.circular(70),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: const Color(0xFF1E3A8A).withOpacity(0.3),
+                                          color: const Color(0xFF1E3A8A)
+                                              .withOpacity(0.3),
                                           blurRadius: 20,
                                           offset: const Offset(0, 10),
                                         ),
@@ -226,10 +231,14 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                                   spacing: 12,
                                   runSpacing: 12,
                                   children: [
-                                    _buildEnhancedSkillTag('Flutter', const Color(0xFF1E3A8A)),
-                                    _buildEnhancedSkillTag('Dart', const Color(0xFF059669)),
-                                    _buildEnhancedSkillTag('Mobile Development', const Color(0xFFEF4444)),
-                                    _buildEnhancedSkillTag('UI/UX Design', const Color(0xFF8B5CF6)),
+                                    _buildEnhancedSkillTag(
+                                        'Flutter', const Color(0xFF1E3A8A)),
+                                    _buildEnhancedSkillTag(
+                                        'Dart', const Color(0xFF059669)),
+                                    _buildEnhancedSkillTag('Mobile Development',
+                                        const Color(0xFFEF4444)),
+                                    _buildEnhancedSkillTag('UI/UX Design',
+                                        const Color(0xFF8B5CF6)),
                                   ],
                                 ),
                               ],
@@ -255,7 +264,10 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                                       padding: const EdgeInsets.all(12),
                                       decoration: BoxDecoration(
                                         gradient: const LinearGradient(
-                                          colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
+                                          colors: [
+                                            Color(0xFF1E3A8A),
+                                            Color(0xFF3B82F6)
+                                          ],
                                         ),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
@@ -278,7 +290,11 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                                 ),
                                 const SizedBox(height: 20),
                                 Text(
-                                  'Suvojeet Sengupta is a passionate mobile app developer specializing in Flutter and cross-platform development. With expertise in creating intuitive and efficient mobile applications, Suvojeet focuses on delivering high-quality solutions that enhance user experience and drive business success.',
+                                  '''Hi, I'm Suvojeet Sengupta – currently working as an Advisor at DishTV (GSC). \n I've always been interested in technology, and with some basic knowledge of Flutter and the help of AI tools, I started exploring app development.
+
+During my work,\n I noticed how time-consuming and frustrating it was to fill out Google Forms again and again for issue tracking.\n So, I created this simple app as a solution – to make the process smoother and more efficient.
+
+This app may not be perfect,\n but it's built with real-life experience, practical thinking, and a passion to solve problems in smarter ways.''',
                                   style: TextStyle(
                                     fontSize: 16,
                                     height: 1.6,
@@ -294,18 +310,22 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: [
-                                        const Color(0xFF1E3A8A).withOpacity(0.1),
-                                        const Color(0xFF3B82F6).withOpacity(0.05),
+                                        const Color(0xFF1E3A8A)
+                                            .withOpacity(0.1),
+                                        const Color(0xFF3B82F6)
+                                            .withOpacity(0.05),
                                       ],
                                     ),
                                     borderRadius: BorderRadius.circular(16),
                                     border: Border.all(
-                                      color: const Color(0xFF1E3A8A).withOpacity(0.2),
+                                      color: const Color(0xFF1E3A8A)
+                                          .withOpacity(0.2),
                                       width: 1.5,
                                     ),
                                   ),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
@@ -314,18 +334,24 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                                             height: 50,
                                             decoration: BoxDecoration(
                                               gradient: const LinearGradient(
-                                                colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
+                                                colors: [
+                                                  Color(0xFF1E3A8A),
+                                                  Color(0xFF3B82F6)
+                                                ],
                                               ),
-                                              borderRadius: BorderRadius.circular(12),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                             ),
                                             child: ClipRRect(
-                                              borderRadius: BorderRadius.circular(12),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                               child: Image.asset(
                                                 'assets/images/app_logo.png',
                                                 width: 50,
                                                 height: 50,
                                                 fit: BoxFit.contain,
-                                                errorBuilder: (context, error, stackTrace) {
+                                                errorBuilder: (context, error,
+                                                    stackTrace) {
                                                   return const Icon(
                                                     Icons.track_changes_rounded,
                                                     size: 25,
@@ -338,10 +364,11 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                                           const SizedBox(width: 16),
                                           Expanded(
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 const Text(
-                                                  'Issue Tracker Pro',
+                                                  'Issue Tracker App',
                                                   style: TextStyle(
                                                     fontSize: 18,
                                                     fontWeight: FontWeight.bold,
@@ -350,7 +377,7 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                                                 ),
                                                 const SizedBox(height: 4),
                                                 Text(
-                                                  'Version 1.0.0',
+                                                  'Version 1.0.1',
                                                   style: TextStyle(
                                                     fontSize: 14,
                                                     color: Colors.grey[600],
@@ -364,7 +391,7 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                                       ),
                                       const SizedBox(height: 16),
                                       Text(
-                                        'A professional issue tracking application designed to help teams efficiently manage and monitor their workflow issues with detailed timing and comprehensive reporting capabilities.',
+                                        'A smart issue tracking app built using basic Flutter skills and AI support — designed to replace repetitive Google Form entries with a faster, smoother, and more efficient solution, inspired by real work needs at DishTV (GSC).',
                                         style: TextStyle(
                                           fontSize: 15,
                                           color: Colors.grey[700],
@@ -398,7 +425,10 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                                       padding: const EdgeInsets.all(12),
                                       decoration: BoxDecoration(
                                         gradient: const LinearGradient(
-                                          colors: [Color(0xFF059669), Color(0xFF10B981)],
+                                          colors: [
+                                            Color(0xFF059669),
+                                            Color(0xFF10B981)
+                                          ],
                                         ),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
@@ -425,9 +455,13 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                                   title: 'Email',
                                   subtitle: 'suvojitsengupta21@gmail.com',
                                   gradient: const LinearGradient(
-                                    colors: [Color(0xFFEF4444), Color(0xFFF87171)],
+                                    colors: [
+                                      Color(0xFFEF4444),
+                                      Color(0xFFF87171)
+                                    ],
                                   ),
-                                  onTap: () => _launchURL('mailto:suvojitsengupta21@gmail.com'),
+                                  onTap: () => _launchURL(
+                                      'mailto:suvojitsengupta21@gmail.com'),
                                 ),
                                 const SizedBox(height: 16),
                                 _buildEnhancedContactItem(
@@ -435,9 +469,13 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                                   title: 'GitHub',
                                   subtitle: 'suvojit213',
                                   gradient: const LinearGradient(
-                                    colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
+                                    colors: [
+                                      Color(0xFF1E3A8A),
+                                      Color(0xFF3B82F6)
+                                    ],
                                   ),
-                                  onTap: () => _launchURL('https://github.com/suvojit213'),
+                                  onTap: () => _launchURL(
+                                      'https://github.com/suvojit213'),
                                 ),
                               ],
                             ),
@@ -667,4 +705,3 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
     );
   }
 }
-

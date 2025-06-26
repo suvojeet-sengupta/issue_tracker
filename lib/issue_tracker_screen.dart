@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:issue_tracker_app/google_form_webview_screen.dart';
 
 class IssueTrackerScreen extends StatefulWidget {
@@ -175,7 +174,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
               ],
             ),
             content: const Text(
-              "Issue has been recorded successfully. Opening Google Please Verify Form And Submit...",
+              "Issue has been recorded successfully. Opening Google Form Please Verify Form And Submit...",
               style: TextStyle(fontSize: 16),
             ),
             actions: [
