@@ -1,4 +1,4 @@
-name: 🚀 Flutter Build and Create New GitHub Release
+name: 🚀 Flutter Build and Create New GitHub Release with Telegram Notify
 
 on:
   push:
@@ -13,11 +13,15 @@ jobs:
     permissions:
       contents: write
 
+    env:
+      TELEGRAM_BOT_TOKEN: 8018823912:AAGedWAS21in7NZbQuu3d8i8
+      TELEGRAM_CHAT_ID: -1002798687658
+
     steps:
       - name: ✅ Checkout Code
         uses: actions/checkout@v4
 
-      - name: 📅 Set up Flutter
+      - name: 🗕️ Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.32.5'
@@ -50,7 +54,7 @@ jobs:
             -d '{
               "tag_name": "'"${TAG_NAME}"'",
               "name": "'"${RELEASE_NAME}"'",
-              "body": "📱 APK generated and uploaded on '"${DATE_TIME}"'",
+              "body": "\ud83d\udcf1 App Name: Issue Tracker\n\ud83d\udcc5 Release Time: ${DATE_TIME}",
               "draft": false,
               "prerelease": false
             }' \
@@ -65,10 +69,18 @@ jobs:
           release_id=$(jq -r .id release.json)
           echo "RELEASE_ID=$release_id" >> $GITHUB_ENV
 
-      - name: 📤 Upload APK to Release
+      - name: 📤 Upload APK to GitHub Release
         run: |
           curl -s -X POST \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/vnd.android.package-archive" \
             --data-binary @"Issue Tracker - ${DATE_TIME}.apk" \
             "https://uploads.github.com/repos/${{ github.repository }}/releases/${RELEASE_ID}/assets?name=Issue%20Tracker%20-%20${DATE_TIME}.apk"
+
+      - name: 📲 Notify via Telegram
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ env.TELEGRAM_BOT_TOKEN }}/sendMessage \
+            -d chat_id=${{ env.TELEGRAM_CHAT_ID }} \
+            -d text="\ud83d\ude80 *New Flutter Release!*
+                          \n\ud83d\udcf1 App: *Issue Tracker*\n📅 Time: *${DATE_TIME}*\n🌐 [View on GitHub](https://github.com/${{ github.repository }}/releases/tag/${TAG_NAME})" \
+            -d parse_mode=Markdown
