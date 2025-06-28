@@ -2,12 +2,11 @@
 # 🚀 Enhanced Flutter Build, Release, and Notify Workflow 🚀
 #
 # What's new and improved?
-# 1.  **Semantic Versioning**: Instead of using a timestamp, this workflow now reads the version directly from your `pubspec.yaml` file (e.g., 1.0.0+1). This is the standard way to version releases.
-# 2.  **Dedicated Actions**: Replaced all `curl` commands with specialized, community-trusted GitHub Actions. This makes the workflow more readable, maintainable, and less error-prone.
-#       - `softprops/action-gh-release`: Creates the GitHub release and uploads assets in one clean step.
-#       - `appleboy/telegram-action`: A dedicated action for sending Telegram messages, which is more reliable.
-# 3.  **Enhanced Security**: Your `TELEGRAM_BOT_TOKEN` is no longer exposed in the code. It's now fetched from GitHub Secrets, which is the secure, recommended practice.
-# 4.  **Improved Readability**: The steps are logically named with emojis, and the overall structure is much cleaner.
+# 1.  **Semantic Versioning**: Reads the version directly from your `pubspec.yaml` file.
+# 2.  **Dedicated Actions**: Uses specialized GitHub Actions for cleaner, more reliable code.
+# 3.  **Enhanced Security**: Fetches secrets securely using `secrets.VARIABLE_NAME`.
+# 4.  **FIXED**: Correctly displays the release timestamp.
+# 5.  **FIXED & UPGRADED ✨**: Replaced the problematic changelog generator with `mikepenz/release-changelog-builder-action`, a more reliable and popular action to fix the "action not found" error.
 #
 
 name: 🚀 Flutter Build, Release & Notify
@@ -27,27 +26,29 @@ jobs:
     steps:
       - name: ✅ Checkout Code
         uses: actions/checkout@v4
+        with:
+          # We need to fetch all history and tags for the changelog generator to work correctly
+          fetch-depth: 0
 
       - name: 📦 Install jq
         run: sudo apt-get install -y jq
-        # jq is a lightweight and flexible command-line JSON processor. We need it to parse the pubspec.yaml file.
+        # jq is a lightweight and flexible command-line JSON processor.
 
-      - name: 🔖 Get App Version from pubspec.yaml
-        id: get_version
+      - name: ⚙️ Setup Environment Variables
+        id: setup_vars
         run: |
-          # Read the version from pubspec.yaml and set it as an output variable for later steps.
-          # This creates a version like "v1.0.1+3" which is great for tags.
+          # Read the version from pubspec.yaml
           APP_VERSION=$(cat pubspec.yaml | grep 'version:' | awk '{print $2}')
-          echo "APP_VERSION=${APP_VERSION}" >> $GITHUB_ENV
           echo "RELEASE_TAG=v${APP_VERSION}" >> $GITHUB_ENV
-          echo "version_tag=v${APP_VERSION}" >> $GITHUB_OUTPUT
+          # Get the current timestamp
+          echo "CURRENT_DATE_TIME=$(date +"%Y-%m-%d %H:%M:%S")" >> $GITHUB_ENV
 
       - name: 🐦 Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.32.5' # You can change this to your required Flutter version
+          flutter-version: '3.32.5'
           channel: 'stable'
-          cache: true # Enable caching for faster builds
+          cache: true
 
       - name: 🔄 Get Dependencies
         run: flutter pub get
@@ -57,28 +58,35 @@ jobs:
 
       - name: 📦 Prepare Release Artifacts
         run: |
-          # Create a directory to hold our release assets
           mkdir -p release_artifacts
-          # Rename the built APK to include the app version and move it to the artifacts directory
           mv build/app/outputs/flutter-apk/app-release.apk release_artifacts/Issue-Tracker-${{ env.RELEASE_TAG }}.apk
+
+      - name: 📜 Generate Changelog
+        id: changelog
+        uses: mikepenz/release-changelog-builder-action@v4
+        with:
+          # This token is required for the action to fetch commit history and tags
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 🚀 Create GitHub Release & Upload APK
         uses: softprops/action-gh-release@v2
         with:
-          # The action will use the GITHUB_TOKEN secret automatically
           tag_name: ${{ env.RELEASE_TAG }}
           name: "Release ${{ env.RELEASE_TAG }}"
           body: |
             ## ✨ New Release: ${{ env.RELEASE_TAG }}
             **App:** Issue Tracker
-            **Released On:** ${{ env.DATE_TIME }}
+            **Released On:** ${{ env.CURRENT_DATE_TIME }}
 
-            Another awesome update is here!
-          # Path to the files you want to upload as release assets.
-          # The wildcard '*' will upload all files in the release_artifacts directory.
+            ---
+
+            ### 📝 What's New (Changelog)
+            ${{ steps.changelog.outputs.changelog }}
+
+            ---
+            
+            Another awesome update is here! Grab the APK below. 👇
           files: release_artifacts/*
-        env:
-          DATE_TIME: $(date +'%Y-%m-%d %H:%M:%S')
 
       - name: 📲 Notify via Telegram
         uses: appleboy/telegram-action@master
@@ -91,7 +99,9 @@ jobs:
 
             *App:* `Issue Tracker`
             *Version:* `${{ env.RELEASE_TAG }}`
-            *Repository:* `${{ github.repository }}`
+
+            *Changes:*
+            `${{ steps.changelog.outputs.changelog }}`
 
             A new version has just been released. Check it out on GitHub!
             [View Release](${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ env.RELEASE_TAG }})
