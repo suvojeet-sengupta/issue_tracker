@@ -31,6 +31,17 @@ flutter:
     - assets/icon/ # Added
     - assets/images/developer_profile.jpg
 
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+
 flutter_launcher_icons:
   android: true
   ios: true

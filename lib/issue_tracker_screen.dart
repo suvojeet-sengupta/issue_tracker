@@ -169,13 +169,17 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF1E3A8A),
+                    fontFamily: 'Poppins', // Added Poppins font
                   ),
                 ),
               ],
             ),
             content: const Text(
               "Issue has been recorded successfully. Opening Google Form Please Verify Form And Submit...",
-              style: TextStyle(fontSize: 16),
+              style: TextStyle(
+                fontSize: 16,
+                fontFamily: 'Poppins', // Added Poppins font
+              ),
             ),
             actions: [
               ElevatedButton(
@@ -189,7 +193,10 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text("Continue"),
+                child: const Text(
+                  "Continue",
+                  style: TextStyle(fontFamily: 'Poppins'), // Added Poppins font
+                ),
               ),
             ],
           );
@@ -202,7 +209,10 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
             children: [
               const Icon(Icons.warning_rounded, color: Colors.white),
               const SizedBox(width: 12),
-              const Text("Please select both start and end times."),
+              const Text(
+                "Please select both start and end times.",
+                style: TextStyle(fontFamily: 'Poppins'), // Added Poppins font
+              ),
             ],
           ),
           backgroundColor: const Color(0xFFEF4444),
@@ -327,6 +337,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                         color: Colors.white,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
+                        fontFamily: 'Poppins', // Added Poppins font
                       ),
                     ),
                   ],
@@ -378,6 +389,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                         color: Color(0xFF1E3A8A),
+                                        fontFamily: 'Poppins', // Added Poppins font
                                       ),
                                     ),
                                   ],
@@ -406,6 +418,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF1E3A8A),
+                              fontFamily: 'Poppins', // Added Poppins font
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -476,7 +489,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                                 color: _isFormValid() ? null : Colors.grey[300],
                                 borderRadius: BorderRadius.circular(20),
                                 boxShadow: _isFormValid()
-                                    ? [
+                                    ? [+
                                         BoxShadow(
                                           color: const Color(0xFF1E3A8A)
                                               .withOpacity(0.3),
@@ -512,6 +525,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                                             color: _isFormValid()
                                                 ? Colors.white
                                                 : Colors.grey[600],
+                                            fontFamily: 'Poppins', // Added Poppins font
                                           ),
                                         ),
                                       ],
@@ -564,6 +578,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                                       color: const Color(0xFF1E3A8A),
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
+                                      fontFamily: 'Poppins', // Added Poppins font
                                     ),
                                   ),
                                 ),
@@ -607,12 +622,19 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(12),
+        color: Colors.white, // Changed background color
+        borderRadius: BorderRadius.circular(12), // Slightly smaller radius
         border: Border.all(
           color: const Color(0xFFE2E8F0),
-          width: 1,
+          width: 1, // Slightly thinner border
         ),
+        boxShadow: [ // Added subtle shadow
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -624,7 +646,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
             ),
             child: Icon(
               icon,
-              color: const Color(0xFF1E3A8A),
+              color: const Color(0xFF3B82F6), // Changed icon color
               size: 18,
             ),
           ),
@@ -640,6 +662,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                     color: Colors.grey[600],
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.5,
+                    fontFamily: 'Poppins', // Added Poppins font
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -649,6 +672,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF1E3A8A),
+                    fontFamily: 'Poppins', // Added Poppins font
                   ),
                 ),
               ],
@@ -779,15 +803,23 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
             color: Colors.grey[600],
             fontWeight: FontWeight.w600,
             letterSpacing: 0.5,
+            fontFamily: 'Poppins', // Added Poppins font
           ),
         ),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
-            color: const Color(0xFFF8FAFC),
-            borderRadius: BorderRadius.circular(12),
+            color: Colors.white, // Changed background color
+            borderRadius: BorderRadius.circular(12), // Slightly smaller radius
             border: Border.all(color: const Color(0xFFE2E8F0)),
+            boxShadow: [ // Added subtle shadow
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: DropdownButtonFormField<int>(
             value: value,
@@ -795,11 +827,24 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(vertical: 12),
             ),
-            hint: Text(label),
+            hint: Text(
+              label,
+              style: TextStyle(
+                fontFamily: 'Poppins', // Added Poppins font
+                color: Colors.grey[400],
+              ),
+            ),
             items: items.map((int item) {
               return DropdownMenuItem<int>(
                 value: item,
-                child: Text(item.toString().padLeft(2, '0')),
+                child: Text(
+                  item.toString().padLeft(2, '0'),
+                  style: const TextStyle(
+                    fontFamily: 'Poppins', // Added Poppins font
+                    color: Color(0xFF1E3A8A),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               );
             }).toList(),
             onChanged: onChanged,
@@ -824,15 +869,23 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
             color: Colors.grey[600],
             fontWeight: FontWeight.w600,
             letterSpacing: 0.5,
+            fontFamily: 'Poppins', // Added Poppins font
           ),
         ),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           decoration: BoxDecoration(
-            color: const Color(0xFFF8FAFC),
-            borderRadius: BorderRadius.circular(12),
+            color: Colors.white, // Changed background color
+            borderRadius: BorderRadius.circular(12), // Slightly smaller radius
             border: Border.all(color: const Color(0xFFE2E8F0)),
+            boxShadow: [ // Added subtle shadow
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: DropdownButtonFormField<String>(
             value: value,
@@ -843,7 +896,14 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
             items: ['AM', 'PM'].map((String item) {
               return DropdownMenuItem<String>(
                 value: item,
-                child: Text(item),
+                child: Text(
+                  item,
+                  style: const TextStyle(
+                    fontFamily: 'Poppins', // Added Poppins font
+                    color: Color(0xFF1E3A8A),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               );
             }).toList(),
             onChanged: onChanged,
@@ -875,28 +935,49 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
             fontSize: 22,
             fontWeight: FontWeight.bold,
             color: Color(0xFF1E3A8A),
+            fontFamily: 'Poppins', // Added Poppins font
           ),
         ),
         const SizedBox(height: 16),
         _buildEnhancedCard(
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 12), // Adjusted padding
             decoration: BoxDecoration(
-              color: const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(12),
+              color: Colors.white, // Changed background color
+              borderRadius: BorderRadius.circular(12), // Slightly smaller radius
               border: Border.all(color: const Color(0xFFE2E8F0)),
+              boxShadow: [ // Added subtle shadow
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: DropdownButtonFormField<String>(
               value: _selectedIssueExplanation,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 border: InputBorder.none,
-                prefixIcon:
-                    Icon(Icons.help_outline_rounded, color: Color(0xFF1E3A8A)),
+                prefixIcon: Padding( // Changed to Padding for better spacing
+                  padding: const EdgeInsets.all(12),
+                  child: const Icon(
+                    Icons.help_outline_rounded,
+                    color: Color(0xFF3B82F6), // Changed icon color
+                    size: 20,
+                  ),
+                ),
               ),
               items: issueOptions.map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
-                  child: Text(value),
+                  child: Text(
+                    value,
+                    style: const TextStyle(
+                      fontFamily: 'Poppins', // Added Poppins font
+                      color: Color(0xFF1E3A8A),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 );
               }).toList(),
               onChanged: (String? newValue) {
@@ -921,6 +1002,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
             fontSize: 22,
             fontWeight: FontWeight.bold,
             color: Color(0xFF1E3A8A),
+            fontFamily: 'Poppins', // Added Poppins font
           ),
         ),
         const SizedBox(height: 16),
@@ -965,14 +1047,21 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
       decoration: BoxDecoration(
         color: value == groupValue
             ? const Color(0xFF1E3A8A).withOpacity(0.1)
-            : const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(12),
+            : Colors.white, // Changed background color
+        borderRadius: BorderRadius.circular(12), // Slightly smaller radius
         border: Border.all(
           color: value == groupValue
               ? const Color(0xFF1E3A8A)
               : const Color(0xFFE2E8F0),
           width: value == groupValue ? 2 : 1,
         ),
+        boxShadow: [ // Added subtle shadow
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: RadioListTile<String>(
         title: Text(
@@ -982,6 +1071,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
             color: value == groupValue
                 ? const Color(0xFF1E3A8A)
                 : Colors.grey[700],
+            fontFamily: 'Poppins', // Added Poppins font
           ),
         ),
         value: value,

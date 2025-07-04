@@ -122,6 +122,7 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                         color: Colors.white,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
+                        fontFamily: 'Poppins', // Added Poppins font
                       ),
                     ),
                   ],
@@ -209,6 +210,7 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                                     color: Color(0xFF1E3A8A),
                                     fontSize: 32,
                                     fontWeight: FontWeight.bold,
+                                    fontFamily: 'Poppins', // Added Poppins font
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
@@ -221,6 +223,7 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                                     color: Colors.grey[600],
                                     fontSize: 18,
                                     fontWeight: FontWeight.w600,
+                                    fontFamily: 'Poppins', // Added Poppins font
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
@@ -284,6 +287,7 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                                         fontSize: 22,
                                         fontWeight: FontWeight.bold,
                                         color: Color(0xFF1E3A8A),
+                                        fontFamily: 'Poppins', // Added Poppins font
                                       ),
                                     ),
                                   ],
@@ -300,6 +304,7 @@ This app may not be perfect,\n but it's built with real-life experience, practic
                                     height: 1.6,
                                     color: Colors.grey[700],
                                     fontWeight: FontWeight.w500,
+                                    fontFamily: 'Poppins', // Added Poppins font
                                   ),
                                 ),
                                 const SizedBox(height: 24),
@@ -373,6 +378,7 @@ This app may not be perfect,\n but it's built with real-life experience, practic
                                                     fontSize: 18,
                                                     fontWeight: FontWeight.bold,
                                                     color: Color(0xFF1E3A8A),
+                                                    fontFamily: 'Poppins', // Added Poppins font
                                                   ),
                                                 ),
                                                 const SizedBox(height: 4),
@@ -382,6 +388,7 @@ This app may not be perfect,\n but it's built with real-life experience, practic
                                                     fontSize: 14,
                                                     color: Colors.grey[600],
                                                     fontWeight: FontWeight.w500,
+                                                    fontFamily: 'Poppins', // Added Poppins font
                                                   ),
                                                 ),
                                               ],
@@ -397,6 +404,7 @@ This app may not be perfect,\n but it's built with real-life experience, practic
                                           color: Colors.grey[700],
                                           height: 1.5,
                                           fontWeight: FontWeight.w500,
+                                          fontFamily: 'Poppins', // Added Poppins font
                                         ),
                                       ),
                                     ],
@@ -445,6 +453,7 @@ This app may not be perfect,\n but it's built with real-life experience, practic
                                         fontSize: 22,
                                         fontWeight: FontWeight.bold,
                                         color: Color(0xFF1E3A8A),
+                                        fontFamily: 'Poppins', // Added Poppins font
                                       ),
                                     ),
                                   ],
@@ -513,6 +522,7 @@ This app may not be perfect,\n but it's built with real-life experience, practic
                                     fontSize: 16,
                                     color: Colors.grey[700],
                                     fontWeight: FontWeight.w600,
+                                    fontFamily: 'Poppins', // Added Poppins font
                                   ),
                                 ),
                                 const SizedBox(height: 8),
@@ -525,6 +535,7 @@ This app may not be perfect,\n but it's built with real-life experience, practic
                                         fontSize: 14,
                                         color: Colors.grey[600],
                                         fontWeight: FontWeight.w500,
+                                        fontFamily: 'Poppins', // Added Poppins font
                                       ),
                                     ),
                                     const Icon(
@@ -538,6 +549,7 @@ This app may not be perfect,\n but it's built with real-life experience, practic
                                         fontSize: 14,
                                         color: Colors.grey[600],
                                         fontWeight: FontWeight.w500,
+                                        fontFamily: 'Poppins', // Added Poppins font
                                       ),
                                     ),
                                   ],
@@ -600,6 +612,7 @@ This app may not be perfect,\n but it's built with real-life experience, practic
           color: Colors.white,
           fontSize: 14,
           fontWeight: FontWeight.w600,
+          fontFamily: 'Poppins', // Added Poppins font
         ),
       ),
     );
@@ -631,7 +644,7 @@ This app may not be perfect,\n but it's built with real-life experience, practic
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: const Color(0xFFF8FAFC),
+              color: Colors.white, // Changed background color
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: const Color(0xFFE2E8F0),
@@ -671,6 +684,7 @@ This app may not be perfect,\n but it's built with real-life experience, practic
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF1E3A8A),
+                          fontFamily: 'Poppins', // Added Poppins font
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -680,6 +694,7 @@ This app may not be perfect,\n but it's built with real-life experience, practic
                           fontSize: 14,
                           color: Colors.grey[600],
                           fontWeight: FontWeight.w500,
+                          fontFamily: 'Poppins', // Added Poppins font
                         ),
                       ),
                     ],
@@ -688,7 +703,7 @@ This app may not be perfect,\n but it's built with real-life experience, practic
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: const Color(0xFFF8FAFC), // Changed background color
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(

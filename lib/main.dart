@@ -40,20 +40,19 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF1E3A8A),
+          seedColor: const Color(0xFF3B82F6), // Updated seed color
           brightness: Brightness.light,
         ),
         primaryColor: const Color(0xFF1E3A8A),
         scaffoldBackgroundColor: const Color(0xFFF8FAFC),
-        fontFamily: 'SF Pro Display',
+        fontFamily: 'Poppins', // Changed font family
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF1E3A8A),
-          foregroundColor: Colors.white,
+          backgroundColor: Colors.transparent, // Changed to transparent
           elevation: 0,
-          centerTitle: true,
+          foregroundColor: Colors.white,
           titleTextStyle: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
+            fontSize: 22, // Increased font size
+            fontWeight: FontWeight.bold, // Changed to bold
             color: Colors.white,
           ),
         ),
@@ -219,6 +218,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             color: Colors.white,
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
+                            fontFamily: 'Poppins', // Added Poppins font
                           ),
                         ),
                         Container(
@@ -310,6 +310,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               color: Color(0xFF1E3A8A),
                               fontSize: 32,
                               fontWeight: FontWeight.bold,
+                              fontFamily: 'Poppins', // Added Poppins font
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -320,6 +321,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               color: Colors.grey[600],
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
+                              fontFamily: 'Poppins', // Added Poppins font
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -373,6 +375,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                     fontSize: 22,
                                     fontWeight: FontWeight.bold,
                                     color: Color(0xFF1E3A8A),
+                                    fontFamily: 'Poppins', // Added Poppins font
                                   ),
                                 ),
                               ],
@@ -402,6 +405,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF1E3A8A),
+                        fontFamily: 'Poppins', // Added Poppins font
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -449,12 +453,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(16),
+        color: Colors.white, // Changed background color
+        borderRadius: BorderRadius.circular(12), // Slightly smaller radius
         border: Border.all(
           color: const Color(0xFFE2E8F0),
-          width: 1,
+          width: 1, // Slightly thinner border
         ),
+        boxShadow: [ // Added subtle shadow
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -466,7 +477,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ),
             child: Icon(
               icon,
-              color: const Color(0xFF1E3A8A),
+              color: const Color(0xFF3B82F6), // Changed icon color
               size: 20,
             ),
           ),
@@ -482,6 +493,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     color: Colors.grey[600],
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.5,
+                    fontFamily: 'Poppins', // Added Poppins font
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -491,6 +503,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF1E3A8A),
+                    fontFamily: 'Poppins', // Added Poppins font
                   ),
                 ),
               ],
@@ -527,7 +540,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Colors.white, // Changed background color
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -563,6 +576,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF1E3A8A),
+                          fontFamily: 'Poppins', // Added Poppins font
                         ),
                       ),
                       const SizedBox(height: 6),
@@ -572,6 +586,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           fontSize: 14,
                           color: Colors.grey[600],
                           fontWeight: FontWeight.w500,
+                          fontFamily: 'Poppins', // Added Poppins font
                         ),
                       ),
                     ],
@@ -580,7 +595,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF8FAFC),
+                    color: const Color(0xFFF8FAFC), // Changed background color
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(

@@ -87,13 +87,17 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF1E3A8A),
+                  fontFamily: 'Poppins', // Added Poppins font
                 ),
               ),
             ],
           ),
           content: const Text(
             'Are you sure you want to clear all issue history? This action cannot be undone.',
-            style: TextStyle(fontSize: 16),
+            style: TextStyle(
+              fontSize: 16,
+              fontFamily: 'Poppins', // Added Poppins font
+            ),
           ),
           actions: [
             TextButton(
@@ -103,6 +107,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                 style: TextStyle(
                   color: Colors.grey[600],
                   fontWeight: FontWeight.w600,
+                  fontFamily: 'Poppins', // Added Poppins font
                 ),
               ),
             ),
@@ -120,7 +125,10 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                       children: [
                         const Icon(Icons.check_circle_rounded, color: Colors.white),
                         const SizedBox(width: 12),
-                        const Text('History cleared successfully'),
+                        const Text(
+                          'History cleared successfully',
+                          style: TextStyle(fontFamily: 'Poppins'), // Added Poppins font
+                        ),
                       ],
                     ),
                     backgroundColor: const Color(0xFF059669),
@@ -139,7 +147,10 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text('Clear'),
+              child: const Text(
+                'Clear',
+                style: TextStyle(fontFamily: 'Poppins'), // Added Poppins font
+              ),
             ),
           ],
         );
@@ -188,6 +199,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                           color: Colors.white,
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
+                          fontFamily: 'Poppins', // Added Poppins font
                         ),
                       ),
                     ),
@@ -254,6 +266,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF1E3A8A),
+                fontFamily: 'Poppins', // Added Poppins font
               ),
             ),
             const SizedBox(height: 12),
@@ -264,13 +277,17 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                 fontSize: 16,
                 color: Colors.grey[600],
                 fontWeight: FontWeight.w500,
+                fontFamily: 'Poppins', // Added Poppins font
               ),
             ),
             const SizedBox(height: 32),
             ElevatedButton.icon(
               onPressed: () => Navigator.pop(context),
               icon: const Icon(Icons.add_task_rounded),
-              label: const Text('Record First Issue'),
+              label: const Text(
+                'Record First Issue',
+                style: TextStyle(fontFamily: 'Poppins'), // Added Poppins font
+              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF1E3A8A),
                 foregroundColor: Colors.white,
@@ -340,6 +357,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                             color: Colors.white70,
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
+                            fontFamily: 'Poppins', // Added Poppins font
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -349,6 +367,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                             color: Colors.white,
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
+                            fontFamily: 'Poppins', // Added Poppins font
                           ),
                         ),
                       ],
@@ -366,6 +385,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF1E3A8A),
+                fontFamily: 'Poppins', // Added Poppins font
               ),
             ),
             
@@ -398,12 +418,12 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16), // Slightly smaller radius
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 15,
-            offset: const Offset(0, 6),
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -422,7 +442,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                     gradient: const LinearGradient(
                       colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
                     ),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(16), // Slightly smaller radius
                   ),
                   child: Text(
                     'Issue #${_issueHistory.length - index}',
@@ -430,6 +450,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                       color: Colors.white,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
+                      fontFamily: 'Poppins', // Added Poppins font
                     ),
                   ),
                 ),
@@ -440,6 +461,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                       color: Colors.grey[600],
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
+                      fontFamily: 'Poppins', // Added Poppins font
                     ),
                   ),
               ],
@@ -462,7 +484,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFFF0F9FF),
+                color: const Color(0xFFF0F9FF), // Lighter background
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: const Color(0xFF3B82F6).withOpacity(0.2),
@@ -493,6 +515,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF3B82F6),
+                          fontFamily: 'Poppins', // Added Poppins font
                         ),
                       ),
                     ],
@@ -562,7 +585,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
           ),
           child: Icon(
             icon,
-            color: const Color(0xFF1E3A8A),
+            color: const Color(0xFF3B82F6), // Changed icon color
             size: 16,
           ),
         ),
@@ -573,6 +596,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
             fontSize: 14,
             color: Colors.grey[600],
             fontWeight: FontWeight.w500,
+            fontFamily: 'Poppins', // Added Poppins font
           ),
         ),
         Expanded(
@@ -582,6 +606,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
               fontSize: 14,
               fontWeight: FontWeight.w600,
               color: Color(0xFF1E3A8A),
+              fontFamily: 'Poppins', // Added Poppins font
             ),
           ),
         ),
@@ -604,6 +629,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
             fontSize: 12,
             color: Colors.grey[600],
             fontWeight: FontWeight.w500,
+            fontFamily: 'Poppins', // Added Poppins font
           ),
         ),
         const SizedBox(height: 2),
@@ -613,6 +639,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
             fontSize: 14,
             fontWeight: FontWeight.bold,
             color: color,
+            fontFamily: 'Poppins', // Added Poppins font
           ),
         ),
       ],
@@ -629,6 +656,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
             fontSize: 13,
             color: Colors.grey[600],
             fontWeight: FontWeight.w500,
+            fontFamily: 'Poppins', // Added Poppins font
           ),
         ),
         Expanded(
@@ -638,6 +666,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: Color(0xFF3B82F6),
+              fontFamily: 'Poppins', // Added Poppins font
             ),
           ),
         ),

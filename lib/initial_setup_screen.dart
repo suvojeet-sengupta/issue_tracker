@@ -95,7 +95,10 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
             children: [
               const Icon(Icons.warning_rounded, color: Colors.white),
               const SizedBox(width: 12),
-              const Text('Please fill in all required fields'),
+              const Text(
+                'Please fill in all required fields',
+                style: TextStyle(fontFamily: 'Poppins'), // Added Poppins font
+              ),
             ],
           ),
           backgroundColor: const Color(0xFFEF4444),
@@ -205,6 +208,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                               color: Colors.white70,
                               fontSize: 18,
                               fontWeight: FontWeight.w500,
+                              fontFamily: 'Poppins', // Added Poppins font
                             ),
                           ),
                           const SizedBox(height: 8),
@@ -214,6 +218,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                               color: Colors.white,
                               fontSize: 32,
                               fontWeight: FontWeight.bold,
+                              fontFamily: 'Poppins', // Added Poppins font
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -223,6 +228,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                               color: Colors.white.withOpacity(0.8),
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
+                              fontFamily: 'Poppins', // Added Poppins font
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -276,6 +282,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                                     fontSize: 22,
                                     fontWeight: FontWeight.bold,
                                     color: Color(0xFF1E3A8A),
+                                    fontFamily: 'Poppins', // Added Poppins font
                                   ),
                                 ),
                               ],
@@ -419,48 +426,53 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: Color(0xFF1E3A8A),
+            fontFamily: 'Poppins', // Added Poppins font
           ),
         ),
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            color: const Color(0xFFF8FAFC),
-            borderRadius: BorderRadius.circular(16),
+            color: Colors.white, // Changed background color
+            borderRadius: BorderRadius.circular(12), // Slightly smaller radius
             border: Border.all(
               color: const Color(0xFFE2E8F0),
-              width: 1.5,
+              width: 1, // Slightly thinner border
             ),
+            boxShadow: [ // Added subtle shadow
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: TextField(
             controller: controller,
             onChanged: (value) => setState(() {}),
             decoration: InputDecoration(
               hintText: hint,
-              prefixIcon: Container(
-                margin: const EdgeInsets.all(12),
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1E3A8A).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
+              prefixIcon: Padding( // Changed to Padding for better spacing
+                padding: const EdgeInsets.all(12),
                 child: Icon(
                   icon,
-                  color: const Color(0xFF1E3A8A),
+                  color: const Color(0xFF3B82F6), // Changed icon color
                   size: 20,
                 ),
               ),
               border: InputBorder.none,
               contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14), // Adjusted padding
               hintStyle: TextStyle(
-                color: Colors.grey[500],
+                color: Colors.grey[400], // Lighter hint color
                 fontWeight: FontWeight.w500,
+                fontFamily: 'Poppins', // Added Poppins font
               ),
             ),
             style: const TextStyle(
               fontSize: 16,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500, // Slightly lighter font weight
               color: Color(0xFF1E3A8A),
+              fontFamily: 'Poppins', // Added Poppins font
             ),
           ),
         ),
@@ -495,38 +507,41 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: Color(0xFF1E3A8A),
+            fontFamily: 'Poppins', // Added Poppins font
           ),
         ),
         const SizedBox(height: 8),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 12), // Adjusted padding
           decoration: BoxDecoration(
-            color: const Color(0xFFF8FAFC),
-            borderRadius: BorderRadius.circular(16),
+            color: Colors.white, // Changed background color
+            borderRadius: BorderRadius.circular(12), // Slightly smaller radius
             border: Border.all(
               color: const Color(0xFFE2E8F0),
-              width: 1.5,
+              width: 1, // Slightly thinner border
             ),
+            boxShadow: [ // Added subtle shadow
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: DropdownButtonFormField<String>(
             value: _selectedTlName,
             decoration: InputDecoration(
               border: InputBorder.none,
-              prefixIcon: Container(
-                margin: const EdgeInsets.all(12),
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1E3A8A).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
+              prefixIcon: Padding( // Changed to Padding for better spacing
+                padding: const EdgeInsets.all(12),
                 child: const Icon(
                   Icons.supervisor_account_outlined,
-                  color: Color(0xFF1E3A8A),
+                  color: Color(0xFF3B82F6), // Changed icon color
                   size: 20,
                 ),
               ),
               contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14), // Adjusted padding
             ),
             items: tlOptions.map((String value) {
               return DropdownMenuItem<String>(
@@ -535,8 +550,9 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                   value,
                   style: const TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500, // Slightly lighter font weight
                     color: Color(0xFF1E3A8A),
+                    fontFamily: 'Poppins', // Added Poppins font
                   ),
                 ),
               );
@@ -568,38 +584,41 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: Color(0xFF1E3A8A),
+            fontFamily: 'Poppins', // Added Poppins font
           ),
         ),
         const SizedBox(height: 8),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 12), // Adjusted padding
           decoration: BoxDecoration(
-            color: const Color(0xFFF8FAFC),
-            borderRadius: BorderRadius.circular(16),
+            color: Colors.white, // Changed background color
+            borderRadius: BorderRadius.circular(12), // Slightly smaller radius
             border: Border.all(
               color: const Color(0xFFE2E8F0),
-              width: 1.5,
+              width: 1, // Slightly thinner border
             ),
+            boxShadow: [ // Added subtle shadow
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: DropdownButtonFormField<String>(
             value: _selectedOrganization,
             decoration: InputDecoration(
               border: InputBorder.none,
-              prefixIcon: Container(
-                margin: const EdgeInsets.all(12),
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1E3A8A).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
+              prefixIcon: Padding( // Changed to Padding for better spacing
+                padding: const EdgeInsets.all(12),
                 child: const Icon(
                   Icons.business_outlined,
-                  color: Color(0xFF1E3A8A),
+                  color: Color(0xFF3B82F6), // Changed icon color
                   size: 20,
                 ),
               ),
               contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14), // Adjusted padding
             ),
             items: orgOptions.map((String value) {
               return DropdownMenuItem<String>(
@@ -608,8 +627,9 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                   value,
                   style: const TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500, // Slightly lighter font weight
                     color: Color(0xFF1E3A8A),
+                    fontFamily: 'Poppins', // Added Poppins font
                   ),
                 ),
               );
