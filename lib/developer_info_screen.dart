@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DeveloperInfoScreen extends StatefulWidget {
+  const DeveloperInfoScreen({super.key});
+
   @override
   _DeveloperInfoScreenState createState() => _DeveloperInfoScreenState();
 }

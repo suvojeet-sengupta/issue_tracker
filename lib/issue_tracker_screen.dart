@@ -3,6 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:issue_tracker_app/google_form_webview_screen.dart';
 
 class IssueTrackerScreen extends StatefulWidget {
+  const IssueTrackerScreen({super.key});
+
   @override
   _IssueTrackerScreenState createState() => _IssueTrackerScreenState();
 }
