@@ -539,7 +539,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           onTap: onTap,
           borderRadius: BorderRadius.circular(20),
           child: Container(
-            child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               color: Colors.white, // Changed background color
