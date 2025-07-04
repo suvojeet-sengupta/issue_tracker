@@ -431,12 +431,16 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                             hour: _issueStartHour,
                             minute: _issueStartMinute,
                             period: _issueStartPeriod,
-                            onHourChanged: (value) =>
-                                setState(() => _issueStartHour = value),
-                            onMinuteChanged: (value) =>
-                                setState(() => _issueStartMinute = value),
-                            onPeriodChanged: (value) =>
-                                setState(() => _issueStartPeriod = value!),
+                            onTimeChanged: (TimeOfDay? newTime) {
+                              if (newTime != null) {
+                                setState(() {
+                                  _issueStartHour = newTime.hourOfPeriod;
+                                  _issueStartMinute = newTime.minute;
+                                  _issueStartPeriod =
+                                      newTime.period == DayPeriod.am ? "AM" : "PM";
+                                });
+                              }
+                            },
                             gradient: const LinearGradient(
                               colors: [Color(0xFF059669), Color(0xFF10B981)],
                             ),
@@ -450,12 +454,16 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                             hour: _issueEndHour,
                             minute: _issueEndMinute,
                             period: _issueEndPeriod,
-                            onHourChanged: (value) =>
-                                setState(() => _issueEndHour = value),
-                            onMinuteChanged: (value) =>
-                                setState(() => _issueEndMinute = value),
-                            onPeriodChanged: (value) =>
-                                setState(() => _issueEndPeriod = value!),
+                            onTimeChanged: (TimeOfDay? newTime) {
+                              if (newTime != null) {
+                                setState(() {
+                                  _issueEndHour = newTime.hourOfPeriod;
+                                  _issueEndMinute = newTime.minute;
+                                  _issueEndPeriod =
+                                      newTime.period == DayPeriod.am ? "AM" : "PM";
+                                });
+                              }
+                            },
                             gradient: const LinearGradient(
                               colors: [Color(0xFFEF4444), Color(0xFFF87171)],
                             ),
@@ -691,9 +699,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
     required int? hour,
     required int? minute,
     required String period,
-    required Function(int?) onHourChanged,
-    required Function(int?) onMinuteChanged,
-    required Function(String?) onPeriodChanged,
+    required Function(TimeOfDay?) onTimeChanged,
     required Gradient gradient,
   }) {
     return _buildEnhancedCard(
@@ -736,14 +742,43 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      _formatTime(hour, minute, period),
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: (hour == null || minute == null)
-                            ? Colors.grey[500]
-                            : gradient.colors.first,
-                        fontWeight: FontWeight.w600,
+                    GestureDetector(
+                      onTap: () async {
+                        final TimeOfDay? picked = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay(
+                              hour: hour ?? DateTime.now().hour,
+                              minute: minute ?? DateTime.now().minute),
+                          builder: (BuildContext context, Widget? child) {
+                            return MediaQuery(
+                              data: MediaQuery.of(context)
+                                  .copyWith(alwaysUse24HourFormat: false),
+                              child: child!,
+                            );
+                          },
+                        );
+                        if (picked != null) {
+                          onTimeChanged(picked);
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.grey[300]!),
+                        ),
+                        child: Text(
+                          _formatTime(hour, minute, period),
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: (hour == null || minute == null)
+                                ? Colors.grey[500]
+                                : gradient.colors.first,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -752,168 +787,12 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
             ],
           ),
           const SizedBox(height: 24),
-          Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: _buildTimeDropdown(
-                  label: 'Hour',
-                  value: hour,
-                  items: List.generate(12, (index) => index + 1),
-                  onChanged: onHourChanged,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                flex: 2,
-                child: _buildTimeDropdown(
-                  label: 'Minute',
-                  value: minute,
-                  items: List.generate(60, (index) => index),
-                  onChanged: onMinuteChanged,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                flex: 1,
-                child: _buildPeriodDropdown(
-                  label: 'Period',
-                  value: period,
-                  onChanged: onPeriodChanged,
-                ),
-              ),
-            ],
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildTimeDropdown({
-    required String label,
-    required int? value,
-    required List<int> items,
-    required Function(int?) onChanged,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
-            fontFamily: 'Poppins', // Added Poppins font
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: Colors.white, // Changed background color
-            borderRadius: BorderRadius.circular(12), // Slightly smaller radius
-            border: Border.all(color: const Color(0xFFE2E8F0)),
-            boxShadow: [ // Added subtle shadow
-              BoxShadow(
-                color: Colors.black.withOpacity(0.03),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: DropdownButtonFormField<int>(
-            value: value,
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(vertical: 12),
-            ),
-            hint: Text(
-              label,
-              style: TextStyle(
-                fontFamily: 'Poppins', // Added Poppins font
-                color: Colors.grey[400],
-              ),
-            ),
-            items: items.map((int item) {
-              return DropdownMenuItem<int>(
-                value: item,
-                child: Text(
-                  item.toString().padLeft(2, '0'),
-                  style: const TextStyle(
-                    fontFamily: 'Poppins', // Added Poppins font
-                    color: Color(0xFF1E3A8A),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              );
-            }).toList(),
-            onChanged: onChanged,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPeriodDropdown({
-    required String label,
-    required String value,
-    required Function(String?) onChanged,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
-            fontFamily: 'Poppins', // Added Poppins font
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          decoration: BoxDecoration(
-            color: Colors.white, // Changed background color
-            borderRadius: BorderRadius.circular(12), // Slightly smaller radius
-            border: Border.all(color: const Color(0xFFE2E8F0)),
-            boxShadow: [ // Added subtle shadow
-              BoxShadow(
-                color: Colors.black.withOpacity(0.03),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: DropdownButtonFormField<String>(
-            value: value,
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(vertical: 12),
-            ),
-            items: ['AM', 'PM'].map((String item) {
-              return DropdownMenuItem<String>(
-                value: item,
-                child: Text(
-                  item,
-                  style: const TextStyle(
-                    fontFamily: 'Poppins', // Added Poppins font
-                    color: Color(0xFF1E3A8A),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              );
-            }).toList(),
-            onChanged: onChanged,
-          ),
-        ),
-      ],
-    );
-  }
+  
 
   Widget _buildIssueExplanationDropdownField() {
     List<String> issueOptions = [
