@@ -115,6 +115,105 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
     return "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
   }
 
+  Future<void> _showCustomTimePicker(
+      BuildContext context,
+      int? currentHour,
+      int? currentMinute,
+      String currentPeriod,
+      Function(int, int, String) onTimeSelected) async {
+    TextEditingController hourController =
+        TextEditingController(text: currentHour?.toString() ?? '');
+    TextEditingController minuteController =
+        TextEditingController(text: currentMinute?.toString() ?? '');
+    String selectedPeriod = currentPeriod;
+
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // User must tap button to close
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Select Time'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: hourController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          labelText: 'Hour (1-12)',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        controller: minuteController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          labelText: 'Minute (0-59)',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    DropdownButton<String>(
+                      value: selectedPeriod,
+                      onChanged: (String? newValue) {
+                        if (newValue != null) {
+                          selectedPeriod = newValue;
+                        }
+                      },
+                      items: <String>['AM', 'PM']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                int? hour = int.tryParse(hourController.text);
+                int? minute = int.tryParse(minuteController.text);
+
+                if (hour != null &&
+                    minute != null &&
+                    hour >= 1 &&
+                    hour <= 12 &&
+                    minute >= 0 &&
+                    minute <= 59) {
+                  onTimeSelected(hour, minute, selectedPeriod);
+                  Navigator.of(dialogContext).pop();
+                } else {
+                  ScaffoldMessenger.of(dialogContext).showSnackBar(
+                    const SnackBar(
+                      content: Text('Invalid time input. Please enter valid hour (1-12) and minute (0-59).'),
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   bool _isFormValid() {
     return _issueStartHour != null &&
         _issueStartMinute != null &&
@@ -431,16 +530,12 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                             hour: _issueStartHour,
                             minute: _issueStartMinute,
                             period: _issueStartPeriod,
-                            onTimeChanged: (TimeOfDay? newTime) {
-                              if (newTime != null) {
-                                setState(() {
-                                  _issueStartHour = newTime.hourOfPeriod;
-                                  _issueStartMinute = newTime.minute;
-                                  _issueStartPeriod =
-                                      newTime.period == DayPeriod.am ? "AM" : "PM";
-                                });
-                              }
-                            },
+                            onHourChanged: (value) =>
+                                setState(() => _issueStartHour = value),
+                            onMinuteChanged: (value) =>
+                                setState(() => _issueStartMinute = value),
+                            onPeriodChanged: (value) =>
+                                setState(() => _issueStartPeriod = value!),
                             gradient: const LinearGradient(
                               colors: [Color(0xFF059669), Color(0xFF10B981)],
                             ),
@@ -454,16 +549,12 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                             hour: _issueEndHour,
                             minute: _issueEndMinute,
                             period: _issueEndPeriod,
-                            onTimeChanged: (TimeOfDay? newTime) {
-                              if (newTime != null) {
-                                setState(() {
-                                  _issueEndHour = newTime.hourOfPeriod;
-                                  _issueEndMinute = newTime.minute;
-                                  _issueEndPeriod =
-                                      newTime.period == DayPeriod.am ? "AM" : "PM";
-                                });
-                              }
-                            },
+                            onHourChanged: (value) =>
+                                setState(() => _issueEndHour = value),
+                            onMinuteChanged: (value) =>
+                                setState(() => _issueEndMinute = value),
+                            onPeriodChanged: (value) =>
+                                setState(() => _issueEndPeriod = value!),
                             gradient: const LinearGradient(
                               colors: [Color(0xFFEF4444), Color(0xFFF87171)],
                             ),
@@ -699,7 +790,9 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
     required int? hour,
     required int? minute,
     required String period,
-    required Function(TimeOfDay?) onTimeChanged,
+    required Function(int?) onHourChanged,
+    required Function(int?) onMinuteChanged,
+    required Function(String?) onPeriodChanged,
     required Gradient gradient,
   }) {
     return _buildEnhancedCard(
@@ -743,23 +836,18 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                     ),
                     const SizedBox(height: 4),
                     GestureDetector(
-                      onTap: () async {
-                        final TimeOfDay? picked = await showTimePicker(
-                          context: context,
-                          initialTime: TimeOfDay(
-                              hour: hour ?? DateTime.now().hour,
-                              minute: minute ?? DateTime.now().minute),
-                          builder: (BuildContext context, Widget? child) {
-                            return MediaQuery(
-                              data: MediaQuery.of(context)
-                                  .copyWith(alwaysUse24HourFormat: false),
-                              child: child!,
-                            );
+                      onTap: () {
+                        _showCustomTimePicker(
+                          context,
+                          hour,
+                          minute,
+                          period,
+                          (newHour, newMinute, newPeriod) {
+                            onHourChanged(newHour);
+                            onMinuteChanged(newMinute);
+                            onPeriodChanged(newPeriod);
                           },
                         );
-                        if (picked != null) {
-                          onTimeChanged(picked);
-                        }
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(
@@ -787,12 +875,170 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
             ],
           ),
           const SizedBox(height: 24),
+          Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: _buildTimeDropdown(
+                  label: 'Hour',
+                  value: hour,
+                  items: List.generate(12, (index) => index + 1),
+                  onChanged: onHourChanged,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                flex: 2,
+                child: _buildTimeDropdown(
+                  label: 'Minute',
+                  value: minute,
+                  items: List.generate(60, (index) => index),
+                  onChanged: onMinuteChanged,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                flex: 1,
+                child: _buildPeriodDropdown(
+                  label: 'Period',
+                  value: period,
+                  onChanged: onPeriodChanged,
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 
   
+
+  Widget _buildTimeDropdown({
+    required String label,
+    required int? value,
+    required List<int> items,
+    required Function(int?) onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[600],
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
+            fontFamily: 'Poppins', // Added Poppins font
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: Colors.white, // Changed background color
+            borderRadius: BorderRadius.circular(12), // Slightly smaller radius
+            border: Border.all(color: const Color(0xFFE2E8F0)),
+            boxShadow: [ // Added subtle shadow
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: DropdownButtonFormField<int>(
+            value: value,
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(vertical: 12),
+            ),
+            hint: Text(
+              label,
+              style: TextStyle(
+                fontFamily: 'Poppins', // Added Poppins font
+                color: Colors.grey[400],
+              ),
+            ),
+            items: items.map((int item) {
+              return DropdownMenuItem<int>(
+                value: item,
+                child: Text(
+                  item.toString().padLeft(2, '0'),
+                  style: const TextStyle(
+                    fontFamily: 'Poppins', // Added Poppins font
+                    color: Color(0xFF1E3A8A),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              );
+            }).toList(),
+            onChanged: onChanged,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPeriodDropdown({
+    required String label,
+    required String value,
+    required Function(String?) onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[600],
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
+            fontFamily: 'Poppins', // Added Poppins font
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          decoration: BoxDecoration(
+            color: Colors.white, // Changed background color
+            borderRadius: BorderRadius.circular(12), // Slightly smaller radius
+            border: Border.all(color: const Color(0xFFE2E8F0)),
+            boxShadow: [ // Added subtle shadow
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: DropdownButtonFormField<String>(
+            value: value,
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(vertical: 12),
+            ),
+            items: ['AM', 'PM'].map((String item) {
+              return DropdownMenuItem<String>(
+                value: item,
+                child: Text(
+                  item,
+                  style: const TextStyle(
+                    fontFamily: 'Poppins', // Added Poppins font
+                    color: Color(0xFF1E3A8A),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              );
+            }).toList(),
+            onChanged: onChanged,
+          ),
+        ),
+      ],
+    );
+  }
 
   Widget _buildIssueExplanationDropdownField() {
     List<String> issueOptions = [
