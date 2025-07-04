@@ -543,12 +543,12 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                             width: double.infinity,
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
-                              gradient: LinearGradient(
+                              gradient: const LinearGradient(
                                 colors: [
-                                  const Color(0xFF1E3A8A).withOpacity(0.1),
-                                  const Color(0xFF3B82F6).withOpacity(0.05),
+                                  Color(0xFF1E3A8A),
+                                  Color(0xFF3B82F6),
                                 ],
-                              ),
+                              ).withOpacity(0.1),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
                                 color: const Color(0xFF1E3A8A).withOpacity(0.2),

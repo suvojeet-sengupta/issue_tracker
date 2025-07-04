@@ -26,7 +26,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   _checkSetupStatus() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     setState(() {
       _isSetupComplete = prefs.containsKey("crmId");
     });
@@ -97,18 +97,20 @@ class _MyAppState extends State<MyApp> {
         ),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: _isSetupComplete ? HomeScreen() : InitialSetupScreen(),
+      home: _isSetupComplete ? const HomeScreen() : const InitialSetupScreen(),
       routes: {
-        '/home': (context) => HomeScreen(),
-        '/issue_tracker': (context) => IssueTrackerScreen(),
-        '/history': (context) => HistoryScreen(),
-        '/developer_info': (context) => DeveloperInfoScreen(),
+        '/home': (context) => const HomeScreen(),
+        '/issue_tracker': (context) => const IssueTrackerScreen(),
+        '/history': (context) => const HistoryScreen(),
+        '/developer_info': (context) => const DeveloperInfoScreen(),
       },
     );
   }
 }
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -117,11 +119,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   String _crmId = "";
   String _tlName = "";
   String _advisorName = "";
-  late AnimationController _animationController;
-  late AnimationController _pulseController;
-  late Animation<double> _fadeAnimation;
-  late Animation<double> _slideAnimation;
-  late Animation<double> _pulseAnimation;
+  late final AnimationController _animationController;
+  late final AnimationController _pulseController;
+  late final Animation<double> _fadeAnimation;
+  late final Animation<double> _slideAnimation;
+  late final Animation<double> _pulseAnimation;
 
   @override
   void initState() {
@@ -168,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   _loadUserData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     setState(() {
       _crmId = prefs.getString("crmId") ?? "";
       _tlName = prefs.getString("tlName") ?? "";
@@ -253,11 +255,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           ],
                         ),
                         borderRadius: BorderRadius.circular(24),
-                        boxShadow: [
+                        boxShadow: const [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black,
                             blurRadius: 20,
-                            offset: const Offset(0, 10),
+                            offset: Offset(0, 10),
                           ),
                         ],
                       ),
@@ -276,12 +278,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   ],
                                 ),
                                 borderRadius: BorderRadius.circular(24),
-                                boxShadow: [
+                                boxShadow: const [
                                   BoxShadow(
-                                    color: const Color(0xFF1E3A8A)
-                                        .withOpacity(0.3),
+                                    color: Color(0xFF1E3A8A),
                                     blurRadius: 15,
-                                    offset: const Offset(0, 8),
+                                    offset: Offset(0, 8),
                                   ),
                                 ],
                               ),
@@ -315,10 +316,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 8),
-                          Text(
+                          const Text(
                             'Track and manage your issues with precision',
                             style: TextStyle(
-                              color: Colors.grey[600],
+                              color: Colors.grey,
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                               fontFamily: 'Poppins', // Added Poppins font
@@ -336,11 +337,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(24),
-                        boxShadow: [
+                        boxShadow: const [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.08),
+                            color: Colors.black,
                             blurRadius: 20,
-                            offset: const Offset(0, 8),
+                            offset: Offset(0, 8),
                           ),
                         ],
                       ),
@@ -459,11 +460,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           color: const Color(0xFFE2E8F0),
           width: 1, // Slightly thinner border
         ),
-        boxShadow: [ // Added subtle shadow
+        boxShadow: const [ // Added subtle shadow
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black,
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -488,9 +489,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               children: [
                 Text(
                   label,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 12,
-                    color: Colors.grey[600],
+                    color: Colors.grey,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.5,
                     fontFamily: 'Poppins', // Added Poppins font
@@ -522,13 +523,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     required Gradient gradient,
   }) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black,
             blurRadius: 20,
-            offset: const Offset(0, 8),
+            offset: Offset(0, 8),
           ),
         ],
       ),
@@ -551,11 +552,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   decoration: BoxDecoration(
                     gradient: gradient,
                     borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(
-                        color: gradient.colors.first.withOpacity(0.3),
+                        color: Colors.black,
                         blurRadius: 12,
-                        offset: const Offset(0, 6),
+                        offset: Offset(0, 6),
                       ),
                     ],
                   ),
@@ -582,9 +583,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       const SizedBox(height: 6),
                       Text(
                         subtitle,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 14,
-                          color: Colors.grey[600],
+                          color: Colors.grey,
                           fontWeight: FontWeight.w500,
                           fontFamily: 'Poppins', // Added Poppins font
                         ),
@@ -598,9 +599,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     color: const Color(0xFFF8FAFC), // Changed background color
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.arrow_forward_ios_rounded,
-                    color: Colors.grey[400],
+                    color: Colors.grey,
                     size: 16,
                   ),
                 ),
