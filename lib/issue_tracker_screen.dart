@@ -115,104 +115,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
     return "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
   }
 
-  Future<void> _showCustomTimePicker(
-      BuildContext context,
-      int? currentHour,
-      int? currentMinute,
-      String currentPeriod,
-      Function(int, int, String) onTimeSelected) async {
-    TextEditingController hourController =
-        TextEditingController(text: currentHour?.toString() ?? '');
-    TextEditingController minuteController =
-        TextEditingController(text: currentMinute?.toString() ?? '');
-    String selectedPeriod = currentPeriod;
-
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // User must tap button to close
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text('Select Time'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: hourController,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: 'Hour (1-12)',
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: TextField(
-                        controller: minuteController,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: 'Minute (0-59)',
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    DropdownButton<String>(
-                      value: selectedPeriod,
-                      onChanged: (String? newValue) {
-                        if (newValue != null) {
-                          selectedPeriod = newValue;
-                        }
-                      },
-                      items: <String>['AM', 'PM']
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                int? hour = int.tryParse(hourController.text);
-                int? minute = int.tryParse(minuteController.text);
-
-                if (hour != null &&
-                    minute != null &&
-                    hour >= 1 &&
-                    hour <= 12 &&
-                    minute >= 0 &&
-                    minute <= 59) {
-                  onTimeSelected(hour, minute, selectedPeriod);
-                  Navigator.of(dialogContext).pop();
-                } else {
-                  ScaffoldMessenger.of(dialogContext).showSnackBar(
-                    const SnackBar(
-                      content: Text('Invalid time input. Please enter valid hour (1-12) and minute (0-59).'),
-                    ),
-                  );
-                }
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+  
 
   bool _isFormValid() {
     return _issueStartHour != null &&
@@ -835,38 +738,14 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                       ),
                     ),
                     const SizedBox(height: 4),
-                    GestureDetector(
-                      onTap: () {
-                        _showCustomTimePicker(
-                          context,
-                          hour,
-                          minute,
-                          period,
-                          (newHour, newMinute, newPeriod) {
-                            onHourChanged(newHour);
-                            onMinuteChanged(newMinute);
-                            onPeriodChanged(newPeriod);
-                          },
-                        );
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.grey[300]!),
-                        ),
-                        child: Text(
-                          _formatTime(hour, minute, period),
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: (hour == null || minute == null)
-                                ? Colors.grey[500]
-                                : gradient.colors.first,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                    Text(
+                      _formatTime(hour, minute, period),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: (hour == null || minute == null)
+                            ? Colors.grey[500]
+                            : gradient.colors.first,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
@@ -876,34 +755,42 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
           ),
           const SizedBox(height: 24),
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(
-                flex: 2,
-                child: _buildTimeDropdown(
-                  label: 'Hour',
-                  value: hour,
-                  items: List.generate(12, (index) => index + 1),
-                  onChanged: onHourChanged,
+              _buildTimeInputField(
+                label: 'Hour',
+                value: hour,
+                onChanged: (newValue) {
+                  onHourChanged(newValue);
+                },
+                gradient: gradient,
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text(
+                  ':',
+                  style: TextStyle(
+                    fontSize: 48,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1E3A8A),
+                  ),
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                flex: 2,
-                child: _buildTimeDropdown(
-                  label: 'Minute',
-                  value: minute,
-                  items: List.generate(60, (index) => index),
-                  onChanged: onMinuteChanged,
-                ),
+              _buildTimeInputField(
+                label: 'Minute',
+                value: minute,
+                onChanged: (newValue) {
+                  onMinuteChanged(newValue);
+                },
+                gradient: gradient,
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                flex: 1,
-                child: _buildPeriodDropdown(
-                  label: 'Period',
-                  value: period,
-                  onChanged: onPeriodChanged,
-                ),
+              const SizedBox(width: 16),
+              _buildPeriodToggle(
+                value: period,
+                onChanged: (newValue) {
+                  onPeriodChanged(newValue);
+                },
+                gradient: gradient,
               ),
             ],
           ),
@@ -914,131 +801,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
 
   
 
-  Widget _buildTimeDropdown({
-    required String label,
-    required int? value,
-    required List<int> items,
-    required Function(int?) onChanged,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
-            fontFamily: 'Poppins', // Added Poppins font
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: Colors.white, // Changed background color
-            borderRadius: BorderRadius.circular(12), // Slightly smaller radius
-            border: Border.all(color: const Color(0xFFE2E8F0)),
-            boxShadow: [ // Added subtle shadow
-              BoxShadow(
-                color: Colors.black.withOpacity(0.03),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: DropdownButtonFormField<int>(
-            value: value,
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(vertical: 12),
-            ),
-            hint: Text(
-              label,
-              style: TextStyle(
-                fontFamily: 'Poppins', // Added Poppins font
-                color: Colors.grey[400],
-              ),
-            ),
-            items: items.map((int item) {
-              return DropdownMenuItem<int>(
-                value: item,
-                child: Text(
-                  item.toString().padLeft(2, '0'),
-                  style: const TextStyle(
-                    fontFamily: 'Poppins', // Added Poppins font
-                    color: Color(0xFF1E3A8A),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              );
-            }).toList(),
-            onChanged: onChanged,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPeriodDropdown({
-    required String label,
-    required String value,
-    required Function(String?) onChanged,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
-            fontFamily: 'Poppins', // Added Poppins font
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          decoration: BoxDecoration(
-            color: Colors.white, // Changed background color
-            borderRadius: BorderRadius.circular(12), // Slightly smaller radius
-            border: Border.all(color: const Color(0xFFE2E8F0)),
-            boxShadow: [ // Added subtle shadow
-              BoxShadow(
-                color: Colors.black.withOpacity(0.03),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: DropdownButtonFormField<String>(
-            value: value,
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(vertical: 12),
-            ),
-            items: ['AM', 'PM'].map((String item) {
-              return DropdownMenuItem<String>(
-                value: item,
-                child: Text(
-                  item,
-                  style: const TextStyle(
-                    fontFamily: 'Poppins', // Added Poppins font
-                    color: Color(0xFF1E3A8A),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              );
-            }).toList(),
-            onChanged: onChanged,
-          ),
-        ),
-      ],
-    );
-  }
+  
 
   Widget _buildIssueExplanationDropdownField() {
     List<String> issueOptions = [
@@ -1156,6 +919,147 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                     _selectedReason = value!;
                   });
                 },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTimeInputField({
+    required String label,
+    required int? value,
+    required Function(int?) onChanged,
+    required Gradient gradient,
+  }) {
+    TextEditingController controller = TextEditingController(
+        text: value != null ? value.toString().padLeft(2, '0') : '');
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[600],
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
+            fontFamily: 'Poppins',
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          width: 80, // Fixed width for hour/minute input
+          height: 80, // Fixed height
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey[300]!),
+          ),
+          child: Center(
+            child: TextField(
+              controller: controller,
+              keyboardType: TextInputType.number,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 48,
+                fontWeight: FontWeight.bold,
+                color: gradient.colors.first,
+                fontFamily: 'Poppins',
+              ),
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.zero,
+              ),
+              onChanged: (text) {
+                int? parsedValue = int.tryParse(text);
+                onChanged(parsedValue);
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPeriodToggle({
+    required String value,
+    required Function(String?) onChanged,
+    required Gradient gradient,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Period',
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[600],
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
+            fontFamily: 'Poppins',
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          width: 60, // Fixed width for AM/PM toggle
+          height: 80, // Fixed height
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey[300]!),
+          ),
+          child: Column(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => onChanged('AM'),
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: value == 'AM' ? gradient.colors.first : Colors.transparent,
+                      borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(11)),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'AM',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: value == 'AM' ? Colors.white : Colors.grey[700],
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => onChanged('PM'),
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: value == 'PM' ? gradient.colors.first : Colors.transparent,
+                      borderRadius: const BorderRadius.vertical(
+                          bottom: Radius.circular(11)),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'PM',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: value == 'PM' ? Colors.white : Colors.grey[700],
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
