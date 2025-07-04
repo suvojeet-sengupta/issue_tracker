@@ -489,7 +489,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                                 color: _isFormValid() ? null : Colors.grey[300],
                                 borderRadius: BorderRadius.circular(20),
                                 boxShadow: _isFormValid()
-                                    ? [+
+                                    ? [
                                         BoxShadow(
                                           color: const Color(0xFF1E3A8A)
                                               .withOpacity(0.3),
