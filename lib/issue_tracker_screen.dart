@@ -738,14 +738,44 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      _formatTime(hour, minute, period),
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: (hour == null || minute == null)
-                            ? Colors.grey[500]
-                            : gradient.colors.first,
-                        fontWeight: FontWeight.w600,
+                    GestureDetector(
+                      onTap: () async {
+                        final TimeOfDay? pickedTime = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                          builder: (BuildContext context, Widget? child) {
+                            return MediaQuery(
+                              data: MediaQuery.of(context).copyWith(
+                                alwaysUse24HourFormat: false,
+                              ),
+                              child: child!,
+                            );
+                          },
+                        );
+                        if (pickedTime != null) {
+                          onHourChanged(pickedTime.hourOfPeriod);
+                          onMinuteChanged(pickedTime.minute);
+                          onPeriodChanged(pickedTime.period == DayPeriod.am ? 'AM' : 'PM');
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.grey[300]!),
+                        ),
+                        child: Text(
+                          _formatTime(hour, minute, period),
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: (hour == null || minute == null)
+                                ? Colors.grey[500]
+                                : gradient.colors.first,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -753,47 +783,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
               ),
             ],
           ),
-          const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildTimeInputField(
-                label: 'Hour',
-                value: hour,
-                onChanged: (newValue) {
-                  onHourChanged(newValue);
-                },
-                gradient: gradient,
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.0),
-                child: Text(
-                  ':',
-                  style: TextStyle(
-                    fontSize: 48,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1E3A8A),
-                  ),
-                ),
-              ),
-              _buildTimeInputField(
-                label: 'Minute',
-                value: minute,
-                onChanged: (newValue) {
-                  onMinuteChanged(newValue);
-                },
-                gradient: gradient,
-              ),
-              const SizedBox(width: 16),
-              _buildPeriodToggle(
-                value: period,
-                onChanged: (newValue) {
-                  onPeriodChanged(newValue);
-                },
-                gradient: gradient,
-              ),
-            ],
-          ),
+          
         ],
       ),
     );
@@ -919,147 +909,6 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                     _selectedReason = value!;
                   });
                 },
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTimeInputField({
-    required String label,
-    required int? value,
-    required Function(int?) onChanged,
-    required Gradient gradient,
-  }) {
-    TextEditingController controller = TextEditingController(
-        text: value != null ? value.toString().padLeft(2, '0') : '');
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
-            fontFamily: 'Poppins',
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          width: 80, // Fixed width for hour/minute input
-          height: 80, // Fixed height
-          decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey[300]!),
-          ),
-          child: Center(
-            child: TextField(
-              controller: controller,
-              keyboardType: TextInputType.number,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 48,
-                fontWeight: FontWeight.bold,
-                color: gradient.colors.first,
-                fontFamily: 'Poppins',
-              ),
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.zero,
-              ),
-              onChanged: (text) {
-                int? parsedValue = int.tryParse(text);
-                onChanged(parsedValue);
-              },
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPeriodToggle({
-    required String value,
-    required Function(String?) onChanged,
-    required Gradient gradient,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Period',
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
-            fontFamily: 'Poppins',
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          width: 60, // Fixed width for AM/PM toggle
-          height: 80, // Fixed height
-          decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey[300]!),
-          ),
-          child: Column(
-            children: [
-              Expanded(
-                child: GestureDetector(
-                  onTap: () => onChanged('AM'),
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: value == 'AM' ? gradient.colors.first : Colors.transparent,
-                      borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(11)),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'AM',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: value == 'AM' ? Colors.white : Colors.grey[700],
-                          fontFamily: 'Poppins',
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: GestureDetector(
-                  onTap: () => onChanged('PM'),
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: value == 'PM' ? gradient.colors.first : Colors.transparent,
-                      borderRadius: const BorderRadius.vertical(
-                          bottom: Radius.circular(11)),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'PM',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: value == 'PM' ? Colors.white : Colors.grey[700],
-                          fontFamily: 'Poppins',
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
               ),
             ],
           ),
