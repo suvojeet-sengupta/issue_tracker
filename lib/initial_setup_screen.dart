@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class InitialSetupScreen extends StatefulWidget {
+  const InitialSetupScreen({super.key});
+
   @override
   _InitialSetupScreenState createState() => _InitialSetupScreenState();
 }
