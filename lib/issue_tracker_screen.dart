@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:issue_tracker_app/google_form_webview_screen.dart';
+import 'package:issue_tracker_app/developer_info_screen.dart';
 
 class IssueTrackerScreen extends StatefulWidget {
   const IssueTrackerScreen({super.key});
@@ -294,9 +295,16 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: IconButton(
-                        icon: const Icon(Icons.arrow_back_ios_rounded,
+                        icon: const Icon(Icons.info_outline_rounded,
                             color: Colors.white),
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const DeveloperInfoScreen()),
+                          );
+                        },
                       ),
                     ),
                     const SizedBox(width: 16),
