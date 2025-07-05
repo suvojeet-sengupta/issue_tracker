@@ -180,10 +180,8 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
   String _tlName = "";
   String _advisorName = "";
   late final AnimationController _animationController;
-  late final AnimationController _pulseController;
   late final Animation<double> _fadeAnimation;
   late final Animation<double> _slideAnimation;
-  late final Animation<double> _pulseAnimation;
 
   @override
   void initState() {
@@ -219,13 +217,11 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
       curve: Curves.easeInOut,
     ));
     _animationController.forward();
-    _pulseController.repeat(reverse: true);
   }
 
   @override
   void dispose() {
     _animationController.dispose();
-    _pulseController.dispose();
     super.dispose();
   }
 
@@ -323,45 +319,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                       ),
                       child: Column(
                         children: [
-                          ScaleTransition(
-                            scale: _pulseAnimation,
-                            child: Container(
-                              width: 100,
-                              height: 100,
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xFF1E3A8A),
-                                    Color(0xFF3B82F6)
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(24),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Color(0xFF1E3A8A),
-                                    blurRadius: 15,
-                                    offset: Offset(0, 8),
-                                  ),
-                                ],
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(24),
-                                child: Image.asset(
-                                  'assets/images/app_logo.png',
-                                  width: 80,
-                                  height: 80,
-                                  fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return const Icon(
-                                      Icons.track_changes,
-                                      size: 50,
-                                      color: Colors.white,
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                          ),
+                          
                           const SizedBox(height: 24),
                           const Text(
                             'Welcome Back!',
