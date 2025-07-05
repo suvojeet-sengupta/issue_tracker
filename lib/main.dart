@@ -191,10 +191,6 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
-    _pulseController = AnimationController(
-      duration: const Duration(milliseconds: 2000),
-      vsync: this,
-    );
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -209,14 +205,6 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
       parent: _animationController,
       curve: Curves.easeOutCubic,
     ));
-    _pulseAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.05,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
-    ));
-    _animationController.forward();
   }
 
   @override
