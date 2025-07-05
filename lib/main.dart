@@ -9,16 +9,16 @@ void main() {
   runApp(MyApp(key: myAppKey));
 }
 
-final GlobalKey<_MyAppState> myAppKey = GlobalKey<_MyAppState>();
+final GlobalKey<MyAppState> myAppKey = GlobalKey<MyAppState>();
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<MyApp> createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> {
   bool _isSetupComplete = false;
   ThemeMode _themeMode = ThemeMode.light;
 
@@ -52,7 +52,7 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  static _MyAppState of(BuildContext context) => context.findAncestorStateOfType<_MyAppState>()!;
+  static MyAppState of(BuildContext context) => context.findAncestorStateOfType<MyAppState>()!;
 
   @override
   Widget build(BuildContext context) {
