@@ -855,7 +855,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Attachment (Optional)",
+          "Issue Snap",
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
