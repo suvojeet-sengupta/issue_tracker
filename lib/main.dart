@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:issue_tracker_app/initial_setup_screen.dart';
 import 'package:issue_tracker_app/issue_tracker_screen.dart';
 import 'package:issue_tracker_app/history_screen.dart';
-import 'package:issue_tracker_app/developer_info_screen.dart';
+
 import 'package:issue_tracker_app/edit_profile_screen.dart';
 import 'package:issue_tracker_app/theme_notifier.dart';
 
@@ -55,8 +55,6 @@ class _MyAppState extends State<MyApp> {
             '/home': (context) => const MainAppScreen(),
             '/issue_tracker': (context) => const IssueTrackerScreen(),
             '/history': (context) => const HistoryScreen(),
-            '/developer_info': (context) => const DeveloperInfoScreen(),
-            '/edit_profile': (context) => const EditProfileScreen(),
             '/settings': (context) => const SettingsScreen(),
           },
         );
@@ -199,7 +197,7 @@ class _MainAppScreenState extends State<MainAppScreen> {
     const DashboardScreen(),
     const IssueTrackerScreen(),
     const HistoryScreen(),
-    const DeveloperInfoScreen(),
+    const SettingsScreen(), // Settings screen is now part of bottom nav
   ];
 
   void _onItemTapped(int index) {
@@ -229,8 +227,8 @@ class _MainAppScreenState extends State<MainAppScreen> {
             label: 'History',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.info_outline_rounded),
-            label: 'Developer',
+            icon: Icon(Icons.settings_rounded),
+            label: 'Settings',
           ),
         ],
         currentIndex: _selectedIndex,
