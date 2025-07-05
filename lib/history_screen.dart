@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:issue_tracker_app/issue_tracker_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -211,7 +212,11 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                       ),
                       child: IconButton(
                         icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () => Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => const IssueTrackerScreen()),
+                        (Route<dynamic> route) => false,
+                      ),
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -363,7 +368,11 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
             ),
             const SizedBox(height: 32),
             ElevatedButton.icon(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => const IssueTrackerScreen()),
+                        (Route<dynamic> route) => false,
+                      ),
               icon: const Icon(Icons.add_task_rounded),
               label: const Text(
                 'Record First Issue',
