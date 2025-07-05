@@ -128,6 +128,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         controller: _tlNameController,
                         label: 'Team Leader Name',
                         icon: Icons.supervisor_account_outlined,
+                        readOnly: true, // Make TL Name non-editable
                       ),
                       const SizedBox(height: 20),
                       _buildTextField(
@@ -176,6 +177,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     required TextEditingController controller,
     required String label,
     required IconData icon,
+    bool readOnly = false,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -191,6 +193,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
       child: TextField(
         controller: controller,
+        readOnly: readOnly,
         style: const TextStyle(
           color: Color(0xFF1E3A8A),
           fontFamily: 'Poppins',
