@@ -893,7 +893,13 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
   String _formatTime(String isoString) {
     try {
       DateTime dateTime = DateTime.parse(isoString);
-      return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+      int hour = dateTime.hour;
+      String period = hour >= 12 ? 'PM' : 'AM';
+      hour = hour % 12;
+      if (hour == 0) {
+        hour = 12;
+      }
+      return '${hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')} $period';
     } catch (e) {
       return 'N/A';
     }
