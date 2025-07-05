@@ -784,7 +784,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                                 IconButton(
                                   icon: const Icon(Icons.download_rounded, color: Colors.white),
                                   onPressed: () async {
-                                    await GallerySaver.saveImage(imagePaths[imgIndex]);
+                                    await GallerySaverPlus.saveImage(imagePaths[imgIndex]);
                                     Navigator.of(context).pop();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(content: Text('Image saved to gallery')),
