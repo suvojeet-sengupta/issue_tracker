@@ -100,8 +100,8 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
       return;
     }
 
-    if (crmId.isEmpty || !RegExp(r'^[0-9]{6}$').hasMatch(crmId)) {
-      _showErrorSnackbar('CRM ID must be a 6-digit number');
+    if (crmId.isEmpty || !RegExp(r'^[0-9]+$').hasMatch(crmId)) {
+      _showErrorSnackbar('CRM ID must contain only digits');
       return;
     }
 
@@ -239,7 +239,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                           ),
                           const SizedBox(height: 12),
                           Text(
-                            'Let\'s set up your profile to get started',
+                            'Let's set up your profile to get started',
                             style: TextStyle(
                               color: Colors.white.withOpacity(0.8),
                               fontSize: 16,
@@ -311,9 +311,8 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                               controller: _crmIdController,
                               label: 'CRM ID',
                               icon: Icons.badge_outlined,
-                              hint: 'Enter your 6-digit CRM ID',
+                              hint: 'Enter your CRM ID',
                               keyboardType: TextInputType.number,
-                              maxLength: 6,
                             ),
 
                             const SizedBox(height: 20),
