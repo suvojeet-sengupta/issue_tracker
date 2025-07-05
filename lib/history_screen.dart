@@ -10,8 +10,7 @@ class HistoryScreen extends StatefulWidget {
 
 class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateMixin {
   List<String> _issueHistory = [];
-  List<String> _filteredHistory = [];
-  final TextEditingController _searchController = TextEditingController();
+  DateTime? _selectedDate;
   late AnimationController _animationController;
   late AnimationController _listController;
   late Animation<double> _fadeAnimation;
@@ -21,7 +20,6 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
   void initState() {
     super.initState();
     _loadHistory();
-    _searchController.addListener(_filterHistory);
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
@@ -52,7 +50,6 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
   void dispose() {
     _animationController.dispose();
     _listController.dispose();
-    _searchController.dispose();
     super.dispose();
   }
 
@@ -61,17 +58,27 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
     setState(() {
       _issueHistory = prefs.getStringList("issueHistory") ?? [];
       _issueHistory = _issueHistory.reversed.toList();
-      _filterHistory(); // Apply filter after loading history
     });
   }
 
-  _filterHistory() {
-    String query = _searchController.text.toLowerCase();
-    setState(() {
-      _filteredHistory = _issueHistory.where((entry) {
-        return entry.toLowerCase().contains(query);
-      }).toList();
-    });
+  List<String> get _filteredHistory {
+    if (_selectedDate == null) {
+      return _issueHistory;
+    }
+    return _issueHistory.where((entry) {
+      Map<String, String> parsedEntry = _parseHistoryEntry(entry);
+      String? fillTime = parsedEntry['Fill Time'];
+      if (fillTime == null) return false;
+
+      try {
+        DateTime entryDate = DateTime.parse(fillTime);
+        return entryDate.year == _selectedDate!.year &&
+            entryDate.month == _selectedDate!.month &&
+            entryDate.day == _selectedDate!.day;
+      } catch (e) {
+        return false;
+      }
+    }).toList();
   }
 
   _clearHistory() async {
@@ -244,20 +251,52 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                           children: [
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-                              child: TextField(
-                                controller: _searchController,
-                                decoration: InputDecoration(
-                                  hintText: 'Search history...',
-                                  prefixIcon: const Icon(Icons.search, color: Color(0xFF3B82F6)),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide.none,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton.icon(
+                                      onPressed: () async {
+                                        final DateTime? picked = await showDatePicker(
+                                          context: context,
+                                          initialDate: _selectedDate ?? DateTime.now(),
+                                          firstDate: DateTime(2020),
+                                          lastDate: DateTime.now(),
+                                        );
+                                        if (picked != null && picked != _selectedDate) {
+                                          setState(() {
+                                            _selectedDate = picked;
+                                          });
+                                        }
+                                      },
+                                      icon: const Icon(Icons.calendar_today_rounded, color: Colors.white),
+                                      label: Text(
+                                        _selectedDate == null
+                                            ? 'Select Date'
+                                            : '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
+                                        style: const TextStyle(fontFamily: 'Poppins', color: Colors.white),
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color(0xFF3B82F6),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        elevation: 4,
+                                      ),
+                                    ),
                                   ),
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                ),
-                                style: const TextStyle(fontFamily: 'Poppins', color: Color(0xFF1E3A8A)),
+                                  if (_selectedDate != null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: IconButton(
+                                        icon: const Icon(Icons.clear_rounded, color: Colors.grey),
+                                        onPressed: () {
+                                          setState(() {
+                                            _selectedDate = null;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                ],
                               ),
                             ),
                             Expanded(
@@ -571,60 +610,6 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
               ],
             ),
             
-            const SizedBox(height: 16),
-            
-            // Personal Information Section
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF0F9FF), // Lighter background
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: const Color(0xFF3B82F6).withOpacity(0.2),
-                  width: 1,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF3B82F6).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: const Icon(
-                          Icons.person_outline_rounded,
-                          color: Color(0xFF3B82F6),
-                          size: 16,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'Personal Details',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF3B82F6),
-                          fontFamily: 'Poppins',
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  _buildDetailRow(Icons.badge_outlined, 'CRM ID', parsedEntry['CRM ID'] ?? 'N/A'),
-                  const SizedBox(height: 8),
-                  _buildDetailRow(Icons.supervisor_account_outlined, 'Team Leader', parsedEntry['TL Name'] ?? 'N/A'),
-                  const SizedBox(height: 8),
-                  _buildDetailRow(Icons.person_outline, 'Advisor', parsedEntry['Advisor Name'] ?? 'N/A'),
-                  const SizedBox(height: 8),
-                  _buildDetailRow(Icons.business_outlined, 'Organization', parsedEntry['Organization'] ?? 'N/A'),
-                ],
-              ),
-            ),
-
             const SizedBox(height: 16),
             
             // Issue Information Section
