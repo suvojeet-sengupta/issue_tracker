@@ -175,76 +175,39 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 40), // Increased space at the top
 
                     // Welcome Header
                     Center(
                       child: Column(
                         children: [
-                          Container(
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  Colors.white.withOpacity(0.9),
-                                  Colors.white.withOpacity(0.7),
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(24),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 20,
-                                  offset: const Offset(0, 10),
-                                ),
-                              ],
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(24),
-                              child: Image.asset(
-                                'assets/images/app_logo.png',
-                                width: 80,
-                                height: 80,
-                                fit: BoxFit.contain,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return const Icon(
-                                    Icons.track_changes_rounded,
-                                    size: 50,
-                                    color: Color(0xFF1E3A8A),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 24),
                           const Text(
                             'Welcome to',
                             style: TextStyle(
                               color: Colors.white70,
-                              fontSize: 18,
+                              fontSize: 20, // Slightly larger font
                               fontWeight: FontWeight.w500,
-                              fontFamily: 'Poppins', // Added Poppins font
+                              fontFamily: 'Poppins',
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 10), // Adjusted spacing
                           const Text(
                             'Issue Tracker App',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 32,
+                              fontSize: 36, // Larger and more prominent
                               fontWeight: FontWeight.bold,
-                              fontFamily: 'Poppins', // Added Poppins font
+                              fontFamily: 'Poppins',
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 16), // Adjusted spacing
                           Text(
                             "Let's set up your profile to get started",
                             style: TextStyle(
                               color: Colors.white.withOpacity(0.8),
-                              fontSize: 16,
+                              fontSize: 18, // Slightly larger font
                               fontWeight: FontWeight.w500,
-                              fontFamily: 'Poppins', // Added Poppins font
+                              fontFamily: 'Poppins',
                             ),
                             textAlign: TextAlign.center,
                           ),
