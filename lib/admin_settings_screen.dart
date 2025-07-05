@@ -204,10 +204,76 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                 },
                 child: const Text('Save Settings'),
               ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  _showClearDataConfirmationDialog();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Clear All Data'),
+              ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void _showClearDataConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Clear Data'),
+          content: const Text(
+              'Are you sure you want to clear all saved user data and settings? This action cannot be undone.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Clear'),
+              onPressed: () async {
+                Navigator.of(context).pop(); // Close dialog
+                await _clearAllData();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _clearAllData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    _googleFormUrlController.clear();
+    _crmIdEntryController.clear();
+    _advisorNameEntryController.clear();
+    _issueStartTimeHourEntryController.clear();
+    _issueStartTimeMinuteEntryController.clear();
+    _issueEndTimeHourEntryController.clear();
+    _issueEndTimeMinuteEntryController.clear();
+    _tlNameEntryController.clear();
+    _organizationEntryController.clear();
+    _issueStartDateYearEntryController.clear();
+    _issueStartDateMonthEntryController.clear();
+    _issueStartDateDayEntryController.clear();
+    _issueEndDateYearEntryController.clear();
+    _issueEndDateMonthEntryController.clear();
+    _issueEndDateDayEntryController.clear();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('All data cleared successfully!')),
+    );
+
+    // Reload default values after clearing
+    _loadSettings();
   }
 }
