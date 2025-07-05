@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:issue_tracker_app/initial_setup_screen.dart';
 import 'package:issue_tracker_app/issue_tracker_screen.dart';
 import 'package:issue_tracker_app/history_screen.dart';
 import 'package:issue_tracker_app/developer_info_screen.dart';
 import 'package:issue_tracker_app/edit_profile_screen.dart';
+import 'package:issue_tracker_app/theme_notifier.dart';
+
+import 'package:issue_tracker_app/settings_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider<ThemeNotifier>(
+    create: (_) => ThemeNotifier(),
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatefulWidget {
@@ -17,8 +24,6 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-ValueNotifier<ThemeMode> themeModeNotifier = ValueNotifier(ThemeMode.light);
-
 class _MyAppState extends State<MyApp> {
   bool _isSetupComplete = false;
 
@@ -26,7 +31,6 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _checkSetupStatus();
-    _loadThemeMode();
   }
 
   _checkSetupStatus() async {
@@ -36,141 +40,16 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  _loadThemeMode() async {
-    final prefs = await SharedPreferences.getInstance();
-    final isDarkMode = prefs.getBool('isDarkMode') ?? false;
-    themeModeNotifier.value = isDarkMode ? ThemeMode.dark : ThemeMode.light;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeModeNotifier,
-      builder: (context, currentThemeMode, child) {
+    return Consumer<ThemeNotifier>(
+      builder: (context, theme, child) {
         return MaterialApp(
           title: 'Issue Tracker App',
           debugShowCheckedModeBanner: false,
-          themeMode: currentThemeMode,
-          theme: ThemeData(
-            useMaterial3: true,
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color(0xFF3B82F6), // Updated seed color
-              brightness: Brightness.light,
-            ),
-            primaryColor: const Color(0xFF1E3A8A),
-            scaffoldBackgroundColor: const Color(0xFFF8FAFC),
-            fontFamily: 'Poppins', // Changed font family
-            appBarTheme: const AppBarTheme(
-              backgroundColor: Colors.transparent, // Changed to transparent
-              elevation: 0,
-              foregroundColor: Colors.white,
-              titleTextStyle: TextStyle(
-                fontSize: 22, // Increased font size
-                fontWeight: FontWeight.bold, // Changed to bold
-                color: Colors.white,
-              ),
-            ),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF1E3A8A),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                elevation: 4,
-                shadowColor: const Color(0xFF1E3A8A).withOpacity(0.3),
-              ),
-            ),
-            cardTheme: CardThemeData(
-              elevation: 8,
-              shadowColor: Colors.black.withOpacity(0.1),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              color: Colors.white,
-            ),
-            inputDecorationTheme: InputDecorationTheme(
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide.none,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: Color(0xFFE2E8F0), width: 1.5),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: Color(0xFF1E3A8A), width: 2),
-              ),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            ),
-            visualDensity: VisualDensity.adaptivePlatformDensity,
-          ),
-          darkTheme: ThemeData(
-            useMaterial3: true,
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color(0xFF3B82F6),
-              brightness: Brightness.dark,
-            ),
-            primaryColor: const Color(0xFF90CAF9),
-            scaffoldBackgroundColor: const Color(0xFF121212),
-            fontFamily: 'Poppins',
-            appBarTheme: const AppBarTheme(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              foregroundColor: Colors.white,
-              titleTextStyle: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF90CAF9),
-                foregroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                elevation: 4,
-                shadowColor: const Color(0xFF90CAF9).withOpacity(0.3),
-              ),
-            ),
-            cardTheme: CardThemeData(
-              elevation: 8,
-              shadowColor: Colors.black.withOpacity(0.3),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              color: const Color(0xFF1E1E1E),
-            ),
-            inputDecorationTheme: InputDecorationTheme(
-              filled: true,
-              fillColor: const Color(0xFF1E1E1E),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide.none,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: Color(0xFF333333), width: 1.5),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: Color(0xFF90CAF9), width: 2),
-              ),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            ),
-            visualDensity: VisualDensity.adaptivePlatformDensity,
-          ),
+          theme: theme.darkTheme ? darkTheme : lightTheme,
+          darkTheme: darkTheme,
+          themeMode: theme.darkTheme ? ThemeMode.dark : ThemeMode.light,
           home: _isSetupComplete ? const MainAppScreen() : const InitialSetupScreen(),
           routes: {
             '/home': (context) => const MainAppScreen(),
@@ -178,12 +57,133 @@ class _MyAppState extends State<MyApp> {
             '/history': (context) => const HistoryScreen(),
             '/developer_info': (context) => const DeveloperInfoScreen(),
             '/edit_profile': (context) => const EditProfileScreen(),
+            '/settings': (context) => const SettingsScreen(),
           },
         );
       },
     );
   }
 }
+
+final ThemeData lightTheme = ThemeData(
+  useMaterial3: true,
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: const Color(0xFF3B82F6),
+    brightness: Brightness.light,
+  ),
+  primaryColor: const Color(0xFF1E3A8A),
+  scaffoldBackgroundColor: const Color(0xFFF8FAFC),
+  fontFamily: 'Poppins',
+  appBarTheme: const AppBarTheme(
+    backgroundColor: Colors.transparent,
+    elevation: 0,
+    foregroundColor: Colors.white,
+    titleTextStyle: TextStyle(
+      fontSize: 22,
+      fontWeight: FontWeight.bold,
+      color: Colors.white,
+    ),
+  ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: const Color(0xFF1E3A8A),
+      foregroundColor: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      elevation: 4,
+      shadowColor: const Color(0xFF1E3A8A).withOpacity(0.3),
+    ),
+  ),
+  cardTheme: CardThemeData(
+    elevation: 8,
+    shadowColor: Colors.black.withOpacity(0.1),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
+    ),
+    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    color: Colors.white,
+  ),
+  inputDecorationTheme: InputDecorationTheme(
+    filled: true,
+    fillColor: Colors.white,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(16),
+      borderSide: BorderSide.none,
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(16),
+      borderSide: const BorderSide(color: Color(0xFFE2E8F0), width: 1.5),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(16),
+      borderSide: const BorderSide(color: Color(0xFF1E3A8A), width: 2),
+    ),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+  ),
+  visualDensity: VisualDensity.adaptivePlatformDensity,
+);
+
+final ThemeData darkTheme = ThemeData(
+  useMaterial3: true,
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: const Color(0xFF3B82F6),
+    brightness: Brightness.dark,
+  ),
+  primaryColor: const Color(0xFF90CAF9),
+  scaffoldBackgroundColor: const Color(0xFF121212),
+  fontFamily: 'Poppins',
+  appBarTheme: const AppBarTheme(
+    backgroundColor: Colors.transparent,
+    elevation: 0,
+    foregroundColor: Colors.white,
+    titleTextStyle: TextStyle(
+      fontSize: 22,
+      fontWeight: FontWeight.bold,
+      color: Colors.white,
+    ),
+  ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: const Color(0xFF90CAF9),
+      foregroundColor: Colors.black,
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      elevation: 4,
+      shadowColor: const Color(0xFF90CAF9).withOpacity(0.3),
+    ),
+  ),
+  cardTheme: CardThemeData(
+    elevation: 8,
+    shadowColor: Colors.black.withOpacity(0.3),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
+    ),
+    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    color: const Color(0xFF1E1E1E),
+  ),
+  inputDecorationTheme: InputDecorationTheme(
+    filled: true,
+    fillColor: const Color(0xFF1E1E1E),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(16),
+      borderSide: BorderSide.none,
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(16),
+      borderSide: const BorderSide(color: Color(0xFF333333), width: 1.5),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(16),
+      borderSide: const BorderSide(color: Color(0xFF90CAF9), width: 2),
+    ),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+  ),
+  visualDensity: VisualDensity.adaptivePlatformDensity,
+);
 
 class MainAppScreen extends StatefulWidget {
   const MainAppScreen({super.key});
@@ -333,17 +333,25 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Custom App Bar
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: const Text(
-                        'Issue Tracker App',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Poppins', // Added Poppins font
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Issue Tracker App',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Poppins', // Added Poppins font
+                          ),
                         ),
-                      ),
+                        IconButton(
+                          icon: const Icon(Icons.settings, color: Colors.white),
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/settings');
+                          },
+                        ),
+                      ],
                     ),
 
                     const SizedBox(height: 32),
