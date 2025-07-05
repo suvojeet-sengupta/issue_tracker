@@ -456,16 +456,26 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                     ),
                   ),
                 ),
-                if (parsedEntry['Fill Time'] != null)
-                  Text(
-                    _formatDate(parsedEntry['Fill Time']!),
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      fontFamily: 'Poppins', // Added Poppins font
+                Row(
+                  children: [
+                    if (parsedEntry['Fill Time'] != null)
+                      Text(
+                        _formatDate(parsedEntry['Fill Time']!),
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'Poppins', // Added Poppins font
+                        ),
+                      ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent),
+                      onPressed: () => _confirmDelete(index),
+                      visualDensity: VisualDensity.compact,
                     ),
-                  ),
+                  ],
+                ),
               ],
             ),
             
@@ -720,6 +730,116 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
       }
     } catch (e) {
       return 'N/A';
+    }
+  }
+
+  _confirmDelete(int index) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.delete_forever_rounded,
+                  color: Colors.red,
+                  size: 32,
+                ),
+              ),
+              const SizedBox(width: 16),
+              const Text(
+                'Delete Entry',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1E3A8A),
+                  fontFamily: 'Poppins',
+                ),
+              ),
+            ],
+          ),
+          content: const Text(
+            'Are you sure you want to delete this history entry? This action cannot be undone.',
+            style: TextStyle(
+              fontSize: 16,
+              fontFamily: 'Poppins',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _deleteHistoryItem(index);
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFEF4444),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text(
+                'Delete',
+                style: TextStyle(fontFamily: 'Poppins'),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  _deleteHistoryItem(int index) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> currentHistory = prefs.getStringList("issueHistory") ?? [];
+    // The displayed list is reversed, so we need to adjust the index for the actual stored list
+    int originalIndex = currentHistory.length - 1 - index;
+    if (originalIndex >= 0 && originalIndex < currentHistory.length) {
+      currentHistory.removeAt(originalIndex);
+      await prefs.setStringList("issueHistory", currentHistory);
+      setState(() {
+        _issueHistory.removeAt(index);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle_rounded, color: Colors.white),
+              const SizedBox(width: 12),
+              const Text(
+                'Entry deleted successfully',
+                style: TextStyle(fontFamily: 'Poppins'),
+              ),
+            ],
+          ),
+          backgroundColor: const Color(0xFF059669),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: const EdgeInsets.all(16),
+        ),
+      );
     }
   }
 }
