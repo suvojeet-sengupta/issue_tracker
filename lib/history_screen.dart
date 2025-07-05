@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:issue_tracker_app/issue_tracker_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -553,14 +555,14 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
   }
 
   Widget _buildHistoryItem(String entry, int index) {
-    // Parse the entry to extract information
     Map<String, String> parsedEntry = _parseHistoryEntry(entry);
-    
+    String? imagePath = parsedEntry['Image'];
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16), // Slightly smaller radius
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -574,7 +576,6 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header with issue number and date
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -584,7 +585,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                     gradient: const LinearGradient(
                       colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
                     ),
-                    borderRadius: BorderRadius.circular(16), // Slightly smaller radius
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
                     'Issue #${_issueHistory.length - index}',
@@ -592,7 +593,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                       color: Colors.white,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'Poppins', // Added Poppins font
+                      fontFamily: 'Poppins',
                     ),
                   ),
                 ),
@@ -632,14 +633,11 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                 ),
               ],
             ),
-            
             const SizedBox(height: 16),
-            
-            // Issue Information Section
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFFF0F9FF), // Lighter background
+                color: const Color(0xFFF0F9FF),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: const Color(0xFF3B82F6).withOpacity(0.2),
@@ -670,7 +668,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF3B82F6),
-                          fontFamily: 'Poppins', // Added Poppins font
+                          fontFamily: 'Poppins',
                         ),
                       ),
                     ],
@@ -682,10 +680,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                 ],
               ),
             ),
-            
             const SizedBox(height: 16),
-            
-            // Time information
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -757,6 +752,29 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                 ],
               ),
             ),
+            if (imagePath != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => Dialog(
+                        child: Image.file(File(imagePath)),
+                      ),
+                    );
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.file(
+                      File(imagePath),
+                      width: double.infinity,
+                      height: 200,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -1046,4 +1064,3 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
     }
   }
 }
-

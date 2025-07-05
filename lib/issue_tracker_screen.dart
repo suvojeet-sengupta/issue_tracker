@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:issue_tracker_app/google_form_webview_screen.dart';
 
@@ -25,6 +29,8 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
   int? _issueEndHour;
   int? _issueEndMinute;
   String _issueEndPeriod = "AM";
+
+  XFile? _image;
 
   late AnimationController _animationController;
   late AnimationController _buttonController;
@@ -88,6 +94,14 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
     });
   }
 
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      _image = image;
+    });
+  }
+
   TimeOfDay? _getStartTimeOfDay() {
     if (_issueStartHour == null || _issueStartMinute == null) return null;
     int hour24 = _issueStartHour!;
@@ -115,8 +129,6 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
     return "${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
   }
 
-  
-
   bool _isFormValid() {
     return _issueStartHour != null &&
         _issueStartMinute != null &&
@@ -136,11 +148,22 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
       TimeOfDay? startTime = _getStartTimeOfDay();
       TimeOfDay? endTime = _getEndTimeOfDay();
 
+      String? imagePath;
+      if (_image != null) {
+        final Directory appDir = await getApplicationDocumentsDirectory();
+        final String fileName = _image!.name;
+        final File localImage = await File(_image!.path).copy('${appDir.path}/$fileName');
+        imagePath = localImage.path;
+      }
+
       String entry =
           "CRM ID: $_crmId, TL Name: $_tlName, Advisor Name: $_advisorName, "
           "Organization: $_organization, Issue Explanation: $_selectedIssueExplanation, "
           "Reason: $_selectedReason, Start Time: ${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, startTime!.hour, startTime.minute).toIso8601String()}, "
           "End Time: ${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, endTime!.hour, endTime.minute).toIso8601String()}, Fill Time: ${DateTime.now().toIso8601String()}";
+      if (imagePath != null) {
+        entry += ", Image: $imagePath";
+      }
 
       history.add(entry);
       await prefs.setStringList("issueHistory", history);
@@ -423,6 +446,11 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
 
                           // Issue Explanation
                           _buildIssueExplanationDropdownField(),
+
+                          const SizedBox(height: 24),
+
+                          // Attachment Section
+                          _buildAttachmentSection(),
 
                           const SizedBox(height: 24),
 
@@ -740,15 +768,10 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
               ),
             ],
           ),
-          
         ],
       ),
     );
   }
-
-  
-
-  
 
   Widget _buildIssueExplanationDropdownField() {
     List<String> issueOptions = [
@@ -823,6 +846,84 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                 });
               },
             ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAttachmentSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Attachment (Optional)",
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF1E3A8A),
+            fontFamily: 'Poppins',
+          ),
+        ),
+        const SizedBox(height: 16),
+        _buildEnhancedCard(
+          child: Column(
+            children: [
+              if (_image != null)
+                Stack(
+                  alignment: Alignment.topRight,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.file(
+                        File(_image!.path),
+                        width: double.infinity,
+                        height: 200,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close_rounded, color: Colors.white),
+                      onPressed: () {
+                        setState(() {
+                          _image = null;
+                        });
+                      },
+                    ),
+                  ],
+                )
+              else
+                GestureDetector(
+                  onTap: _pickImage,
+                  child: Container(
+                    height: 150,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey[300]!),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.add_a_photo_outlined,
+                          color: Colors.grey[500],
+                          size: 48,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Add Screenshot',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
       ],
