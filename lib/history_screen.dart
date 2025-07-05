@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:gallery_saver_plus/gallery_saver_plus.dart';
 import 'package:issue_tracker_app/issue_tracker_screen.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -784,11 +783,8 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                                 IconButton(
                                   icon: const Icon(Icons.download_rounded, color: Colors.white),
                                   onPressed: () async {
-                                    await GallerySaver.saveImage(imagePaths[imgIndex]);
+                                    await Share.shareXFiles([XFile(imagePaths[imgIndex])]);
                                     Navigator.of(context).pop();
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Image saved to gallery')),
-                                    );
                                   },
                                 ),
                               ],
