@@ -573,17 +573,58 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
             
             const SizedBox(height: 16),
             
-            // Issue details
-            _buildDetailRow(Icons.badge_outlined, 'CRM ID', parsedEntry['CRM ID'] ?? 'N/A'),
-            const SizedBox(height: 12),
-            _buildDetailRow(Icons.supervisor_account_outlined, 'Team Leader', parsedEntry['TL Name'] ?? 'N/A'),
-            const SizedBox(height: 12),
-            _buildDetailRow(Icons.person_outline, 'Advisor', parsedEntry['Advisor Name'] ?? 'N/A'),
-            const SizedBox(height: 12),
-            _buildDetailRow(Icons.business_outlined, 'Organization', parsedEntry['Organization'] ?? 'N/A'),
-            const SizedBox(height: 12),
-            _buildDetailRow(Icons.timer_rounded, 'Duration', _formatDuration(parsedEntry['Start Time'] ?? '', parsedEntry['End Time'] ?? '')),
-            
+            // Personal Information Section
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF0F9FF), // Lighter background
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0xFF3B82F6).withOpacity(0.2),
+                  width: 1,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF3B82F6).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Icon(
+                          Icons.person_outline_rounded,
+                          color: Color(0xFF3B82F6),
+                          size: 16,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'Personal Details',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF3B82F6),
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  _buildDetailRow(Icons.badge_outlined, 'CRM ID', parsedEntry['CRM ID'] ?? 'N/A'),
+                  const SizedBox(height: 8),
+                  _buildDetailRow(Icons.supervisor_account_outlined, 'Team Leader', parsedEntry['TL Name'] ?? 'N/A'),
+                  const SizedBox(height: 8),
+                  _buildDetailRow(Icons.person_outline, 'Advisor', parsedEntry['Advisor Name'] ?? 'N/A'),
+                  const SizedBox(height: 8),
+                  _buildDetailRow(Icons.business_outlined, 'Organization', parsedEntry['Organization'] ?? 'N/A'),
+                ],
+              ),
+            ),
+
             const SizedBox(height: 16),
             
             // Issue Information Section
@@ -647,30 +688,64 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                   width: 1,
                 ),
               ),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: _buildTimeInfo(
-                      Icons.play_circle_outline_rounded,
-                      'Start Time',
-                      parsedEntry['Start Time'] ?? 'N/A',
-                      const Color(0xFF059669),
-                    ),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1E3A8A).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Icon(
+                          Icons.access_time_rounded,
+                          color: Color(0xFF1E3A8A),
+                          size: 16,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'Time Information',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1E3A8A),
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                    ],
                   ),
-                  Container(
-                    width: 1,
-                    height: 40,
-                    color: const Color(0xFFE2E8F0),
-                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildTimeInfo(
+                          Icons.play_circle_outline_rounded,
+                          'Start Time',
+                          parsedEntry['Start Time'] ?? 'N/A',
+                          const Color(0xFF059669),
+                        ),
+                      ),
+                      Container(
+                        width: 1,
+                        height: 40,
+                        color: const Color(0xFFE2E8F0),
+                        margin: const EdgeInsets.symmetric(horizontal: 16),
+                      ),
+                      Expanded(
+                        child: _buildTimeInfo(
+                          Icons.stop_circle_outlined,
+                          'End Time',
+                          parsedEntry['End Time'] ?? 'N/A',
+                          const Color(0xFFEF4444),
+                        ),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                    child: _buildTimeInfo(
-                      Icons.stop_circle_outlined,
-                      'End Time',
-                      parsedEntry['End Time'] ?? 'N/A',
-                      const Color(0xFFEF4444),
-                    ),
-                  ),
+                  const SizedBox(height: 12),
+                  _buildDetailRow(Icons.timer_rounded, 'Duration', _formatDuration(parsedEntry['Start Time'] ?? '', parsedEntry['End Time'] ?? '')),
                 ],
               ),
             ),
