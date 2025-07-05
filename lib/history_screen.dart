@@ -10,6 +10,8 @@ class HistoryScreen extends StatefulWidget {
 
 class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateMixin {
   List<String> _issueHistory = [];
+  List<String> _filteredHistory = [];
+  final TextEditingController _searchController = TextEditingController();
   late AnimationController _animationController;
   late AnimationController _listController;
   late Animation<double> _fadeAnimation;
@@ -19,6 +21,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
   void initState() {
     super.initState();
     _loadHistory();
+    _searchController.addListener(_filterHistory);
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
@@ -49,6 +52,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
   void dispose() {
     _animationController.dispose();
     _listController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -57,6 +61,16 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
     setState(() {
       _issueHistory = prefs.getStringList("issueHistory") ?? [];
       _issueHistory = _issueHistory.reversed.toList();
+      _filterHistory(); // Apply filter after loading history
+    });
+  }
+
+  _filterHistory() {
+    String query = _searchController.text.toLowerCase();
+    setState(() {
+      _filteredHistory = _issueHistory.where((entry) {
+        return entry.toLowerCase().contains(query);
+      }).toList();
     });
   }
 
@@ -226,7 +240,33 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                   opacity: _fadeAnimation,
                   child: _issueHistory.isEmpty
                       ? _buildEmptyState()
-                      : _buildHistoryList(),
+                      : Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                              child: TextField(
+                                controller: _searchController,
+                                decoration: InputDecoration(
+                                  hintText: 'Search history...',
+                                  prefixIcon: const Icon(Icons.search, color: Color(0xFF3B82F6)),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                ),
+                                style: const TextStyle(fontFamily: 'Poppins', color: Color(0xFF1E3A8A)),
+                              ),
+                            ),
+                            Expanded(
+                              child: _filteredHistory.isEmpty
+                                  ? _buildNoResultsState()
+                                  : _buildHistoryList(),
+                            ),
+                          ],
+                        ),
                 ),
               ),
             ],
@@ -396,14 +436,66 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
             // History List
             Expanded(
               child: ListView.builder(
-                itemCount: _issueHistory.length,
+                itemCount: _filteredHistory.length,
                 itemBuilder: (context, index) {
                   return AnimatedContainer(
                     duration: Duration(milliseconds: 300 + (index * 100)),
                     curve: Curves.easeOutCubic,
-                    child: _buildHistoryItem(_issueHistory[index], index),
+                    child: _buildHistoryItem(_filteredHistory[index], index),
                   );
                 },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNoResultsState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    const Color(0xFF1E3A8A).withOpacity(0.1),
+                    const Color(0xFF3B82F6).withOpacity(0.05),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: const Icon(
+                Icons.search_off_rounded,
+                size: 50,
+                color: Color(0xFF1E3A8A),
+              ),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'No Matching Results',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1E3A8A),
+                fontFamily: 'Poppins',
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Try adjusting your search terms or clearing the search bar.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+                fontFamily: 'Poppins',
               ),
             ),
           ],
