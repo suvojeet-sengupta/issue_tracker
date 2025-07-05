@@ -331,35 +331,22 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Custom App Bar
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Issue Tracker App',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Poppins', // Added Poppins font
-                          ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: const Text(
+                        'Issue Tracker App',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Poppins', // Added Poppins font
                         ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: IconButton(
-                            icon: const Icon(Icons.info_outline,
-                                color: Colors.white),
-                            onPressed: null, // Handled by bottom navigation
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
 
                     const SizedBox(height: 32),
 
-                    // Hero Section with Logo
+                    // Hero Section
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(32),
@@ -373,25 +360,17 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                           ],
                         ),
                         borderRadius: BorderRadius.circular(24),
-                        boxShadow: const [
+                        boxShadow: [
                           BoxShadow(
-                            color: Colors.black,
-                            blurRadius: 20,
-                            offset: Offset(0, 10),
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 5),
                           ),
                         ],
                       ),
-                      child: Column(
+                      child: const Column(
                         children: [
-                          
-                          Image.asset(
-                            'assets/images/app_logo.png',
-                            width: 120,
-                            height: 120,
-                            fit: BoxFit.contain,
-                          ),
-                          const SizedBox(height: 24),
-                          const Text(
+                          Text(
                             'Welcome Back!',
                             style: TextStyle(
                               color: Color(0xFF1E3A8A),
@@ -401,8 +380,8 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          const SizedBox(height: 8),
-                          const Text(
+                          SizedBox(height: 8),
+                          Text(
                             'Track and manage your issues with precision',
                             style: TextStyle(
                               color: Colors.grey,
@@ -423,11 +402,11 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(24),
-                        boxShadow: const [
+                        boxShadow: [
                           BoxShadow(
-                            color: Colors.black,
-                            blurRadius: 20,
-                            offset: Offset(0, 8),
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
@@ -516,11 +495,11 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
           color: const Color(0xFFE2E8F0),
           width: 1, // Slightly thinner border
         ),
-        boxShadow: const [ // Added subtle shadow
+        boxShadow: [
           BoxShadow(
-            color: Colors.black,
-            blurRadius: 8,
-            offset: Offset(0, 2),
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
