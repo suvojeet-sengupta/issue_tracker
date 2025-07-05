@@ -376,26 +376,26 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                           ),
                         ],
                       ),
-                      child: const Column(
+                      child: Column(
                         children: [
                           Text(
-                            'Welcome Back!',
-                            style: TextStyle(
+                            'Welcome Back, ${_advisorName.split(" ").first}!',
+                            style: const TextStyle(
                               color: Color(0xFF1E3A8A),
                               fontSize: 32,
                               fontWeight: FontWeight.bold,
-                              fontFamily: 'Poppins', // Added Poppins font
+                              fontFamily: 'Poppins',
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          SizedBox(height: 8),
-                          Text(
+                          const SizedBox(height: 8),
+                          const Text(
                             'Track and manage your issues with precision',
                             style: TextStyle(
                               color: Colors.grey,
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
-                              fontFamily: 'Poppins', // Added Poppins font
+                              fontFamily: 'Poppins',
                             ),
                             textAlign: TextAlign.center,
                           ),
