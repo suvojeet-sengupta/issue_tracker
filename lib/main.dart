@@ -97,9 +97,9 @@ class _MyAppState extends State<MyApp> {
         ),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: _isSetupComplete ? const HomeScreen() : const InitialSetupScreen(),
+      home: _isSetupComplete ? const MainAppScreen() : const InitialSetupScreen(),
       routes: {
-        '/home': (context) => const HomeScreen(),
+        '/home': (context) => const MainAppScreen(),
         '/issue_tracker': (context) => const IssueTrackerScreen(),
         '/history': (context) => const HistoryScreen(),
         '/developer_info': (context) => const DeveloperInfoScreen(),
@@ -108,14 +108,74 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class MainAppScreen extends StatefulWidget {
+  const MainAppScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<MainAppScreen> createState() => _MainAppScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+class _MainAppScreenState extends State<MainAppScreen> {
+  int _selectedIndex = 0;
+
+  static final List<Widget> _widgetOptions = <Widget>[
+    const DashboardScreen(),
+    const IssueTrackerScreen(),
+    const HistoryScreen(),
+    const DeveloperInfoScreen(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_rounded),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add_task_rounded),
+            label: 'Tracker',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history_rounded),
+            label: 'History',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.info_outline_rounded),
+            label: 'Developer',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Theme.of(context).primaryColor,
+        unselectedItemColor: Colors.grey,
+        onTap: _onItemTapped,
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.white,
+        elevation: 10,
+      ),
+    );
+  }
+}
+
+class DashboardScreen extends StatefulWidget {
+  const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> with TickerProviderStateMixin {
   String _crmId = "";
   String _tlName = "";
   String _advisorName = "";
@@ -231,9 +291,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           child: IconButton(
                             icon: const Icon(Icons.info_outline,
                                 color: Colors.white),
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/developer_info');
-                            },
+                            onPressed: null, // Handled by bottom navigation
                           ),
                         ),
                       ],
@@ -382,15 +440,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               ],
                             ),
                             const SizedBox(height: 24),
-                            _buildEnhancedInfoRow(
-                                Icons.badge_outlined, 'CRM ID', _crmId),
+                            _buildInfoRow(Icons.badge_outlined, 'CRM ID', _crmId),
                             const SizedBox(height: 16),
-                            _buildEnhancedInfoRow(
+                            _buildInfoRow(
                                 Icons.supervisor_account_outlined,
                                 'Team Leader',
                                 _tlName),
                             const SizedBox(height: 16),
-                            _buildEnhancedInfoRow(Icons.person_outline,
+                            _buildInfoRow(Icons.person_outline,
                                 'Advisor Name', _advisorName),
                           ],
                         ),
@@ -398,44 +455,233 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     ),
 
                     const SizedBox(height: 32),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.pushNamed(context, '/issue_tracker');
+        },
+        label: const Text('Fill Issue Tracker'),
+        icon: const Icon(Icons.add_task_rounded),
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        elevation: 8,
+      ),
+    );
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF1E3A8A),
+              Color(0xFF3B82F6),
+              Color(0xFFF8FAFC),
+            ],
+            stops: [0.0, 0.3, 1.0],
+          ),
+        ),
+        child: SafeArea(
+          child: FadeTransition(
+            opacity: _fadeAnimation,
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0, 0.3),
+                end: Offset.zero,
+              ).animate(_slideAnimation),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Custom App Bar
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Issue Tracker App',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Poppins', // Added Poppins font
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(Icons.info_outline,
+                                color: Colors.white),
+                            onPressed: null, // Handled by bottom navigation
+                          ),
+                        ),
+                      ],
+                    ),
 
-                    // Quick Actions Section
-                    const Text(
-                      'Quick Actions',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E3A8A),
-                        fontFamily: 'Poppins', // Added Poppins font
+                    const SizedBox(height: 32),
+
+                    // Hero Section with Logo
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(32),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Colors.white.withOpacity(0.95),
+                            Colors.white.withOpacity(0.85),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black,
+                            blurRadius: 20,
+                            offset: Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          ScaleTransition(
+                            scale: _pulseAnimation,
+                            child: Container(
+                              width: 100,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFF1E3A8A),
+                                    Color(0xFF3B82F6)
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(24),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color(0xFF1E3A8A),
+                                    blurRadius: 15,
+                                    offset: Offset(0, 8),
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(24),
+                                child: Image.asset(
+                                  'assets/images/app_logo.png',
+                                  width: 80,
+                                  height: 80,
+                                  fit: BoxFit.contain,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(
+                                      Icons.track_changes,
+                                      size: 50,
+                                      color: Colors.white,
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          const Text(
+                            'Welcome Back!',
+                            style: TextStyle(
+                              color: Color(0xFF1E3A8A),
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Poppins', // Added Poppins font
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Track and manage your issues with precision',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Poppins', // Added Poppins font
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 20),
 
-                    _buildEnhancedActionCard(
-                      icon: Icons.add_task_rounded,
-                      title: 'Fill Issue Tracker',
-                      subtitle:
-                          'Record a new issue with precise timing details',
-                      onTap: () {
-                        Navigator.pushNamed(context, '/issue_tracker');
-                      },
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
+                    const SizedBox(height: 32),
+
+                    // User Information Card with Enhanced Design
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black,
+                            blurRadius: 20,
+                            offset: Offset(0, 8),
+                          ),
+                        ],
                       ),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    _buildEnhancedActionCard(
-                      icon: Icons.history_rounded,
-                      title: 'View History',
-                      subtitle:
-                          'Browse and manage your previously recorded issues',
-                      onTap: () {
-                        Navigator.pushNamed(context, '/history');
-                      },
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF059669), Color(0xFF10B981)],
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [
+                                        Color(0xFF1E3A8A),
+                                        Color(0xFF3B82F6)
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Icon(
+                                    Icons.person_outline,
+                                    color: Colors.white,
+                                    size: 24,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                const Text(
+                                  'User Profile',
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF1E3A8A),
+                                    fontFamily: 'Poppins', // Added Poppins font
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 24),
+                            _buildInfoRow(Icons.badge_outlined, 'CRM ID', _crmId),
+                            const SizedBox(height: 16),
+                            _buildInfoRow(
+                                Icons.supervisor_account_outlined,
+                                'Team Leader',
+                                _tlName),
+                            const SizedBox(height: 16),
+                            _buildInfoRow(Icons.person_outline,
+                                'Advisor Name', _advisorName),
+                          ],
+                        ),
                       ),
                     ),
 
@@ -450,7 +696,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildEnhancedInfoRow(IconData icon, String label, String value) {
+  Widget _buildInfoRow(IconData icon, String label, String value) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -511,104 +757,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildEnhancedActionCard({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-    required Gradient gradient,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black,
-            blurRadius: 20,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: Colors.white, // Changed background color
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 64,
-                  height: 64,
-                  decoration: BoxDecoration(
-                    gradient: gradient,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black,
-                        blurRadius: 12,
-                        offset: Offset(0, 6),
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    icon,
-                    color: Colors.white,
-                    size: 28,
-                  ),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF1E3A8A),
-                          fontFamily: 'Poppins', // Added Poppins font
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        subtitle,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'Poppins', // Added Poppins font
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF8FAFC), // Changed background color
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    color: Colors.grey,
-                    size: 16,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }
