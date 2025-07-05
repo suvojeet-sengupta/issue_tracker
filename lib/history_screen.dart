@@ -446,7 +446,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                           '${_issueHistory.length}',
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 32,
+                            fontSize: 24,
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Poppins', // Added Poppins font
                           ),
@@ -591,7 +591,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                   children: [
                     if (parsedEntry['Fill Time'] != null)
                       Text(
-                        _formatDate(parsedEntry['Fill Time']!),
+                        'Filled: ${_formatDate(parsedEntry['Fill Time']!)}',
                         style: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 12,
@@ -863,10 +863,10 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
     }
   }
 
-  String _formatDuration(String startTime, String endTime) {
+  String _formatDuration(String startTimeIso, String endTimeIso) {
     try {
-      DateTime start = DateTime.parse(startTime);
-      DateTime end = DateTime.parse(endTime);
+      DateTime start = DateTime.parse(startTimeIso);
+      DateTime end = DateTime.parse(endTimeIso);
       Duration duration = end.difference(start);
 
       String twoDigits(int n) => n.toString().padLeft(2, "0");

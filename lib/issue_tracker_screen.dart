@@ -139,8 +139,8 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
       String entry =
           "CRM ID: $_crmId, TL Name: $_tlName, Advisor Name: $_advisorName, "
           "Organization: $_organization, Issue Explanation: $_selectedIssueExplanation, "
-          "Reason: $_selectedReason, Start Time: ${startTime!.format(context)}, "
-          "End Time: ${endTime!.format(context)}, Fill Time: ${DateTime.now().toIso8601String()}";
+          "Reason: $_selectedReason, Start Time: ${DateTime(now.year, now.month, now.day, startTime!.hour, startTime.minute).toIso8601String()}, "
+          "End Time: ${DateTime(now.year, now.month, now.day, endTime!.hour, endTime.minute).toIso8601String()}, Fill Time: ${DateTime.now().toIso8601String()}";
 
       history.add(entry);
       await prefs.setStringList("issueHistory", history);
