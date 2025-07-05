@@ -280,6 +280,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
       parent: _animationController,
       curve: Curves.easeOutCubic,
     ));
+    _animationController.forward();
   }
 
   @override

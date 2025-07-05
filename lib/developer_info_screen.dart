@@ -36,8 +36,7 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
       parent: _animationController,
       curve: Curves.easeOutCubic,
     ));
-    
-    
+    _animationController.forward();
   }
 
   @override
