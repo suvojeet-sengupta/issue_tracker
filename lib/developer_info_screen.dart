@@ -11,20 +11,14 @@ class DeveloperInfoScreen extends StatefulWidget {
 class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
     with TickerProviderStateMixin {
   late AnimationController _animationController;
-  late AnimationController _pulseController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _slideAnimation;
-  late Animation<double> _pulseAnimation;
 
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1200),
-      vsync: this,
-    );
-    _pulseController = AnimationController(
-      duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
     _fadeAnimation = Tween<double>(
@@ -41,13 +35,6 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
       parent: _animationController,
       curve: Curves.easeOutCubic,
     ));
-    _pulseAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.05,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
-    ));
     _animationController.forward();
     _pulseController.repeat(reverse: true);
   }
@@ -55,7 +42,6 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
   @override
   void dispose() {
     _animationController.dispose();
-    _pulseController.dispose();
     super.dispose();
   }
 
@@ -169,37 +155,34 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                             ),
                             child: Column(
                               children: [
-                                // Profile Avatar with Pulse Animation
-                                ScaleTransition(
-                                  scale: _pulseAnimation,
-                                  child: Container(
-                                    width: 140,
-                                    height: 140,
-                                    decoration: BoxDecoration(
-                                      gradient: const LinearGradient(
-                                        colors: [
-                                          Color(0xFF1E3A8A),
-                                          Color(0xFF3B82F6)
-                                        ],
-                                      ),
-                                      borderRadius: BorderRadius.circular(70),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: const Color(0xFF1E3A8A)
-                                              .withOpacity(0.3),
-                                          blurRadius: 20,
-                                          offset: const Offset(0, 10),
-                                        ),
+                                // Profile Avatar
+                                Container(
+                                  width: 140,
+                                  height: 140,
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [
+                                        Color(0xFF1E3A8A),
+                                        Color(0xFF3B82F6)
                                       ],
                                     ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(70),
-                                      child: Image.asset(
-                                        'assets/images/developer_profile.jpg',
-                                        fit: BoxFit.cover,
-                                        width: 140,
-                                        height: 140,
+                                    borderRadius: BorderRadius.circular(70),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color(0xFF1E3A8A)
+                                            .withOpacity(0.3),
+                                        blurRadius: 20,
+                                        offset: const Offset(0, 10),
                                       ),
+                                    ],
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(70),
+                                    child: Image.asset(
+                                      'assets/images/developer_profile.jpg',
+                                      fit: BoxFit.cover,
+                                      width: 140,
+                                      height: 140,
                                     ),
                                   ),
                                 ),
@@ -487,6 +470,81 @@ This app may not be perfect,\n but it's built with real-life experience, practic
                                   ),
                                   onTap: () => _launchURL(
                                       'https://github.com/suvojit213'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 32),
+
+                        // App Settings Section
+                        SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(0, 0.5),
+                            end: Offset.zero,
+                          ).animate(_slideAnimation),
+                          child: _buildEnhancedCard(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        gradient: const LinearGradient(
+                                          colors: [
+                                            Color(0xFF8B5CF6),
+                                            Color(0xFFC084FC)
+                                          ],
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: const Icon(
+                                        Icons.settings_rounded,
+                                        color: Colors.white,
+                                        size: 24,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    const Text(
+                                      'App Settings',
+                                      style: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF1E3A8A),
+                                        fontFamily: 'Poppins', // Added Poppins font
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 24),
+                                Builder(
+                                  builder: (context) {
+                                    final MyAppState? myAppState = context.findAncestorStateOfType<MyAppState>();
+                                    final bool isDarkMode = myAppState?._themeMode == ThemeMode.dark;
+                                    return SwitchListTile(
+                                      title: const Text(
+                                        'Dark Mode',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: Color(0xFF1E3A8A),
+                                          fontFamily: 'Poppins', // Added Poppins font
+                                        ),
+                                      ),
+                                      secondary: Icon(
+                                        isDarkMode ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
+                                        color: isDarkMode ? const Color(0xFF1E3A8A) : Colors.grey,
+                                      ),
+                                      value: isDarkMode,
+                                      onChanged: (value) {
+                                        myAppState?._toggleThemeMode(value);
+                                      },
+                                      activeColor: const Color(0xFF1E3A8A),
+                                    );
+                                  },
                                 ),
                               ],
                             ),
