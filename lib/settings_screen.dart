@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:issue_tracker_app/theme_notifier.dart';
+import 'package:issue_tracker_app/admin_settings_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -26,9 +27,58 @@ class SettingsScreen extends StatelessWidget {
                 );
               },
             ),
+            ListTile(
+              title: const Text('Admin Settings'),
+              onTap: () {
+                _showAdminPasswordDialog(context);
+              },
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  void _showAdminPasswordDialog(BuildContext context) {
+    TextEditingController passwordController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Admin Access'),
+          content: TextField(
+            controller: passwordController,
+            obscureText: true,
+            decoration: const InputDecoration(
+              hintText: 'Enter password',
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Enter'),
+              onPressed: () {
+                if (passwordController.text == '01082005') {
+                  Navigator.of(context).pop(); // Close dialog
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const AdminSettingsScreen()),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Incorrect password')),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
