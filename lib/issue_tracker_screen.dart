@@ -145,67 +145,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
       history.add(entry);
       await prefs.setStringList("issueHistory", history);
 
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            title: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.check_circle_rounded,
-                    color: Colors.green,
-                    size: 32,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                const Text(
-                  "Success!",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1E3A8A),
-                    fontFamily: 'Poppins', // Added Poppins font
-                  ),
-                ),
-              ],
-            ),
-            content: const Text(
-              "Issue has been recorded successfully. Opening Google Form Please Verify Form And Submit...",
-              style: TextStyle(
-                fontSize: 16,
-                fontFamily: 'Poppins', // Added Poppins font
-              ),
-            ),
-            actions: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  _openGoogleForm();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1E3A8A),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: const Text(
-                  "Continue",
-                  style: TextStyle(fontFamily: 'Poppins'), // Added Poppins font
-                ),
-              ),
-            ],
-          );
-        },
-      );
+      _openGoogleForm();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
