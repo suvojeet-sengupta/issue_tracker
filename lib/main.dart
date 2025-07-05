@@ -353,12 +353,12 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                       ],
                     ),
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 20),
 
                     // Hero Section
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(32),
+                      padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
@@ -368,12 +368,12 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                             Colors.white.withOpacity(0.85),
                           ],
                         ),
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.05),
-                            blurRadius: 10,
-                            offset: const Offset(0, 5),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
@@ -383,18 +383,18 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                             'Welcome Back, ${_advisorName.split(" ").first}!',
                             style: const TextStyle(
                               color: Color(0xFF1E3A8A),
-                              fontSize: 32,
+                              fontSize: 28,
                               fontWeight: FontWeight.bold,
                               fontFamily: 'Poppins',
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 6),
                           const Text(
                             'Track and manage your issues with precision',
                             style: TextStyle(
                               color: Colors.grey,
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                               fontFamily: 'Poppins',
                             ),
@@ -404,30 +404,30 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                       ),
                     ),
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 20),
 
                     // User Information Card with Enhanced Design
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.05),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
                           ),
                         ],
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(24),
+                        padding: const EdgeInsets.all(20),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
                               children: [
                                 Container(
-                                  padding: const EdgeInsets.all(12),
+                                  padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
                                     gradient: const LinearGradient(
                                       colors: [
@@ -435,19 +435,19 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                                         Color(0xFF3B82F6)
                                       ],
                                     ),
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: const Icon(
                                     Icons.person_outline,
                                     color: Colors.white,
-                                    size: 24,
+                                    size: 20,
                                   ),
                                 ),
-                                const SizedBox(width: 16),
+                                const SizedBox(width: 12),
                                 const Text(
                                   'User Profile',
                                   style: TextStyle(
-                                    fontSize: 22,
+                                    fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                     color: Color(0xFF1E3A8A),
                                     fontFamily: 'Poppins',
@@ -455,17 +455,17 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 20),
                             _buildInfoRow(Icons.badge_outlined, 'CRM ID', _crmId),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 12),
                             _buildInfoRow(
                                 Icons.supervisor_account_outlined,
                                 'Team Leader',
                                 _tlName),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 12),
                             _buildInfoRow(Icons.person_outline,
                                 'Advisor Name', _advisorName),
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 20),
                             SizedBox(
                               width: double.infinity,
                               child: ElevatedButton.icon(
@@ -479,7 +479,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                                 label: const Text(
                                   'Edit Profile',
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Poppins',
                                     color: Colors.white,
@@ -488,10 +488,10 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFF3B82F6),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                  elevation: 4,
-                                  shadowColor: const Color(0xFF3B82F6).withOpacity(0.3),
+                                  elevation: 3,
+                                  shadowColor: const Color(0xFF3B82F6).withOpacity(0.2),
                                 ),
                               ),
                             ),
@@ -500,7 +500,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                       ),
                     ),
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -514,37 +514,37 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
 
   Widget _buildInfoRow(IconData icon, String label, String value) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: const Color(0xFFE2E8F0),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 3,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
               color: const Color(0xFF1E3A8A).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(6),
             ),
             child: Icon(
               icon,
               color: const Color(0xFF3B82F6),
-              size: 20,
+              size: 18,
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -552,18 +552,18 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                 Text(
                   label,
                   style: const TextStyle(
-                    fontSize: 12,
+                    fontSize: 11,
                     color: Colors.grey,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.5,
                     fontFamily: 'Poppins',
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
                   value.isNotEmpty ? value : 'Not set',
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF1E3A8A),
                     fontFamily: 'Poppins',
