@@ -4,6 +4,7 @@ import 'package:issue_tracker_app/initial_setup_screen.dart';
 import 'package:issue_tracker_app/issue_tracker_screen.dart';
 import 'package:issue_tracker_app/history_screen.dart';
 import 'package:issue_tracker_app/developer_info_screen.dart';
+import 'package:issue_tracker_app/edit_profile_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -176,6 +177,7 @@ class _MyAppState extends State<MyApp> {
             '/issue_tracker': (context) => const IssueTrackerScreen(),
             '/history': (context) => const HistoryScreen(),
             '/developer_info': (context) => const DeveloperInfoScreen(),
+            '/edit_profile': (context) => const EditProfileScreen(),
           },
         );
       },
@@ -456,6 +458,36 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                             const SizedBox(height: 16),
                             _buildInfoRow(Icons.person_outline,
                                 'Advisor Name', _advisorName),
+                            const SizedBox(height: 24),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton.icon(
+                                onPressed: () async {
+                                  final result = await Navigator.pushNamed(context, '/edit_profile');
+                                  if (result == true) {
+                                    _loadUserData(); // Reload data if profile was updated
+                                  }
+                                },
+                                icon: const Icon(Icons.edit_rounded, color: Colors.white),
+                                label: const Text(
+                                  'Edit Profile',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Poppins',
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF3B82F6),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  elevation: 4,
+                                  shadowColor: const Color(0xFF3B82F6).withOpacity(0.3),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
