@@ -6,8 +6,10 @@ import 'package:issue_tracker_app/history_screen.dart';
 import 'package:issue_tracker_app/developer_info_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const MyApp(key: myAppKey));
 }
+
+final GlobalKey<_MyAppState> myAppKey = GlobalKey<_MyAppState>();
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -53,6 +55,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      key: myAppKey,
       title: 'Issue Tracker App',
       debugShowCheckedModeBanner: false,
       themeMode: _themeMode,

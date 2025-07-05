@@ -35,7 +35,7 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
       parent: _animationController,
       curve: Curves.easeOutCubic,
     ));
-    _animationController.forward();
+    
     
   }
 
@@ -522,7 +522,7 @@ This app may not be perfect,\n but it's built with real-life experience, practic
                                 const SizedBox(height: 24),
                                 Builder(
                                   builder: (context) {
-                                    final _MyAppState? myAppState = context.findAncestorStateOfType<_MyAppState>();
+                                    final _MyAppState? myAppState = myAppKey.currentState;
                                     final bool isDarkMode = myAppState?._themeMode == ThemeMode.dark;
                                     return SwitchListTile(
                                       title: const Text(
