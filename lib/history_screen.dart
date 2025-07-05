@@ -21,11 +21,11 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
     super.initState();
     _loadHistory();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 500),
       vsync: this,
     );
     _listController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 600),
       vsync: this,
     );
     _fadeAnimation = Tween<double>(
@@ -590,14 +590,28 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                 Row(
                   children: [
                     if (parsedEntry['Fill Time'] != null)
-                      Text(
-                        'Filled: ${_formatDate(parsedEntry['Fill Time']!)}',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'Poppins', // Added Poppins font
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            '${_formatOnlyDate(parsedEntry['Fill Time']!)}',
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                          Text(
+                            'Filled: ${_formatTime(parsedEntry['Fill Time']!)}',
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                        ],
                       ),
                     const SizedBox(width: 8),
                     IconButton(
@@ -780,7 +794,10 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
     );
   }
 
-  Widget _buildTimeInfo(IconData icon, String label, String time, Color color) {
+  Widget _buildTimeInfo(IconData icon, String label, String timeIso, Color color) {
+    String formattedTime = _formatTime(timeIso);
+    String formattedDate = _formatOnlyDate(timeIso);
+
     return Column(
       children: [
         Icon(
@@ -795,17 +812,27 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
             fontSize: 12,
             color: Colors.grey[600],
             fontWeight: FontWeight.w500,
-            fontFamily: 'Poppins', // Added Poppins font
+            fontFamily: 'Poppins',
           ),
         ),
         const SizedBox(height: 2),
         Text(
-          time,
+          formattedDate,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: color,
+            fontFamily: 'Poppins',
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          formattedTime,
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.bold,
             color: color,
-            fontFamily: 'Poppins', // Added Poppins font
+            fontFamily: 'Poppins',
           ),
         ),
       ],
@@ -854,12 +881,21 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
     return parsed;
   }
 
-  String _formatDate(String isoString) {
+  String _formatTime(String isoString) {
     try {
       DateTime dateTime = DateTime.parse(isoString);
-      return '${dateTime.day}/${dateTime.month}/${dateTime.year} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+      return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
     } catch (e) {
-      return 'Invalid Date';
+      return 'N/A';
+    }
+  }
+
+  String _formatOnlyDate(String isoString) {
+    try {
+      DateTime dateTime = DateTime.parse(isoString);
+      return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
+    } catch (e) {
+      return 'N/A';
     }
   }
 
