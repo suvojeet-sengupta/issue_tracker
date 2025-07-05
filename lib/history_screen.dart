@@ -998,7 +998,8 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
         "*Reason:* ${parsedEntry['Reason']}\n\n"
         "*Start Time:* ${_formatTime(parsedEntry['Start Time']!)} on ${_formatOnlyDate(parsedEntry['Start Time']!)}\n"
         "*End Time:* ${_formatTime(parsedEntry['End Time']!)} on ${_formatOnlyDate(parsedEntry['End Time']!)}\n"
-        "*Duration:* ${_formatDuration(parsedEntry['Start Time']!, parsedEntry['End Time']!)}\n\n"
+        "*Duration:* ${_formatDuration(parsedEntry['Start Time']!, parsedEntry['End Time']!)}\n"
+        "*Fill Time:* ${_formatTime(parsedEntry['Fill Time']!)} on ${_formatOnlyDate(parsedEntry['Fill Time']!)}\n\n"
         "This report was generated from the Issue Tracker App.";
 
     Share.shareXFiles(imagePaths.map((path) => XFile(path)).toList(), text: message);
