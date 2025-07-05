@@ -9,6 +9,7 @@ import 'package:issue_tracker_app/edit_profile_screen.dart';
 import 'package:issue_tracker_app/theme_notifier.dart';
 
 import 'package:issue_tracker_app/settings_screen.dart';
+import 'package:issue_tracker_app/developer_info_screen.dart';
 
 void main() {
   runApp(ChangeNotifierProvider<ThemeNotifier>(
@@ -345,9 +346,14 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.settings, color: Colors.white),
+                          icon: const Icon(Icons.info_outline_rounded, color: Colors.white),
                           onPressed: () {
-                            Navigator.pushNamed(context, '/settings');
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const DeveloperInfoScreen()),
+                            );
                           },
                         ),
                       ],

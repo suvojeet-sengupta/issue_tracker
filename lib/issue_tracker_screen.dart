@@ -288,7 +288,30 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back_rounded,
+                            color: Colors.white),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    const Text(
+                      'Fill Issue Tracker',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Poppins', // Added Poppins font
+                      ),
+                    ),
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.2),
@@ -305,16 +328,6 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                                     const DeveloperInfoScreen()),
                           );
                         },
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    const Text(
-                      'Fill Issue Tracker',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Poppins', // Added Poppins font
                       ),
                     ),
                   ],
