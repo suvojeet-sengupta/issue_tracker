@@ -239,7 +239,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                           ),
                           const SizedBox(height: 12),
                           Text(
-                            'Let's set up your profile to get started',
+                            "Let's set up your profile to get started",
                             style: TextStyle(
                               color: Colors.white.withOpacity(0.8),
                               fontSize: 16,
