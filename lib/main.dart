@@ -6,7 +6,7 @@ import 'package:issue_tracker_app/history_screen.dart';
 import 'package:issue_tracker_app/developer_info_screen.dart';
 
 void main() {
-  runApp(const MyApp(key: myAppKey));
+  runApp(MyApp(key: myAppKey));
 }
 
 final GlobalKey<_MyAppState> myAppKey = GlobalKey<_MyAppState>();
