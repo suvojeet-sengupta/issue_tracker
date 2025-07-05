@@ -479,6 +479,8 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
             _buildDetailRow(Icons.person_outline, 'Advisor', parsedEntry['Advisor Name'] ?? 'N/A'),
             const SizedBox(height: 12),
             _buildDetailRow(Icons.business_outlined, 'Organization', parsedEntry['Organization'] ?? 'N/A'),
+            const SizedBox(height: 12),
+            _buildDetailRow(Icons.timer_rounded, 'Duration', _formatDuration(parsedEntry['Start Time'] ?? '', parsedEntry['End Time'] ?? '')),
             
             const SizedBox(height: 16),
             
@@ -696,6 +698,28 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
       return '${dateTime.day}/${dateTime.month}/${dateTime.year} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
     } catch (e) {
       return 'Invalid Date';
+    }
+  }
+
+  String _formatDuration(String startTime, String endTime) {
+    try {
+      DateTime start = DateTime.parse(startTime);
+      DateTime end = DateTime.parse(endTime);
+      Duration duration = end.difference(start);
+
+      String twoDigits(int n) => n.toString().padLeft(2, "0");
+      String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+      String twoDigitHours = twoDigits(duration.inHours);
+
+      if (duration.inHours > 0) {
+        return "${twoDigitHours}h ${twoDigitMinutes}m";
+      } else if (duration.inMinutes > 0) {
+        return "${twoDigitMinutes}m";
+      } else {
+        return "${duration.inSeconds}s";
+      }
+    } catch (e) {
+      return 'N/A';
     }
   }
 }
