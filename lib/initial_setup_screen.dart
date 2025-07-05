@@ -90,27 +90,18 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
   }
 
   _saveData() async {
-    if (!_isFormValid()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(Icons.warning_rounded, color: Colors.white),
-              const SizedBox(width: 12),
-              const Text(
-                'Please fill in all required fields',
-                style: TextStyle(fontFamily: 'Poppins'), // Added Poppins font
-              ),
-            ],
-          ),
-          backgroundColor: const Color(0xFFEF4444),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          margin: const EdgeInsets.all(16),
-        ),
-      );
+    final crmId = _crmIdController.text;
+    final advisorName = _advisorNameController.text;
+    final tlName = _selectedTlName;
+    final otherTlName = _otherTlNameController.text;
+
+    if (advisorName.isEmpty || (tlName == 'Other' && otherTlName.isEmpty)) {
+      _showErrorSnackbar('Please fill in all required fields');
+      return;
+    }
+
+    if (crmId.isEmpty || !RegExp(r'^[0-9]{6}$').hasMatch(crmId)) {
+      _showErrorSnackbar('CRM ID must be a 6-digit number');
       return;
     }
 
@@ -119,17 +110,40 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
     });
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('crmId', _crmIdController.text);
-    await prefs.setString('advisorName', _advisorNameController.text);
-    await prefs.setString("tlName", _selectedTlName);
+    await prefs.setString('crmId', crmId);
+    await prefs.setString('advisorName', advisorName);
+    await prefs.setString("tlName", tlName);
     if (_showOtherTlNameField) {
-      await prefs.setString("otherTlName", _otherTlNameController.text);
+      await prefs.setString("otherTlName", otherTlName);
     } else {
       await prefs.remove("otherTlName");
     }
     await prefs.setString("organization", _selectedOrganization);
 
     Navigator.pushReplacementNamed(context, '/home');
+  }
+
+  void _showErrorSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.warning_rounded, color: Colors.white),
+            const SizedBox(width: 12),
+            Text(
+              message,
+              style: const TextStyle(fontFamily: 'Poppins'),
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFFEF4444),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        margin: const EdgeInsets.all(16),
+      ),
+    );
   }
 
   @override
@@ -297,7 +311,9 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                               controller: _crmIdController,
                               label: 'CRM ID',
                               icon: Icons.badge_outlined,
-                              hint: 'Enter your CRM ID',
+                              hint: 'Enter your 6-digit CRM ID',
+                              keyboardType: TextInputType.number,
+                              maxLength: 6,
                             ),
 
                             const SizedBox(height: 20),
@@ -418,6 +434,8 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
     required String label,
     required IconData icon,
     required String hint,
+    TextInputType? keyboardType,
+    int? maxLength,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -451,6 +469,8 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
           child: TextField(
             controller: controller,
             onChanged: (value) => setState(() {}),
+            keyboardType: keyboardType,
+            maxLength: maxLength,
             decoration: InputDecoration(
               hintText: hint,
               prefixIcon: Padding( // Changed to Padding for better spacing
