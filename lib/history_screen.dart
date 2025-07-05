@@ -21,11 +21,11 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
     super.initState();
     _loadHistory();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 300),
       vsync: this,
     );
     _listController = AnimationController(
-      duration: const Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 400),
       vsync: this,
     );
     _fadeAnimation = Tween<double>(
@@ -478,7 +478,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                 itemCount: _filteredHistory.length,
                 itemBuilder: (context, index) {
                   return AnimatedContainer(
-                    duration: Duration(milliseconds: 300 + (index * 100)),
+                    duration: Duration(milliseconds: 200 + (index * 50)),
                     curve: Curves.easeOutCubic,
                     child: _buildHistoryItem(_filteredHistory[index], index),
                   );
