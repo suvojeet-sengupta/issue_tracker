@@ -450,7 +450,6 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                             scale: _buttonScale,
                             child: Container(
                               width: double.infinity,
-                              height: 64,
                               decoration: BoxDecoration(
                                 gradient: _isFormValid()
                                     ? const LinearGradient(
@@ -478,7 +477,8 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                                 child: InkWell(
                                   onTap: _isFormValid() ? _submitIssue : null,
                                   borderRadius: BorderRadius.circular(20),
-                                  child: Center(
+                                  child: Padding( // Added Padding for vertical spacing
+                                    padding: const EdgeInsets.symmetric(vertical: 16.0), // Adjust padding as needed
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -491,15 +491,19 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                                               : Colors.grey[600],
                                         ),
                                         const SizedBox(width: 12),
-                                        Text(
-                                          'Submit Issue and Open Form',
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                            color: _isFormValid()
-                                                ? Colors.white
-                                                : Colors.grey[600],
-                                            fontFamily: 'Poppins', // Added Poppins font
+                                        Expanded( // Wrapped Text in Expanded
+                                          child: Text(
+                                            'Submit Issue and Open Form',
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: _isFormValid()
+                                                  ? Colors.white
+                                                  : Colors.grey[600],
+                                              fontFamily: 'Poppins', // Added Poppins font
+                                            ),
+                                            textAlign: TextAlign.center, // Center text within Expanded
+                                            overflow: TextOverflow.ellipsis, // Handle overflow
                                           ),
                                         ),
                                       ],
