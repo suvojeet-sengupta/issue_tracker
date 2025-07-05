@@ -315,8 +315,6 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
       ),
     );
   }
-        
-  }
 
   Widget _buildInfoRow(IconData icon, String label, String value) {
     return Container(

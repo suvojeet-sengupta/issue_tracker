@@ -36,7 +36,7 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
       curve: Curves.easeOutCubic,
     ));
     _animationController.forward();
-    _pulseController.repeat(reverse: true);
+    
   }
 
   @override
@@ -522,7 +522,7 @@ This app may not be perfect,\n but it's built with real-life experience, practic
                                 const SizedBox(height: 24),
                                 Builder(
                                   builder: (context) {
-                                    final MyAppState? myAppState = context.findAncestorStateOfType<MyAppState>();
+                                    final _MyAppState? myAppState = context.findAncestorStateOfType<_MyAppState>();
                                     final bool isDarkMode = myAppState?._themeMode == ThemeMode.dark;
                                     return SwitchListTile(
                                       title: const Text(
