@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:issue_tracker_app/issue_tracker_screen.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -556,7 +558,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
 
   Widget _buildHistoryItem(String entry, int index) {
     Map<String, String> parsedEntry = _parseHistoryEntry(entry);
-    String? imagePath = parsedEntry['Image'];
+    List<String> imagePaths = parsedEntry['Images']?.split('|') ?? [];
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -624,6 +626,11 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                         ],
                       ),
                     const SizedBox(width: 8),
+                    IconButton(
+                      icon: const Icon(Icons.share_rounded, color: Colors.blueAccent),
+                      onPressed: () => _shareIssue(parsedEntry, imagePaths),
+                      visualDensity: VisualDensity.compact,
+                    ),
                     IconButton(
                       icon: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent),
                       onPressed: () => _confirmDelete(index),
@@ -752,27 +759,54 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                 ],
               ),
             ),
-            if (imagePath != null)
+            if (imagePaths.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 16.0),
-                child: GestureDetector(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => Dialog(
-                        child: Image.file(File(imagePath)),
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                  ),
+                  itemCount: imagePaths.length,
+                  itemBuilder: (context, imgIndex) {
+                    return GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => Dialog(
+                            child: Stack(
+                              alignment: Alignment.bottomRight,
+                              children: [
+                                Image.file(File(imagePaths[imgIndex])),
+                                IconButton(
+                                  icon: const Icon(Icons.download_rounded, color: Colors.white),
+                                  onPressed: () async {
+                                    await GallerySaver.saveImage(imagePaths[imgIndex]);
+                                    Navigator.of(context).pop();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('Image saved to gallery')),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.file(
+                          File(imagePaths[imgIndex]),
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     );
                   },
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.file(
-                      File(imagePath),
-                      width: double.infinity,
-                      height: 200,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
                 ),
               ),
           ],
@@ -952,6 +986,22 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
     } catch (e) {
       return 'N/A';
     }
+  }
+
+  _shareIssue(Map<String, String> parsedEntry, List<String> imagePaths) {
+    String message = "*Issue Report*\n\n"
+        "*Advisor Name:* ${parsedEntry['Advisor Name']}\n"
+        "*CRM ID:* ${parsedEntry['CRM ID']}\n"
+        "*Team Leader:* ${parsedEntry['Team Leader']}\n"
+        "*Organization:* ${parsedEntry['Organization']}\n\n"
+        "*Issue:* ${parsedEntry['Issue Explanation']}\n"
+        "*Reason:* ${parsedEntry['Reason']}\n\n"
+        "*Start Time:* ${_formatTime(parsedEntry['Start Time']!)} on ${_formatOnlyDate(parsedEntry['Start Time']!)}\n"
+        "*End Time:* ${_formatTime(parsedEntry['End Time']!)} on ${_formatOnlyDate(parsedEntry['End Time']!)}\n"
+        "*Duration:* ${_formatDuration(parsedEntry['Start Time']!, parsedEntry['End Time']!)}\n\n"
+        "This report was generated from the Issue Tracker App.";
+
+    Share.shareXFiles(imagePaths.map((path) => XFile(path)).toList(), text: message);
   }
 
   _confirmDelete(int index) {

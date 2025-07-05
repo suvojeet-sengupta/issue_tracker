@@ -30,7 +30,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
   int? _issueEndMinute;
   String _issueEndPeriod = "AM";
 
-  XFile? _image;
+  List<XFile> _images = [];
 
   late AnimationController _animationController;
   late AnimationController _buttonController;
@@ -94,11 +94,11 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
     });
   }
 
-  Future<void> _pickImage() async {
+  Future<void> _pickImages() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    final List<XFile> images = await picker.pickMultiImage();
     setState(() {
-      _image = image;
+      _images.addAll(images);
     });
   }
 
@@ -148,12 +148,14 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
       TimeOfDay? startTime = _getStartTimeOfDay();
       TimeOfDay? endTime = _getEndTimeOfDay();
 
-      String? imagePath;
-      if (_image != null) {
+      List<String> imagePaths = [];
+      if (_images.isNotEmpty) {
         final Directory appDir = await getApplicationDocumentsDirectory();
-        final String fileName = _image!.name;
-        final File localImage = await File(_image!.path).copy('${appDir.path}/$fileName');
-        imagePath = localImage.path;
+        for (var image in _images) {
+          final String fileName = image.name;
+          final File localImage = await File(image.path).copy('${appDir.path}/$fileName');
+          imagePaths.add(localImage.path);
+        }
       }
 
       String entry =
@@ -161,8 +163,8 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
           "Organization: $_organization, Issue Explanation: $_selectedIssueExplanation, "
           "Reason: $_selectedReason, Start Time: ${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, startTime!.hour, startTime.minute).toIso8601String()}, "
           "End Time: ${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, endTime!.hour, endTime.minute).toIso8601String()}, Fill Time: ${DateTime.now().toIso8601String()}";
-      if (imagePath != null) {
-        entry += ", Image: $imagePath";
+      if (imagePaths.isNotEmpty) {
+        entry += ", Images: ${imagePaths.join('|')}";
       }
 
       history.add(entry);
@@ -869,60 +871,70 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
         _buildEnhancedCard(
           child: Column(
             children: [
-              if (_image != null)
-                Stack(
-                  alignment: Alignment.topRight,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.file(
-                        File(_image!.path),
-                        width: double.infinity,
-                        height: 200,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close_rounded, color: Colors.white),
-                      onPressed: () {
-                        setState(() {
-                          _image = null;
-                        });
-                      },
-                    ),
-                  ],
-                )
-              else
-                GestureDetector(
-                  onTap: _pickImage,
-                  child: Container(
-                    height: 150,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey[300]!),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.add_a_photo_outlined,
-                          color: Colors.grey[500],
-                          size: 48,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Add Screenshot',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
                 ),
+                itemCount: _images.length + 1,
+                itemBuilder: (context, index) {
+                  if (index == _images.length) {
+                    return GestureDetector(
+                      onTap: _pickImages,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey[300]!),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.add_a_photo_outlined,
+                              color: Colors.grey[500],
+                              size: 48,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Add Image',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+                  return Stack(
+                    alignment: Alignment.topRight,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.file(
+                          File(_images[index].path),
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close_rounded, color: Colors.white),
+                        onPressed: () {
+                          setState(() {
+                            _images.removeAt(index);
+                          });
+                        },
+                      ),
+                    ],
+                  );
+                },
+              ),
             ],
           ),
         ),
