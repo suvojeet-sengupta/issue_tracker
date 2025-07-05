@@ -44,13 +44,15 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  void _toggleThemeMode(bool isDarkMode) async {
+  void toggleThemeMode(bool isDarkMode) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isDarkMode', isDarkMode);
     setState(() {
       _themeMode = isDarkMode ? ThemeMode.dark : ThemeMode.light;
     });
   }
+
+  static _MyAppState of(BuildContext context) => context.findAncestorStateOfType<_MyAppState>()!;
 
   @override
   Widget build(BuildContext context) {

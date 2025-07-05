@@ -523,8 +523,7 @@ This app may not be perfect,\n but it's built with real-life experience, practic
                                 const SizedBox(height: 24),
                                 Builder(
                                   builder: (context) {
-                                    final _MyAppState? myAppState = myAppKey.currentState;
-                                    final bool isDarkMode = myAppState?._themeMode == ThemeMode.dark;
+                                    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
                                     return SwitchListTile(
                                       title: const Text(
                                         'Dark Mode',
@@ -541,7 +540,7 @@ This app may not be perfect,\n but it's built with real-life experience, practic
                                       ),
                                       value: isDarkMode,
                                       onChanged: (value) {
-                                        myAppState?._toggleThemeMode(value);
+                                        MyApp.of(context).toggleThemeMode(value);
                                       },
                                       activeColor: const Color(0xFF1E3A8A),
                                     );
