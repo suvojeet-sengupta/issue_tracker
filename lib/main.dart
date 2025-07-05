@@ -508,19 +508,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.pushNamed(context, '/issue_tracker');
-        },
-        label: const Text('Fill Issue Tracker'),
-        icon: const Icon(Icons.add_task_rounded),
-        backgroundColor: Theme.of(context).primaryColor,
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        elevation: 8,
-      ),
+      // Removed FloatingActionButton as its functionality is covered by the BottomNavigationBar
     );
   }
 
