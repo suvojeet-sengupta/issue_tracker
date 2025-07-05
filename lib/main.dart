@@ -383,6 +383,12 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                       child: Column(
                         children: [
                           
+                          Image.asset(
+                            'assets/images/app_logo.png',
+                            width: 120,
+                            height: 120,
+                            fit: BoxFit.contain,
+                          ),
                           const SizedBox(height: 24),
                           const Text(
                             'Welcome Back!',
