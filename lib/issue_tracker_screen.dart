@@ -171,7 +171,28 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
       history.add(entry);
       await prefs.setStringList("issueHistory", history);
 
-      _openGoogleForm();
+      await _openGoogleForm();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle_rounded, color: Colors.white),
+              const SizedBox(width: 12),
+              const Text(
+                "Issue Tracker filled successfully!",
+                style: TextStyle(fontFamily: 'Poppins'),
+              ),
+            ],
+          ),
+          backgroundColor: const Color(0xFF059669),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: const EdgeInsets.all(16),
+        ),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
