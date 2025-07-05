@@ -56,6 +56,7 @@ class _MyAppState extends State<MyApp> {
             '/issue_tracker': (context) => const IssueTrackerScreen(),
             '/history': (context) => const HistoryScreen(),
             '/settings': (context) => const SettingsScreen(),
+            '/edit_profile': (context) => const EditProfileScreen(),
           },
         );
       },
@@ -340,7 +341,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                             color: Colors.white,
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            fontFamily: 'Poppins', // Added Poppins font
+                            fontFamily: 'Poppins',
                           ),
                         ),
                         IconButton(
@@ -449,7 +450,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                                     fontSize: 22,
                                     fontWeight: FontWeight.bold,
                                     color: Color(0xFF1E3A8A),
-                                    fontFamily: 'Poppins', // Added Poppins font
+                                    fontFamily: 'Poppins',
                                   ),
                                 ),
                               ],
@@ -527,11 +528,11 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white, // Changed background color
-        borderRadius: BorderRadius.circular(12), // Slightly smaller radius
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: const Color(0xFFE2E8F0),
-          width: 1, // Slightly thinner border
+          width: 1,
         ),
         boxShadow: [
           BoxShadow(
@@ -551,7 +552,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
             ),
             child: Icon(
               icon,
-              color: const Color(0xFF3B82F6), // Changed icon color
+              color: const Color(0xFF3B82F6),
               size: 20,
             ),
           ),
@@ -567,7 +568,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                     color: Colors.grey,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.5,
-                    fontFamily: 'Poppins', // Added Poppins font
+                    fontFamily: 'Poppins',
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -577,7 +578,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF1E3A8A),
-                    fontFamily: 'Poppins', // Added Poppins font
+                    fontFamily: 'Poppins',
                   ),
                 ),
               ],
