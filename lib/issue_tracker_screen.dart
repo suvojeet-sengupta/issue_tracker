@@ -171,20 +171,37 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
   }
 
   _openGoogleForm() async {
-    final String crmIdEntryId = "1005447471";
-    final String advisorNameEntryId = "44222229";
-    final String startTimeHourEntryId = "1521239602_hour";
-    final String startTimeMinuteEntryId = "1521239602_minute";
-    final String endTimeHourEntryId = "701130970_hour";
-    final String endTimeMinuteEntryId = "701130970_minute";
-    final String tlNameEntryId = "115861300";
-    final String organizationEntryId = "313975949";
-    final String startDateYearEntryId = "702818104_year";
-    final String startDateMonthEntryId = "702818104_month";
-    final String startDateDayEntryId = "702818104_day";
-    final String endDateYearEntryId = "514450388_year";
-    final String endDateMonthEntryId = "514450388_month";
-    final String endDateDayEntryId = "514450388_day";
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String googleFormUrl = prefs.getString('googleFormUrl') ??
+        "https://docs.google.com/forms/d/e/1FAIpQLSdeWylhfFaHmM3osSGRbxh9S_XvnAEPCIhTemuh-I7-LNds_w/viewform?usp=pp_url"; // Default URL
+    String crmIdEntryId =
+        prefs.getString('crmIdEntry') ?? "entry.1005447471";
+    String advisorNameEntryId =
+        prefs.getString('advisorNameEntry') ?? "entry.44222229";
+    String startTimeHourEntryId =
+        prefs.getString('issueStartTimeHourEntry') ?? "entry.1521239602_hour";
+    String startTimeMinuteEntryId = prefs.getString('issueStartTimeMinuteEntry') ??
+        "entry.1521239602_minute";
+    String endTimeHourEntryId =
+        prefs.getString('issueEndTimeHourEntry') ?? "entry.701130970_hour";
+    String endTimeMinuteEntryId =
+        prefs.getString('issueEndTimeMinuteEntry') ?? "entry.701130970_minute";
+    String tlNameEntryId =
+        prefs.getString('tlNameEntry') ?? "entry.115861300";
+    String organizationEntryId =
+        prefs.getString('organizationEntry') ?? "entry.313975949";
+    String startDateYearEntryId =
+        prefs.getString('issueStartDateYearEntry') ?? "entry.702818104_year";
+    String startDateMonthEntryId = prefs.getString('issueStartDateMonthEntry') ??
+        "entry.702818104_month";
+    String startDateDayEntryId =
+        prefs.getString('issueStartDateDayEntry') ?? "entry.702818104_day";
+    String endDateYearEntryId =
+        prefs.getString('issueEndDateYearEntry') ?? "entry.514450388_year";
+    String endDateMonthEntryId =
+        prefs.getString('issueEndDateMonthEntry') ?? "entry.514450388_month";
+    String endDateDayEntryId =
+        prefs.getString('issueEndDateDayEntry') ?? "entry.514450388_day";
     final String explainIssueEntryId = "1211413190";
     final String reasonEntryId = "1231067802";
 
@@ -212,24 +229,23 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
     final String currentMonth = now.month.toString();
     final String currentDay = now.day.toString();
 
-    String url =
-        "https://docs.google.com/forms/d/e/1FAIpQLSdeWylhfFaHmM3osSGRbxh9S_XvnAEPCIhTemuh-I7-LNds_w/viewform?usp=pp_url";
-    url += "&entry." + crmIdEntryId + "=" + encodedCrmId;
-    url += "&entry." + advisorNameEntryId + "=" + encodedAdvisorName;
-    url += "&entry." + startTimeHourEntryId + "=" + startTimeHour;
-    url += "&entry." + startTimeMinuteEntryId + "=" + startTimeMinute;
-    url += "&entry." + endTimeHourEntryId + "=" + endTimeHour;
-    url += "&entry." + endTimeMinuteEntryId + "=" + endTimeMinute;
-    url += "&entry." + tlNameEntryId + "=" + encodedTlName;
-    url += "&entry." + organizationEntryId + "=" + encodedOrganization;
-    url += "&entry." + startDateYearEntryId + "=" + currentYear;
-    url += "&entry." + startDateMonthEntryId + "=" + currentMonth;
-    url += "&entry." + startDateDayEntryId + "=" + currentDay;
-    url += "&entry." + endDateYearEntryId + "=" + currentYear;
-    url += "&entry." + endDateMonthEntryId + "=" + currentMonth;
-    url += "&entry." + endDateDayEntryId + "=" + currentDay;
-    url += "&entry." + explainIssueEntryId + "=" + encodedIssueExplanation;
-    url += "&entry." + reasonEntryId + "=" + encodedReason;
+    String url = googleFormUrl;
+    url += "&" + crmIdEntryId + "=" + encodedCrmId;
+    url += "&" + advisorNameEntryId + "=" + encodedAdvisorName;
+    url += "&" + startTimeHourEntryId + "=" + startTimeHour;
+    url += "&" + startTimeMinuteEntryId + "=" + startTimeMinute;
+    url += "&" + endTimeHourEntryId + "=" + endTimeHour;
+    url += "&" + endTimeMinuteEntryId + "=" + endTimeMinute;
+    url += "&" + tlNameEntryId + "=" + encodedTlName;
+    url += "&" + organizationEntryId + "=" + encodedOrganization;
+    url += "&" + startDateYearEntryId + "=" + currentYear;
+    url += "&" + startDateMonthEntryId + "=" + currentMonth;
+    url += "&" + startDateDayEntryId + "=" + currentDay;
+    url += "&" + endDateYearEntryId + "=" + currentYear;
+    url += "&" + endDateMonthEntryId + "=" + currentMonth;
+    url += "&" + endDateDayEntryId + "=" + currentDay;
+    url += "&" + explainIssueEntryId + "=" + encodedIssueExplanation;
+    url += "&" + reasonEntryId + "=" + encodedReason;
 
     final Uri googleFormUri = Uri.parse(url);
 
