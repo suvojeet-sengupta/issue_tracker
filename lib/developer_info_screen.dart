@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:issue_tracker_app/main.dart'; // Import main.dart to access myAppKey
 
 class DeveloperInfoScreen extends StatefulWidget {
   const DeveloperInfoScreen({super.key});
@@ -521,9 +520,10 @@ This app may not be perfect,\n but it's built with real-life experience, practic
                                   ],
                                 ),
                                 const SizedBox(height: 24),
-                                Builder(
-                                  builder: (context) {
-                                    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+                                ValueListenableBuilder<ThemeMode>(
+                                  valueListenable: themeModeNotifier,
+                                  builder: (context, currentThemeMode, child) {
+                                    final bool isDarkMode = currentThemeMode == ThemeMode.dark;
                                     return SwitchListTile(
                                       title: const Text(
                                         'Dark Mode',
@@ -540,7 +540,7 @@ This app may not be perfect,\n but it's built with real-life experience, practic
                                       ),
                                       value: isDarkMode,
                                       onChanged: (value) {
-                                        MyApp.of(context).toggleThemeMode(value);
+                                        themeModeNotifier.value = value ? ThemeMode.dark : ThemeMode.light;
                                       },
                                       activeColor: const Color(0xFF1E3A8A),
                                     );
