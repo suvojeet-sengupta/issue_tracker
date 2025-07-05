@@ -105,6 +105,11 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
       return;
     }
 
+    if (!RegExp(r'^[a-zA-Z ]+$').hasMatch(advisorName)) {
+      _showErrorSnackbar('Advisor Name must contain only alphabets');
+      return;
+    }
+
     _buttonController.forward().then((_) {
       _buttonController.reverse();
     });
