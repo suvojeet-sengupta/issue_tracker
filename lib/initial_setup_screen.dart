@@ -180,37 +180,37 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 40), // Increased space at the top
+                    const SizedBox(height: 20),
 
                     // Welcome Header
                     Center(
                       child: Column(
                         children: [
-                          const Text(
+                          Text(
                             'Welcome to',
                             style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 20, // Slightly larger font
+                              color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.7),
+                              fontSize: 18, // Slightly larger font
                               fontWeight: FontWeight.w500,
                               fontFamily: 'Poppins',
                             ),
                           ),
-                          const SizedBox(height: 10), // Adjusted spacing
-                          const Text(
+                          const SizedBox(height: 8), // Adjusted spacing
+                          Text(
                             'Issue Tracker App',
                             style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 36, // Larger and more prominent
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              fontSize: 32, // Larger and more prominent
                               fontWeight: FontWeight.bold,
                               fontFamily: 'Poppins',
                             ),
                           ),
-                          const SizedBox(height: 16), // Adjusted spacing
+                          const SizedBox(height: 12), // Adjusted spacing
                           Text(
                             "Let's set up your profile to get started",
                             style: TextStyle(
-                              color: Colors.white.withOpacity(0.8),
-                              fontSize: 18, // Slightly larger font
+                              color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.8),
+                              fontSize: 16, // Slightly larger font
                               fontWeight: FontWeight.w500,
                               fontFamily: 'Poppins',
                             ),
@@ -220,7 +220,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                       ),
                     ),
 
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 20),
 
                     // Setup Form
                     Container(
@@ -236,7 +236,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                         ],
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(28),
+                        padding: const EdgeInsets.all(20),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -272,7 +272,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                               ],
                             ),
 
-                            const SizedBox(height: 32),
+                            const SizedBox(height: 24),
 
                             // CRM ID Field
                             _buildEnhancedTextField(
@@ -283,7 +283,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                               keyboardType: TextInputType.number,
                             ),
 
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 16),
 
                             // Advisor Name Field
                             _buildEnhancedTextField(
@@ -293,14 +293,14 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                               hint: 'Enter your advisor name',
                             ),
 
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 16),
 
                             // Team Leader Dropdown
                             _buildTeamLeaderDropdown(),
 
                             // Other TL Name Field (conditional)
                             if (_showOtherTlNameField) ...[
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 16),
                               _buildEnhancedTextField(
                                 controller: _otherTlNameController,
                                 label: 'Other Team Leader Name',
@@ -309,36 +309,35 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                               ),
                             ],
 
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 16),
 
                             // Organization Dropdown
                             _buildOrganizationDropdown(),
 
-                            const SizedBox(height: 32),
+                            const SizedBox(height: 24),
 
                             // Save Button
                             ScaleTransition(
                               scale: _buttonScale,
                               child: Container(
                                 width: double.infinity,
-                                height: 64,
+                                height: 60,
                                 decoration: BoxDecoration(
                                   gradient: _isFormValid()
-                                      ? const LinearGradient(
+                                      ? LinearGradient(
                                           colors: [
-                                            Color(0xFF1E3A8A),
-                                            Color(0xFF3B82F6)
+                                            Theme.of(context).primaryColor,
+                                            Theme.of(context).colorScheme.secondary,
                                           ],
                                         )
                                       : null,
                                   color:
-                                      _isFormValid() ? null : Colors.grey[300],
+                                      _isFormValid() ? null : Theme.of(context).disabledColor,
                                   borderRadius: BorderRadius.circular(20),
                                   boxShadow: _isFormValid()
                                       ? [
                                           BoxShadow(
-                                            color: const Color(0xFF1E3A8A)
-                                                .withOpacity(0.3),
+                                            color: Theme.of(context).primaryColor.withOpacity(0.3),
                                             blurRadius: 15,
                                             offset: const Offset(0, 8),
                                           ),
@@ -359,8 +358,8 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                                             Icons.check_circle_rounded,
                                             size: 24,
                                             color: _isFormValid()
-                                                ? Colors.white
-                                                : Colors.grey[600],
+                                                ? Theme.of(context).colorScheme.onPrimary
+                                                : Theme.of(context).textTheme.bodySmall?.color,
                                           ),
                                           const SizedBox(width: 12),
                                           Text(
@@ -369,8 +368,8 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold,
                                               color: _isFormValid()
-                                                  ? Colors.white
-                                                  : Colors.grey[600],
+                                                  ? Theme.of(context).colorScheme.onPrimary
+                                                  : Theme.of(context).textTheme.bodySmall?.color,
                                             ),
                                           ),
                                         ],
@@ -385,7 +384,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                       ),
                     ),
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -597,7 +596,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
           child: DropdownButtonFormField<String>(
             value: _selectedOrganization,
             decoration: InputDecoration(
-              border: InputBorder.none,
+              border: InputBord_buildEnhancedTextFielder.none,
               prefixIcon: Padding( // Changed to Padding for better spacing
                 padding: const EdgeInsets.all(12),
                 child: const Icon(
