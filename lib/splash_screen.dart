@@ -42,17 +42,17 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     final bool isSetupComplete = prefs.containsKey("crmId"); // Declare isSetupComplete
 
     if (mounted) {
-      if (!interactiveOnboardingComplete) {
+      if (!isSetupComplete) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const InitialSetupScreen()),
+        );
+      } else if (!interactiveOnboardingComplete) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const MainAppScreen()), // Navigate to MainAppScreen to start interactive tour
         );
-      } else if (isSetupComplete) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const MainAppScreen()),
-        );
       } else {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const InitialSetupScreen()),
+          MaterialPageRoute(builder: (context) => const MainAppScreen()),
         );
       }
     }
@@ -77,7 +77,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  'assets/icon/app_icon.png', // Your app icon
+                  'assets/icon/app_icon_foreground.png', // Using the adaptive icon foreground
                   height: 150,
                 ),
                 const SizedBox(height: 20),
