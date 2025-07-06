@@ -215,11 +215,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                       ),
                       child: IconButton(
                         icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
-                        onPressed: () => Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (context) => const IssueTrackerScreen()),
-                        (Route<dynamic> route) => false,
-                      ),
+                        onPressed: () => Navigator.pushReplacementNamed(context, '/home'),
                       ),
                     ),
                     const SizedBox(width: 16),
