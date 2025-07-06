@@ -88,7 +88,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       title: 'Developer Info',
                       subtitle: 'Information about the app developer',
                       onTap: () {
-                        Navigator.pushNamed(context, '/developer_info');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const DeveloperInfoScreen()),
+                        );
                       },
                     ),
                   ],
