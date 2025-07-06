@@ -5,6 +5,8 @@ import 'package:issue_tracker_app/issue_tracker_screen.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:issue_tracker_app/utils/issue_parser.dart';
+
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
 
@@ -70,7 +72,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
       return _issueHistory;
     }
     return _issueHistory.where((entry) {
-      Map<String, String> parsedEntry = _parseHistoryEntry(entry);
+      Map<String, String> parsedEntry = parseHistoryEntry(entry);
       String? fillTime = parsedEntry['Fill Time'];
       if (fillTime == null) return false;
 
@@ -552,7 +554,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
   }
 
   Widget _buildHistoryItem(String entry, int index) {
-    Map<String, String> parsedEntry = _parseHistoryEntry(entry);
+    Map<String, String> parsedEntry = parseHistoryEntry(entry);
     List<String> imagePaths = parsedEntry['Images']?.split('|') ?? [];
 
     return Container(
@@ -924,21 +926,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
     );
   }
 
-  Map<String, String> _parseHistoryEntry(String entry) {
-    Map<String, String> parsed = {};
-    List<String> parts = entry.split(', ');
-    
-    for (String part in parts) {
-      List<String> keyValue = part.split(': ');
-      if (keyValue.length >= 2) {
-        String key = keyValue[0];
-        String value = keyValue.sublist(1).join(': ');
-        parsed[key] = value;
-      }
-    }
-    
-    return parsed;
-  }
+  
 
   String _formatTime(String isoString) {
     try {

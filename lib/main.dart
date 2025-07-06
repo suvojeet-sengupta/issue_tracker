@@ -11,6 +11,7 @@ import 'package:issue_tracker_app/edit_profile_screen.dart';
 import 'package:issue_tracker_app/settings_screen.dart';
 import 'package:issue_tracker_app/developer_info_screen.dart';
 import 'package:issue_tracker_app/theme.dart';
+import 'package:issue_tracker_app/utils/issue_parser.dart'; // New import for issue parsing utility
 
 void main() {
   runApp(const MyApp());
@@ -131,6 +132,9 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
   String _tlName = "";
   String _advisorName = "";
   bool _isLoading = true; // Added loading state
+  int _totalIssues = 0;
+  Map<String, int> _issuesPerDay = {};
+  Map<String, int> _issueTypeBreakdown = {};
   late final AnimationController _animationController;
   late final Animation<double> _fadeAnimation;
   late final Animation<double> _slideAnimation;
@@ -139,6 +143,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
   void initState() {
     super.initState();
     _loadUserData();
+    _loadAnalyticsData(); // Load analytics data
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
@@ -179,6 +184,37 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
       }
       _advisorName = prefs.getString("advisorName") ?? "";
       _isLoading = false; // Set loading to false after data is loaded
+    });
+  }
+
+  _loadAnalyticsData() async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> issueHistory = prefs.getStringList("issueHistory") ?? [];
+
+    int total = issueHistory.length;
+    Map<String, int> issuesPerDay = {};
+    Map<String, int> issueTypeBreakdown = {};
+
+    for (String entry in issueHistory) {
+      Map<String, String> parsedEntry = parseHistoryEntry(entry);
+      String? fillTime = parsedEntry['Fill Time'];
+      String? issueType = parsedEntry['Issue Explanation'];
+
+      if (fillTime != null) {
+        DateTime date = DateTime.parse(fillTime);
+        String formattedDate = "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+        issuesPerDay.update(formattedDate, (value) => value + 1, ifAbsent: () => 1);
+      }
+
+      if (issueType != null) {
+        issueTypeBreakdown.update(issueType, (value) => value + 1, ifAbsent: () => 1);
+      }
+    }
+
+    setState(() {
+      _totalIssues = total;
+      _issuesPerDay = issuesPerDay;
+      _issueTypeBreakdown = issueTypeBreakdown;
     });
   }
 
@@ -395,6 +431,41 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                           ),
 
                           const SizedBox(height: 20),
+
+                          // Analytics Section
+                          if (_totalIssues > 0)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Your Activity',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF1E3A8A),
+                                    fontFamily: 'Poppins',
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                _buildAnalyticsCard(
+                                  title: 'Total Issues Recorded',
+                                  value: '$_totalIssues',
+                                  icon: Icons.task_alt_rounded,
+                                  color: const Color(0xFF059669),
+                                ),
+                                const SizedBox(height: 16),
+                                _buildAnalyticsCard(
+                                  title: 'Issues Today',
+                                  value: '${_issuesPerDay[DateTime.now().toString().substring(0, 10)] ?? 0}',
+                                  icon: Icons.calendar_today_rounded,
+                                  color: const Color(0xFF3B82F6),
+                                ),
+                                const SizedBox(height: 16),
+                                if (_issueTypeBreakdown.isNotEmpty)
+                                  _buildIssueTypeBreakdownCard(),
+                                const SizedBox(height: 20),
+                              ],
+                            ),
                         ],
                       ),
                     ),
@@ -482,6 +553,125 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAnalyticsCard({required String title, required String value, required IconData icon, required Color color}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              icon,
+              color: color,
+              size: 28,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1E3A8A),
+                  fontFamily: 'Poppins',
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIssueTypeBreakdownCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Issue Type Breakdown',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF1E3A8A),
+              fontFamily: 'Poppins',
+            ),
+          ),
+          const SizedBox(height: 16),
+          ..._issueTypeBreakdown.entries.map((entry) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    entry.key,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey[700],
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                  Text(
+                    '${entry.value}',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1E3A8A),
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
         ],
       ),
     );
