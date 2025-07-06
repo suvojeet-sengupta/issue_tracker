@@ -4,8 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:issue_tracker_app/initial_setup_screen.dart';
 import 'package:issue_tracker_app/issue_tracker_screen.dart';
 import 'package:issue_tracker_app/history_screen.dart';
-import 'package:issue_tracker_app/onboarding_screen.dart';
 import 'package:issue_tracker_app/splash_screen.dart'; // New import for splash screen
+import 'package:issue_tracker_app/onboarding_tour.dart'; // Import the new onboarding tour
 
 import 'package:issue_tracker_app/edit_profile_screen.dart';
 
@@ -27,13 +27,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // Remove _isSetupComplete and _isOnboardingComplete from here
-  // as SplashScreen will handle the initial navigation logic
-
   @override
   void initState() {
     super.initState();
-    // No need to check setup status here, SplashScreen will do it
   }
 
   @override
@@ -66,12 +62,45 @@ class MainAppScreen extends StatefulWidget {
 class _MainAppScreenState extends State<MainAppScreen> {
   int _selectedIndex = 0;
 
+  // GlobalKeys for onboarding tour
+  final GlobalKey _homeTabKey = GlobalKey();
+  final GlobalKey _trackerTabKey = GlobalKey();
+  final GlobalKey _historyTabKey = GlobalKey();
+  final GlobalKey _settingsTabKey = GlobalKey();
+  final GlobalKey _fillIssueButtonKey = GlobalKey();
+
+
   static final List<Widget> _widgetOptions = <Widget>[
-    const DashboardScreen(),
+    DashboardScreen(key: _fillIssueButtonKey), // Pass the key to DashboardScreen
     const IssueTrackerScreen(),
     const HistoryScreen(),
     const SettingsScreen(), // Settings screen is now part of bottom nav
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAndShowOnboardingTour();
+  }
+
+  _checkAndShowOnboardingTour() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bool onboardingComplete = prefs.getBool('interactive_onboarding_complete') ?? false;
+
+    if (!onboardingComplete) {
+      // Delay showing the tour until the UI is rendered
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        OnboardingTour(
+          homeTabKey: _homeTabKey,
+          trackerTabKey: _trackerTabKey,
+          historyTabKey: _historyTabKey,
+          settingsTabKey: _settingsTabKey,
+          fillIssueButtonKey: _fillIssueButtonKey,
+        ).show(context);
+        prefs.setBool('interactive_onboarding_complete', true);
+      });
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -86,21 +115,25 @@ class _MainAppScreenState extends State<MainAppScreen> {
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_rounded),
+            key: _homeTabKey, // Assign key
+            icon: const Icon(Icons.home_rounded),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add_task_rounded),
+            key: _trackerTabKey, // Assign key
+            icon: const Icon(Icons.add_task_rounded),
             label: 'Tracker',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.history_rounded),
+            key: _historyTabKey, // Assign key
+            icon: const Icon(Icons.history_rounded),
             label: 'History',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings_rounded),
+            key: _settingsTabKey, // Assign key
+            icon: const Icon(Icons.settings_rounded),
             label: 'Settings',
           ),
         ],
@@ -117,7 +150,8 @@ class _MainAppScreenState extends State<MainAppScreen> {
 }
 
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+  final Key? fillIssueButtonKey;
+  const DashboardScreen({super.key, this.fillIssueButtonKey});
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
@@ -472,6 +506,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 16.0, right: 16.0),
         child: FloatingActionButton.extended(
+          key: widget.fillIssueButtonKey, // Assign the passed key here
           onPressed: () {
             Navigator.pushNamed(context, '/issue_tracker');
           },
