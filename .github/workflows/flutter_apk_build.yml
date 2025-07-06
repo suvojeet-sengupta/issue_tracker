@@ -53,6 +53,19 @@ jobs:
       - name: 🔄 Get Dependencies
         run: flutter pub get
 
+      - name: ⬆️ Commit and Push pubspec.lock changes (if any)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if ! git diff --quiet pubspec.lock; then
+            echo "pubspec.lock has changes. Committing..."
+            git add pubspec.lock
+            git commit -m "chore: Update pubspec.lock [skip ci]"
+            git push
+          else
+            echo "No changes in pubspec.lock."
+          fi
+
       - name: 💪 Build Release APK
         run: flutter build apk --release
 
