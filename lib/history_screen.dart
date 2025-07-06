@@ -1000,6 +1000,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
 *End Time:* ${_formatTime(parsedEntry['End Time']!)} on ${_formatOnlyDate(parsedEntry['End Time']!)}
 *Duration:* ${_formatDuration(parsedEntry['Start Time']!, parsedEntry['End Time']!)}
 *Fill Time:* ${_formatTime(parsedEntry['Fill Time']!)} on ${_formatOnlyDate(parsedEntry['Fill Time']!)}
+${parsedEntry['Issue Remarks'] != null && parsedEntry['Issue Remarks']!.isNotEmpty ? '*Remarks:* ${parsedEntry['Issue Remarks']}' : ''}
 
 """
         "This report was generated from the Issue Tracker App.";
