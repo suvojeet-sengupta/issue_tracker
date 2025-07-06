@@ -57,7 +57,7 @@ class OnboardingTour {
                   Padding(
                     padding: EdgeInsets.only(top: 8.0),
                     child: Text(
-                      "                      "This is your personalized dashboard. Here, you can view your Advisor Profile, track your total issues recorded, see daily issue counts, and get a breakdown of issue types. It provides a quick overview of your activity.",",
+                      "This is your personalized dashboard. Here, you can view your Advisor Profile, track your total issues recorded, see daily issue counts, and get a breakdown of issue types. It provides a quick overview of your activity.",
                       style: TextStyle(
                         color: Colors.black87,
                         fontSize: 14.0,
