@@ -44,7 +44,7 @@ class CreditsScreen extends StatelessWidget {
                     _buildContributorTile(
                       context,
                       name: 'Suvojeet Sengupta',
-                      role: 'Core Developer',
+                      role: 'App Developer, App Idea & Concept Designer',
                     ),
                     const SizedBox(height: 16),
                     Text(
