@@ -27,7 +27,7 @@ class HistoryOnboardingTour {
           enableOverlayTab: true,
           contents: [
             TargetContent(
-              align: ContentAlign.bottom,
+              align: ContentAlign.top, // Changed from .bottom to .top
               child: Container(
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
