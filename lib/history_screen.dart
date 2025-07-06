@@ -982,10 +982,11 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
 
   _shareIssue(Map<String, String> parsedEntry, List<String> imagePaths) {
     String message = "*Issue Report*\n\n"
-        "*Advisor Name:* ${parsedEntry['Advisor Name']}\n"
-        "*CRM ID:* ${parsedEntry['CRM ID']}\n"
-        "*Team Leader:* ${parsedEntry['Team Leader']}\n"
-        "*Organization:* ${parsedEntry['Organization']}\n\n"
+        "*Advisor Name:* ${parsedEntry['Advisor Name']}
+"        "*CRM ID:* ${parsedEntry['CRM ID']}
+"        "*Organization:* ${parsedEntry['Organization']}
+
+"
         "*Issue:* ${parsedEntry['Issue Explanation']}\n"
         "*Reason:* ${parsedEntry['Reason']}\n\n"
         "*Start Time:* ${_formatTime(parsedEntry['Start Time']!)} on ${_formatOnlyDate(parsedEntry['Start Time']!)}\n"
