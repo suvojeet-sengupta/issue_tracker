@@ -119,17 +119,6 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
             ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const IssueTrackerScreen()),
-            (Route<dynamic> route) => false,
-          );
-        },
-        backgroundColor: const Color(0xFF1E3A8A),
-        child: const Icon(Icons.home_rounded),
-      ),
-    );
+      );
   }
 }
