@@ -981,18 +981,21 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
   }
 
   _shareIssue(Map<String, String> parsedEntry, List<String> imagePaths) {
-    String message = "*Issue Report*\n\n"
-        "*Advisor Name:* ${parsedEntry['Advisor Name']}
-"        "*CRM ID:* ${parsedEntry['CRM ID']}
-"        "*Organization:* ${parsedEntry['Organization']}
+    String message = """*Issue Report*
 
-"
-        "*Issue:* ${parsedEntry['Issue Explanation']}\n"
-        "*Reason:* ${parsedEntry['Reason']}\n\n"
-        "*Start Time:* ${_formatTime(parsedEntry['Start Time']!)} on ${_formatOnlyDate(parsedEntry['Start Time']!)}\n"
-        "*End Time:* ${_formatTime(parsedEntry['End Time']!)} on ${_formatOnlyDate(parsedEntry['End Time']!)}\n"
-        "*Duration:* ${_formatDuration(parsedEntry['Start Time']!, parsedEntry['End Time']!)}\n"
-        "*Fill Time:* ${_formatTime(parsedEntry['Fill Time']!)} on ${_formatOnlyDate(parsedEntry['Fill Time']!)}\n\n"
+*Advisor Name:* ${parsedEntry['Advisor Name']}
+*CRM ID:* ${parsedEntry['CRM ID']}
+*Organization:* ${parsedEntry['Organization']}
+
+*Issue:* ${parsedEntry['Issue Explanation']}
+*Reason:* ${parsedEntry['Reason']}
+
+*Start Time:* ${_formatTime(parsedEntry['Start Time']!)} on ${_formatOnlyDate(parsedEntry['Start Time']!)}
+*End Time:* ${_formatTime(parsedEntry['End Time']!)} on ${_formatOnlyDate(parsedEntry['End Time']!)}
+*Duration:* ${_formatDuration(parsedEntry['Start Time']!, parsedEntry['End Time']!)}
+*Fill Time:* ${_formatTime(parsedEntry['Fill Time']!)} on ${_formatOnlyDate(parsedEntry['Fill Time']!)}
+
+"""
         "This report was generated from the Issue Tracker App.";
 
     Share.shareXFiles(imagePaths.map((path) => XFile(path)).toList(), text: message);
