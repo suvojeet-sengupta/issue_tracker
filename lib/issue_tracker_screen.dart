@@ -856,26 +856,42 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
             ),
             child: DropdownButtonFormField<String>(
               value: _selectedIssueExplanation,
-              isExpanded: true, // Added to make the dropdown take full width
+              isExpanded: true,
               decoration: InputDecoration(
                 border: InputBorder.none,
-                prefixIcon: Padding( // Changed to Padding for better spacing
+                prefixIcon: Padding(
                   padding: const EdgeInsets.all(12),
                   child: const Icon(
                     Icons.help_outline_rounded,
-                    color: Color(0xFF3B82F6), // Changed icon color
+                    color: Color(0xFF3B82F6),
                     size: 20,
                   ),
                 ),
               ),
+              selectedItemBuilder: (BuildContext context) {
+                return issueOptions.map<Widget>((String item) {
+                  return Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      item,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontFamily: 'Poppins',
+                        color: Color(0xFF1E3A8A),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  );
+                }).toList();
+              },
               items: issueOptions.map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(
                     value,
-                    overflow: TextOverflow.ellipsis, // Added to handle long text
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontFamily: 'Poppins', // Added Poppins font
+                      fontFamily: 'Poppins',
                       color: Color(0xFF1E3A8A),
                       fontWeight: FontWeight.w500,
                     ),
