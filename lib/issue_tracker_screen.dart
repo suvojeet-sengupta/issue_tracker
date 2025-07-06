@@ -45,7 +45,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
     super.initState();
     _loadUserData();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 500),
       vsync: this,
     );
     _buttonController = AnimationController(
@@ -634,8 +634,8 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -659,8 +659,8 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
         boxShadow: [ // Added subtle shadow
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
@@ -737,8 +737,8 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                   boxShadow: [
                     BoxShadow(
                       color: gradient.colors.first.withOpacity(0.3),
-                      blurRadius: 12,
-                      offset: const Offset(0, 6),
+                      blurRadius: 6,
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
@@ -849,8 +849,8 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
               boxShadow: [ // Added subtle shadow
                 BoxShadow(
                   color: Colors.black.withOpacity(0.05),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
+                  blurRadius: 4,
+                  offset: const Offset(0, 1),
                 ),
               ],
             ),
@@ -1064,8 +1064,8 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
         boxShadow: [ // Added subtle shadow
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            blurRadius: 2,
+            offset: const Offset(0, 0.5),
           ),
         ],
       ),

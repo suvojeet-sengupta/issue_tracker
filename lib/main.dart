@@ -177,7 +177,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
     _loadUserData();
     _loadAnalyticsData(); // Load analytics data
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 400),
       vsync: this,
     );
     _fadeAnimation = Tween<double>(
@@ -332,8 +332,8 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(0.05),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 4),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
                                 ),
                               ],
                             ),
@@ -374,8 +374,8 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(0.05),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 3),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
                                 ),
                               ],
                             ),
@@ -530,8 +530,8 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.03),
-            blurRadius: 3,
-            offset: const Offset(0, 1),
+            blurRadius: 1.5,
+            offset: const Offset(0, 0.5),
           ),
         ],
       ),
@@ -592,8 +592,8 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -651,8 +651,8 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -751,7 +751,7 @@ class _FabExtensionButtonState extends State<_FabExtensionButton> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
-              elevation: 8,
+              elevation: 4,
             )
           : FloatingActionButton(
               key: widget.fillIssueButtonKey,
@@ -760,7 +760,7 @@ class _FabExtensionButtonState extends State<_FabExtensionButton> {
               },
               backgroundColor: Theme.of(context).primaryColor,
               foregroundColor: Colors.white,
-              elevation: 8,
+              elevation: 4,
               child: const Icon(Icons.add_task_rounded),
             ),
     );

@@ -28,7 +28,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
     super.initState();
     _loadSavedData();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 750),
       vsync: this,
     );
     _buttonController = AnimationController(
@@ -230,8 +230,8 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.1),
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
+                            blurRadius: 10,
+                            offset: const Offset(0, 5),
                           ),
                         ],
                       ),
@@ -427,8 +427,8 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
             boxShadow: [ // Added subtle shadow
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
+                blurRadius: 4,
+                offset: const Offset(0, 1),
               ),
             ],
           ),
@@ -511,8 +511,8 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
             boxShadow: [ // Added subtle shadow
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
+                blurRadius: 4,
+                offset: const Offset(0, 1),
               ),
             ],
           ),
@@ -588,8 +588,8 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
             boxShadow: [ // Added subtle shadow
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
+                blurRadius: 4,
+                offset: const Offset(0, 1),
               ),
             ],
           ),

@@ -694,8 +694,8 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
           ),
         ],
       ),

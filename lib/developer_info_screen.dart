@@ -19,7 +19,7 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 600),
       vsync: this,
     );
     _fadeAnimation = Tween<double>(
@@ -148,8 +148,8 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(0.05),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 5),
+                                  blurRadius: 5,
+                                  offset: const Offset(0, 2.5),
                                 ),
                               ],
                             ),
@@ -171,8 +171,8 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                                       BoxShadow(
                                         color: const Color(0xFF1E3A8A)
                                             .withOpacity(0.3),
-                                        blurRadius: 20,
-                                        offset: const Offset(0, 10),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 5),
                                       ),
                                     ],
                                   ),
@@ -565,8 +565,8 @@ This app may not be perfect, but it's built with real-life experience, practical
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).shadowColor.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            blurRadius: 2.5,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
@@ -588,8 +588,8 @@ This app may not be perfect, but it's built with real-life experience, practical
         boxShadow: [
           BoxShadow(
             color: color.withOpacity(0.2),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            blurRadius: 2,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
@@ -618,8 +618,8 @@ This app may not be perfect, but it's built with real-life experience, practical
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.03),
-            blurRadius: 5,
-            offset: const Offset(0, 2),
+            blurRadius: 2.5,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
