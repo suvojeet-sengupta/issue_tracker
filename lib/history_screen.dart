@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:issue_tracker_app/issue_tracker_screen.dart';
+import 'package:issue_tracker_app/issue_detail_screen.dart'; // New import
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -406,70 +407,6 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Stats Card
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
-                ),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF1E3A8A).withOpacity(0.2),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(
-                      Icons.analytics_rounded,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Total Issues Recorded',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            fontFamily: 'Poppins', // Added Poppins font
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '${_issueHistory.length}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Poppins', // Added Poppins font
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            
-            const SizedBox(height: 24),
-            
             const Text(
               'Recent Issues',
               style: TextStyle(
@@ -570,244 +507,258 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
           ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => IssueDetailScreen(
+                issueDetails: parsedEntry,
+                imagePaths: imagePaths,
+              ),
+            ),
+          );
+        },
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
+                      ),
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    borderRadius: BorderRadius.circular(16),
+                    child: Text(
+                      'Issue #${_issueHistory.length - index}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
                   ),
-                  child: Text(
-                    'Issue #${_issueHistory.length - index}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Poppins',
-                    ),
+                  Row(
+                    children: [
+                      if (parsedEntry['Fill Time'] != null)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              '${_formatOnlyDate(parsedEntry['Fill Time']!)}',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                            Text(
+                              'Filled: ${_formatTime(parsedEntry['Fill Time']!)}',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                          ],
+                        ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        icon: const Icon(Icons.share_rounded, color: Colors.blueAccent),
+                        onPressed: () => _shareIssue(parsedEntry, imagePaths),
+                        visualDensity: VisualDensity.compact,
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent),
+                        onPressed: () => _confirmDelete(index),
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF0F9FF),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: const Color(0xFF3B82F6).withOpacity(0.2),
+                    width: 1,
                   ),
                 ),
-                Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (parsedEntry['Fill Time'] != null)
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            '${_formatOnlyDate(parsedEntry['Fill Time']!)}',
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 10,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: 'Poppins',
-                            ),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF3B82F6).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(6),
                           ),
-                          Text(
-                            'Filled: ${_formatTime(parsedEntry['Fill Time']!)}',
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: 'Poppins',
-                            ),
+                          child: const Icon(
+                            Icons.report_problem_outlined,
+                            color: Color(0xFF3B82F6),
+                            size: 16,
                           ),
-                        ],
-                      ),
-                    const SizedBox(width: 8),
-                    IconButton(
-                      icon: const Icon(Icons.share_rounded, color: Colors.blueAccent),
-                      onPressed: () => _shareIssue(parsedEntry, imagePaths),
-                      visualDensity: VisualDensity.compact,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Issue Details',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF3B82F6),
+                            fontFamily: 'Poppins',
+                          ),
+                        ),
+                      ],
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent),
-                      onPressed: () => _confirmDelete(index),
-                      visualDensity: VisualDensity.compact,
-                    ),
+                    const SizedBox(height: 12),
+                    _buildIssueDetailRow('Issue Type', parsedEntry['Issue Explanation'] ?? 'N/A'),
+                    const SizedBox(height: 8),
+                    _buildIssueDetailRow('Reason', parsedEntry['Reason'] ?? 'N/A'),
+                    if (parsedEntry['Issue Remarks'] != null && parsedEntry['Issue Remarks']!.isNotEmpty)
+                      const SizedBox(height: 8),
+                    if (parsedEntry['Issue Remarks'] != null && parsedEntry['Issue Remarks']!.isNotEmpty)
+                      _buildIssueDetailRow('Remarks', parsedEntry['Issue Remarks']!),
                   ],
                 ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF0F9FF),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: const Color(0xFF3B82F6).withOpacity(0.2),
-                  width: 1,
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8FAFC),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: const Color(0xFFE2E8F0),
+                    width: 1,
+                  ),
                 ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF3B82F6).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: const Icon(
-                          Icons.report_problem_outlined,
-                          color: Color(0xFF3B82F6),
-                          size: 16,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'Issue Details',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF3B82F6),
-                          fontFamily: 'Poppins',
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  _buildIssueDetailRow('Issue Type', parsedEntry['Issue Explanation'] ?? 'N/A'),
-                  const SizedBox(height: 8),
-                  _buildIssueDetailRow('Reason', parsedEntry['Reason'] ?? 'N/A'),
-                  if (parsedEntry['Issue Remarks'] != null && parsedEntry['Issue Remarks']!.isNotEmpty)
-                    const SizedBox(height: 8),
-                  if (parsedEntry['Issue Remarks'] != null && parsedEntry['Issue Remarks']!.isNotEmpty)
-                    _buildIssueDetailRow('Remarks', parsedEntry['Issue Remarks']!),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF8FAFC),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: const Color(0xFFE2E8F0),
-                  width: 1,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF1E3A8A).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: const Icon(
-                          Icons.access_time_rounded,
-                          color: Color(0xFF1E3A8A),
-                          size: 16,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'Time Information',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF1E3A8A),
-                          fontFamily: 'Poppins',
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildTimeInfo(
-                          Icons.play_circle_outline_rounded,
-                          'Start Time',
-                          parsedEntry['Start Time'] ?? 'N/A',
-                          const Color(0xFF059669),
-                        ),
-                      ),
-                      Container(
-                        width: 1,
-                        height: 40,
-                        color: const Color(0xFFE2E8F0),
-                        margin: const EdgeInsets.symmetric(horizontal: 16),
-                      ),
-                      Expanded(
-                        child: _buildTimeInfo(
-                          Icons.stop_circle_outlined,
-                          'End Time',
-                          parsedEntry['End Time'] ?? 'N/A',
-                          const Color(0xFFEF4444),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  _buildDetailRow(Icons.timer_rounded, 'Duration', _formatDuration(parsedEntry['Start Time'] ?? '', parsedEntry['End Time'] ?? '')),
-                ],
-              ),
-            ),
-            if (imagePaths.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
-                  ),
-                  itemCount: imagePaths.length,
-                  itemBuilder: (context, imgIndex) {
-                    return GestureDetector(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => Dialog(
-                            child: Stack(
-                              alignment: Alignment.bottomRight,
-                              children: [
-                                Image.file(File(imagePaths[imgIndex])),
-                                IconButton(
-                                  icon: const Icon(Icons.download_rounded, color: Colors.white),
-                                  onPressed: () async {
-                                    await Share.shareXFiles([XFile(imagePaths[imgIndex])]);
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
-                            ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1E3A8A).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(6),
                           ),
-                        );
-                      },
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.file(
-                          File(imagePaths[imgIndex]),
-                          width: double.infinity,
-                          height: double.infinity,
-                          fit: BoxFit.cover,
+                          child: const Icon(
+                            Icons.access_time_rounded,
+                            color: Color(0xFF1E3A8A),
+                            size: 16,
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Time Information',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1E3A8A),
+                            fontFamily: 'Poppins',
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildTimeInfo(
+                            Icons.play_circle_outline_rounded,
+                            'Start Time',
+                            parsedEntry['Start Time'] ?? 'N/A',
+                            const Color(0xFF059669),
+                          ),
+                        ),
+                        Container(
+                          width: 1,
+                          height: 40,
+                          color: const Color(0xFFE2E8F0),
+                          margin: const EdgeInsets.symmetric(horizontal: 16),
+                        ),
+                        Expanded(
+                          child: _buildTimeInfo(
+                            Icons.stop_circle_outlined,
+                            'End Time',
+                            parsedEntry['End Time'] ?? 'N/A',
+                            const Color(0xFFEF4444),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    _buildDetailRow(Icons.timer_rounded, 'Duration', _formatDuration(parsedEntry['Start Time'] ?? '', parsedEntry['End Time'] ?? '')),
+                  ],
                 ),
               ),
-          ],
+              if (imagePaths.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 8,
+                      mainAxisSpacing: 8,
+                    ),
+                    itemCount: imagePaths.length,
+                    itemBuilder: (context, imgIndex) {
+                      return GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => Dialog(
+                              child: Stack(
+                                alignment: Alignment.bottomRight,
+                                children: [
+                                  Image.file(File(imagePaths[imgIndex])),
+                                  IconButton(
+                                    icon: const Icon(Icons.download_rounded, color: Colors.white),
+                                    onPressed: () async {
+                                      await Share.shareXFiles([XFile(imagePaths[imgIndex])]);
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.file(
+                            File(imagePaths[imgIndex]),
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
