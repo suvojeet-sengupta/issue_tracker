@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class AppThemes {
@@ -121,3 +120,4 @@ class AppThemes {
   ),
   visualDensity: VisualDensity.adaptivePlatformDensity,
 );
+}

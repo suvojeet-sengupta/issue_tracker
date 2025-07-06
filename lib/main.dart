@@ -9,6 +9,7 @@ import 'package:issue_tracker_app/edit_profile_screen.dart';
 import 'package:issue_tracker_app/theme_notifier.dart';
 
 import 'package:issue_tracker_app/settings_screen.dart';
+import 'package:issue_tracker_app/developer_info_screen.dart';
 import 'package:issue_tracker_app/theme.dart';
 
 void main() {
