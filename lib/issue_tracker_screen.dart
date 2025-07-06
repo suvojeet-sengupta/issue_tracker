@@ -856,6 +856,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
             ),
             child: DropdownButtonFormField<String>(
               value: _selectedIssueExplanation,
+              isExpanded: true, // Added to make the dropdown take full width
               decoration: InputDecoration(
                 border: InputBorder.none,
                 prefixIcon: Padding( // Changed to Padding for better spacing
@@ -872,6 +873,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                   value: value,
                   child: Text(
                     value,
+                    overflow: TextOverflow.ellipsis, // Added to handle long text
                     style: const TextStyle(
                       fontFamily: 'Poppins', // Added Poppins font
                       color: Color(0xFF1E3A8A),
