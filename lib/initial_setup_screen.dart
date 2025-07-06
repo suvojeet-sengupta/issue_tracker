@@ -596,7 +596,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
           child: DropdownButtonFormField<String>(
             value: _selectedOrganization,
             decoration: InputDecoration(
-              border: InputBord_buildEnhancedTextFielder.none,
+              border: InputBorder.none,
               prefixIcon: Padding( // Changed to Padding for better spacing
                 padding: const EdgeInsets.all(12),
                 child: const Icon(
