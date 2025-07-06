@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FeedbackScreen extends StatefulWidget {
   const FeedbackScreen({super.key});
@@ -13,6 +14,22 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _feedbackController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAdvisorName();
+  }
+
+  Future<void> _loadAdvisorName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? advisorName = prefs.getString("advisorName");
+    if (advisorName != null) {
+      setState(() {
+        _nameController.text = advisorName;
+      });
+    }
+  }
 
   @override
   void dispose() {
