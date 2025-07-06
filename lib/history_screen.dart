@@ -18,6 +18,8 @@ class HistoryScreen extends StatefulWidget {
 class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateMixin {
   List<String> _issueHistory = [];
   DateTime? _selectedDate;
+  TimeOfDay? _selectedStartTime;
+  TimeOfDay? _selectedEndTime;
   late AnimationController _animationController;
   late AnimationController _listController;
   late Animation<double> _fadeAnimation;
@@ -69,23 +71,84 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
   }
 
   List<String> get _filteredHistory {
-    if (_selectedDate == null) {
-      return _issueHistory;
-    }
-    return _issueHistory.where((entry) {
+    List<String> filteredByDate = _issueHistory.where((entry) {
       Map<String, String> parsedEntry = parseHistoryEntry(entry);
       String? fillTime = parsedEntry['Fill Time'];
       if (fillTime == null) return false;
 
       try {
         DateTime entryDate = DateTime.parse(fillTime);
-        return entryDate.year == _selectedDate!.year &&
-            entryDate.month == _selectedDate!.month &&
-            entryDate.day == _selectedDate!.day;
+        return _selectedDate == null ||
+            (entryDate.year == _selectedDate!.year &&
+                entryDate.month == _selectedDate!.month &&
+                entryDate.day == _selectedDate!.day);
       } catch (e) {
         return false;
       }
     }).toList();
+
+    if (_selectedDate != null && (_selectedStartTime != null || _selectedEndTime != null)) {
+      return filteredByDate.where((entry) {
+        Map<String, String> parsedEntry = parseHistoryEntry(entry);
+        String? startTimeStr = parsedEntry['Start Time'];
+        String? endTimeStr = parsedEntry['End Time'];
+
+        if (startTimeStr == null || endTimeStr == null) return false;
+
+        try {
+          DateTime issueStartTime = DateTime.parse(startTimeStr);
+          DateTime issueEndTime = DateTime.parse(endTimeStr);
+
+          // Apply date from _selectedDate to issue times for comparison
+          issueStartTime = DateTime(
+            _selectedDate!.year,
+            _selectedDate!.month,
+            _selectedDate!.day,
+            issueStartTime.hour,
+            issueStartTime.minute,
+          );
+          issueEndTime = DateTime(
+            _selectedDate!.year,
+            _selectedDate!.month,
+            _selectedDate!.day,
+            issueEndTime.hour,
+            issueEndTime.minute,
+          );
+
+          bool matchesStartTime = true;
+          if (_selectedStartTime != null) {
+            DateTime selectedStartDateTime = DateTime(
+              _selectedDate!.year,
+              _selectedDate!.month,
+              _selectedDate!.day,
+              _selectedStartTime!.hour,
+              _selectedStartTime!.minute,
+            );
+            matchesStartTime = issueStartTime.isAtSameMomentAs(selectedStartDateTime) ||
+                (issueStartTime.isAfter(selectedStartDateTime) &&
+                    issueStartTime.difference(selectedStartDateTime).inMinutes <= 15);
+          }
+
+          bool matchesEndTime = true;
+          if (_selectedEndTime != null) {
+            DateTime selectedEndDateTime = DateTime(
+              _selectedDate!.year,
+              _selectedDate!.month,
+              _selectedDate!.day,
+              _selectedEndTime!.hour,
+              _selectedEndTime!.minute,
+            );
+            matchesEndTime = issueEndTime.isAtSameMomentAs(selectedEndDateTime) ||
+                (issueEndTime.isBefore(selectedEndDateTime) &&
+                    selectedEndDateTime.difference(issueEndTime).inMinutes <= 15);
+          }
+          return matchesStartTime && matchesEndTime;
+        } catch (e) {
+          return false;
+        }
+      }).toList();
+    }
+    return filteredByDate;
   }
 
   _clearHistory() async {
@@ -258,51 +321,141 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                           children: [
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-                              child: Row(
+                              child: Column(
                                 children: [
-                                  Expanded(
-                                    child: ElevatedButton.icon(
-                                      onPressed: () async {
-                                        final DateTime? picked = await showDatePicker(
-                                          context: context,
-                                          initialDate: _selectedDate ?? DateTime.now(),
-                                          firstDate: DateTime(2020),
-                                          lastDate: DateTime.now(),
-                                        );
-                                        if (picked != null && picked != _selectedDate) {
-                                          setState(() {
-                                            _selectedDate = picked;
-                                          });
-                                        }
-                                      },
-                                      icon: const Icon(Icons.calendar_today_rounded, color: Colors.white),
-                                      label: Text(
-                                        _selectedDate == null
-                                            ? 'Select Date'
-                                            : '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
-                                        style: const TextStyle(fontFamily: 'Poppins', color: Colors.white),
-                                      ),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(0xFF3B82F6),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: ElevatedButton.icon(
+                                          onPressed: () async {
+                                            final DateTime? picked = await showDatePicker(
+                                              context: context,
+                                              initialDate: _selectedDate ?? DateTime.now(),
+                                              firstDate: DateTime(2020),
+                                              lastDate: DateTime.now(),
+                                            );
+                                            if (picked != null && picked != _selectedDate) {
+                                              setState(() {
+                                                _selectedDate = picked;
+                                                _selectedStartTime = null; // Reset times on date change
+                                                _selectedEndTime = null;
+                                              });
+                                            }
+                                          },
+                                          icon: const Icon(Icons.calendar_today_rounded, color: Colors.white),
+                                          label: Text(
+                                            _selectedDate == null
+                                                ? 'Select Date'
+                                                : '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
+                                            style: const TextStyle(fontFamily: 'Poppins', color: Colors.white),
+                                          ),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: const Color(0xFF3B82F6),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(12),
+                                            ),
+                                            elevation: 4,
+                                          ),
                                         ),
-                                        elevation: 4,
                                       ),
-                                    ),
+                                      if (_selectedDate != null)
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 8.0),
+                                          child: IconButton(
+                                            icon: const Icon(Icons.clear_rounded, color: Colors.grey),
+                                            onPressed: () {
+                                              setState(() {
+                                                _selectedDate = null;
+                                                _selectedStartTime = null;
+                                                _selectedEndTime = null;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                    ],
                                   ),
-                                  if (_selectedDate != null)
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 8.0),
-                                      child: IconButton(
-                                        icon: const Icon(Icons.clear_rounded, color: Colors.grey),
-                                        onPressed: () {
-                                          setState(() {
-                                            _selectedDate = null;
-                                          });
-                                        },
-                                      ),
+                                  if (_selectedDate != null) ...[
+                                    const SizedBox(height: 16),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: ElevatedButton.icon(
+                                            onPressed: () async {
+                                              final TimeOfDay? picked = await showTimePicker(
+                                                context: context,
+                                                initialTime: _selectedStartTime ?? TimeOfDay.now(),
+                                              );
+                                              if (picked != null && picked != _selectedStartTime) {
+                                                setState(() {
+                                                  _selectedStartTime = picked;
+                                                });
+                                              }
+                                            },
+                                            icon: const Icon(Icons.access_time_rounded, color: Colors.white),
+                                            label: Text(
+                                              _selectedStartTime == null
+                                                  ? 'Start Time'
+                                                  : _selectedStartTime!.format(context),
+                                              style: const TextStyle(fontFamily: 'Poppins', color: Colors.white),
+                                            ),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: const Color(0xFF059669),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(12),
+                                              ),
+                                              elevation: 4,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: ElevatedButton.icon(
+                                            onPressed: () async {
+                                              final TimeOfDay? picked = await showTimePicker(
+                                                context: context,
+                                                initialTime: _selectedEndTime ?? TimeOfDay.now(),
+                                              );
+                                              if (picked != null && picked != _selectedEndTime) {
+                                                setState(() {
+                                                  _selectedEndTime = picked;
+                                                });
+                                              }
+                                            },
+                                            icon: const Icon(Icons.access_time_rounded, color: Colors.white),
+                                            label: Text(
+                                              _selectedEndTime == null
+                                                  ? 'End Time'
+                                                  : _selectedEndTime!.format(context),
+                                              style: const TextStyle(fontFamily: 'Poppins', color: Colors.white),
+                                            ),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: const Color(0xFFEF4444),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(12),
+                                              ),
+                                              elevation: 4,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        if (_selectedStartTime != null || _selectedEndTime != null)
+                                          IconButton(
+                                            icon: const Icon(Icons.clear_rounded, color: Colors.grey),
+                                            onPressed: () {
+                                              setState(() {
+                                                _selectedStartTime = null;
+                                                _selectedEndTime = null;
+                                              });
+                                            },
+                                          ),
+                                      ],
+                                    ),
+                                  ],
                                 ],
                               ),
                             ),
