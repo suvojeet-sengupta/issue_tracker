@@ -185,9 +185,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.08), // Slightly more prominent shadow
+            blurRadius: 15, // Increased blur
+            offset: const Offset(0, 6), // Increased offset
           ),
         ],
       ),
@@ -202,11 +202,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(
-            color: Colors.grey[600],
+            color: Colors.grey[700], // Slightly darker label color
             fontFamily: 'Poppins',
             fontWeight: FontWeight.w500,
           ),
-          prefixIcon: Icon(icon, color: const Color(0xFF3B82F6)),
+          prefixIcon: Padding(
+            padding: const EdgeInsets.all(12.0), // Added padding for the icon
+            child: Icon(icon, color: const Color(0xFF3B82F6)),
+          ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide.none,
@@ -217,7 +220,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: Color(0xFFE2E8F0), width: 1.5),
+            borderSide: const BorderSide(color: Color(0xFFB0BEC5), width: 1.5), // Slightly more visible enabled border
           ),
           filled: true,
           fillColor: Colors.white,
