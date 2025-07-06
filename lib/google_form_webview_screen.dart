@@ -47,15 +47,20 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
               SnackBar(
                 content: Row(
                   children: [
-                    const Icon(Icons.info_outline_rounded, color: Colors.white),
+                    const Icon(Icons.ads_click, color: Colors.white, size: 28),
                     const SizedBox(width: 12),
                     const Text(
                       "Click on Submit button",
-                      style: TextStyle(fontFamily: 'Poppins'),
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
                     ),
                   ],
                 ),
-                backgroundColor: Colors.blueAccent,
+                backgroundColor: Colors.deepPurple,
                 behavior: SnackBarBehavior.floating,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
