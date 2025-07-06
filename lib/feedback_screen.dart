@@ -38,7 +38,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       );
 
       if (await canLaunchUrl(emailLaunchUri)) {
-        await launchUrl(emailLaunchUri);
+        await launchUrl(emailLaunchUri, mode: LaunchMode.externalApplication);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Opening email client to send feedback.')),
         );
