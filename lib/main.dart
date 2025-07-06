@@ -178,7 +178,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
     _loadUserData();
     _loadAnalyticsData(); // Load analytics data
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 800),
       vsync: this,
     );
     _fadeAnimation = Tween<double>(
