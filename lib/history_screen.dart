@@ -679,6 +679,10 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                   _buildIssueDetailRow('Issue Type', parsedEntry['Issue Explanation'] ?? 'N/A'),
                   const SizedBox(height: 8),
                   _buildIssueDetailRow('Reason', parsedEntry['Reason'] ?? 'N/A'),
+                  if (parsedEntry['Issue Remarks'] != null && parsedEntry['Issue Remarks']!.isNotEmpty)
+                    const SizedBox(height: 8),
+                  if (parsedEntry['Issue Remarks'] != null && parsedEntry['Issue Remarks']!.isNotEmpty)
+                    _buildIssueDetailRow('Remarks', parsedEntry['Issue Remarks']!),
                 ],
               ),
             ),
@@ -926,8 +930,10 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
     
     for (String part in parts) {
       List<String> keyValue = part.split(': ');
-      if (keyValue.length == 2) {
-        parsed[keyValue[0]] = keyValue[1];
+      if (keyValue.length >= 2) {
+        String key = keyValue[0];
+        String value = keyValue.sublist(1).join(': ');
+        parsed[key] = value;
       }
     }
     

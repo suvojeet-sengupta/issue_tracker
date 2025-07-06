@@ -22,6 +22,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
   String _organization = "";
   String _selectedIssueExplanation = "System Hang / Voice Issue";
   String _selectedReason = "System issue (Network , Asset & Aspect /WDE issue)";
+  final TextEditingController _issueRemarksController = TextEditingController();
 
   int? _issueStartHour;
   int? _issueStartMinute;
@@ -79,6 +80,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
   void dispose() {
     _animationController.dispose();
     _buttonController.dispose();
+    _issueRemarksController.dispose();
     super.dispose();
   }
 
@@ -163,7 +165,8 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
           "CRM ID: $_crmId, TL Name: $_tlName, Advisor Name: $_advisorName, "
           "Organization: $_organization, Issue Explanation: $_selectedIssueExplanation, "
           "Reason: $_selectedReason, Start Time: ${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, startTime!.hour, startTime.minute).toIso8601String()}, "
-          "End Time: ${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, endTime!.hour, endTime.minute).toIso8601String()}, Fill Time: ${DateTime.now().toIso8601String()}";
+          "End Time: ${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, endTime!.hour, endTime.minute).toIso8601String()}, Fill Time: ${DateTime.now().toIso8601String()}, "
+          "Issue Remarks: ${_issueRemarksController.text}";
       if (imagePaths.isNotEmpty) {
         entry += ", Images: ${imagePaths.join('|')}";
       }
@@ -484,6 +487,11 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
 
                           // Reason Section
                           _buildReasonSelection(),
+
+                          const SizedBox(height: 24),
+
+                          // Issue Remarks
+                          _buildIssueRemarksField(),
 
                           const SizedBox(height: 32),
 
@@ -1042,6 +1050,31 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
             offset: const Offset(0, 2),
           ),
         ],
+      Widget _buildRadioOption({
+    required String title,
+    required String value,
+    required String groupValue,
+    required Function(String?) onChanged,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: value == groupValue
+            ? const Color(0xFF1E3A8A).withOpacity(0.1)
+            : Colors.white, // Changed background color
+        borderRadius: BorderRadius.circular(12), // Slightly smaller radius
+        border: Border.all(
+          color: value == groupValue
+              ? const Color(0xFF1E3A8A)
+              : const Color(0xFFE2E8F0),
+          width: value == groupValue ? 2 : 1,
+        ),
+        boxShadow: [ // Added subtle shadow
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: RadioListTile<String>(
         title: Text(
@@ -1059,6 +1092,51 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
         onChanged: onChanged,
         activeColor: const Color(0xFF1E3A8A),
       ),
+    );
+  }
+
+  Widget _buildIssueRemarksField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Issue Remarks (Optional)",
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF1E3A8A),
+            fontFamily: 'Poppins',
+          ),
+        ),
+        const SizedBox(height: 16),
+        _buildEnhancedCard(
+          child: TextFormField(
+            controller: _issueRemarksController,
+            maxLines: 3,
+            decoration: InputDecoration(
+              hintText: "Enter any additional remarks about the issue...",
+              hintStyle: TextStyle(
+                fontFamily: 'Poppins',
+                color: Colors.grey[500],
+              ),
+              border: InputBorder.none,
+              prefixIcon: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Icon(
+                  Icons.notes_rounded,
+                  color: Color(0xFF3B82F6),
+                  size: 20,
+                ),
+              ),
+            ),
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              color: Color(0xFF1E3A8A),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
