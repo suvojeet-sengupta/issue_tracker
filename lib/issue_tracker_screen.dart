@@ -631,13 +631,6 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -656,13 +649,6 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
           color: const Color(0xFFE2E8F0),
           width: 1, // Slightly thinner border
         ),
-        boxShadow: [ // Added subtle shadow
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
-          ),
-        ],
       ),
       child: Row(
         children: [
@@ -734,13 +720,6 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                 decoration: BoxDecoration(
                   gradient: gradient,
                   borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: gradient.colors.first.withOpacity(0.3),
-                      blurRadius: 6,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
                 ),
                 child: Icon(
                   icon,
@@ -846,13 +825,6 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
               color: Colors.white, // Changed background color
               borderRadius: BorderRadius.circular(12), // Slightly smaller radius
               border: Border.all(color: const Color(0xFFE2E8F0)),
-              boxShadow: [ // Added subtle shadow
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 4,
-                  offset: const Offset(0, 1),
-                ),
-              ],
             ),
             child: DropdownButtonFormField<String>(
               value: _selectedIssueExplanation,
@@ -1061,13 +1033,6 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
               : const Color(0xFFE2E8F0),
           width: value == groupValue ? 2 : 1,
         ),
-        boxShadow: [ // Added subtle shadow
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 2,
-            offset: const Offset(0, 0.5),
-          ),
-        ],
       ),
       child: RadioListTile<String>(
         title: Text(

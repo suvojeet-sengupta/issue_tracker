@@ -227,13 +227,6 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(24),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 10,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(20),
@@ -424,13 +417,6 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
               color: const Color(0xFFE2E8F0),
               width: 1, // Slightly thinner border
             ),
-            boxShadow: [ // Added subtle shadow
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 4,
-                offset: const Offset(0, 1),
-              ),
-            ],
           ),
           child: TextField(
             controller: controller,
@@ -508,13 +494,6 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
               color: const Color(0xFFE2E8F0),
               width: 1, // Slightly thinner border
             ),
-            boxShadow: [ // Added subtle shadow
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 4,
-                offset: const Offset(0, 1),
-              ),
-            ],
           ),
           child: DropdownButtonFormField<String>(
             value: _selectedTlName,
@@ -585,13 +564,6 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
               color: const Color(0xFFE2E8F0),
               width: 1, // Slightly thinner border
             ),
-            boxShadow: [ // Added subtle shadow
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 4,
-                offset: const Offset(0, 1),
-              ),
-            ],
           ),
           child: DropdownButtonFormField<String>(
             value: _selectedOrganization,

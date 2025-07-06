@@ -145,13 +145,6 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                                 ],
                               ),
                               borderRadius: BorderRadius.circular(24),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.05),
-                                  blurRadius: 5,
-                                  offset: const Offset(0, 2.5),
-                                ),
-                              ],
                             ),
                             child: Column(
                               children: [
@@ -167,14 +160,6 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                                       ],
                                     ),
                                     borderRadius: BorderRadius.circular(70),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: const Color(0xFF1E3A8A)
-                                            .withOpacity(0.3),
-                                        blurRadius: 10,
-                                        offset: const Offset(0, 5),
-                                      ),
-                                    ],
                                   ),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(70),
@@ -562,13 +547,6 @@ This app may not be perfect, but it's built with real-life experience, practical
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).shadowColor.withOpacity(0.1),
-            blurRadius: 2.5,
-            offset: const Offset(0, 1),
-          ),
-        ],
       ),
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -585,13 +563,6 @@ This app may not be perfect, but it's built with real-life experience, practical
           colors: [color, color.withOpacity(0.8)],
         ),
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.2),
-            blurRadius: 2,
-            offset: const Offset(0, 1),
-          ),
-        ],
       ),
       child: Text(
         skill,
@@ -615,13 +586,6 @@ This app may not be perfect, but it's built with real-life experience, practical
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 2.5,
-            offset: const Offset(0, 1),
-          ),
-        ],
       ),
       child: Material(
         color: Colors.transparent,

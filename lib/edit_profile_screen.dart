@@ -183,13 +183,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08), // Slightly more prominent shadow
-            blurRadius: 15, // Increased blur
-            offset: const Offset(0, 6), // Increased offset
-          ),
-        ],
       ),
       child: TextField(
         controller: controller,
