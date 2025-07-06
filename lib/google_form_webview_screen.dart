@@ -50,7 +50,7 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
                     const Icon(Icons.info_outline_rounded, color: Colors.white),
                     const SizedBox(width: 12),
                     const Text(
-                      "Please scroll down and click the 'Submit' button on the form.",
+                      "Click on Submit button",
                       style: TextStyle(fontFamily: 'Poppins'),
                     ),
                   ],
