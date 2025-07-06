@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:issue_tracker_app/onboarding_screen.dart';
 import 'package:issue_tracker_app/initial_setup_screen.dart';
 import 'package:issue_tracker_app/main.dart'; // Import MainAppScreen
 
@@ -39,23 +38,21 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
   _navigateToNextScreen() async {
     final prefs = await SharedPreferences.getInstance();
-    final bool isOnboardingComplete = prefs.getBool('onboarding_complete') ?? false;
-    final bool isSetupComplete = prefs.containsKey("crmId");
+    final bool interactiveOnboardingComplete = prefs.getBool('interactive_onboarding_complete') ?? false;
+    final bool isSetupComplete = prefs.containsKey("crmId"); // Declare isSetupComplete
 
     if (mounted) {
-      if (isOnboardingComplete) {
-        if (isSetupComplete) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const MainAppScreen()),
-          );
-        } else {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const InitialSetupScreen()),
-          );
-        }
+      if (!interactiveOnboardingComplete) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const MainAppScreen()), // Navigate to MainAppScreen to start interactive tour
+        );
+      } else if (isSetupComplete) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const MainAppScreen()),
+        );
       } else {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const OnboardingScreen()),
+          MaterialPageRoute(builder: (context) => const InitialSetupScreen()),
         );
       }
     }
