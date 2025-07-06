@@ -361,7 +361,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
 
                           const SizedBox(height: 20),
 
-                          // User Information Card with Enhanced Design
+                          // Advisor Information Card with Enhanced Design
                           Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -401,7 +401,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                                       ),
                                       const SizedBox(width: 12),
                                       const Text(
-                                        'User Profile',
+                                        'Advisor Profile',
                                         style: TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,

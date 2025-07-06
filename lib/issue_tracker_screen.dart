@@ -372,7 +372,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // User Information Card
+                          // Advisor Information Card
                           _buildEnhancedCard(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -398,7 +398,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                                     ),
                                     const SizedBox(width: 16),
                                     const Text(
-                                      'User Information',
+                                      'Advisor Information',
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
