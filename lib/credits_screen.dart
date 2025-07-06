@@ -48,7 +48,7 @@ class CreditsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'DishTV Advisors',
+                      'Contributors for Ideas & Improvements',
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.bold,
@@ -60,17 +60,17 @@ class CreditsScreen extends StatelessWidget {
                     _buildContributorTile(
                       context,
                       name: 'Dheeraj Ravidas',
-                      role: 'DishTV Advisor',
+                      role: 'Contributor (Ideas & Improvements)',
                     ),
                     _buildContributorTile(
                       context,
                       name: 'Mouma Sengupta',
-                      role: 'DishTV Advisor',
+                      role: 'Contributor (Ideas & Improvements)',
                     ),
                     _buildContributorTile(
                       context,
                       name: 'Sudhanshu',
-                      role: 'DishTV Advisor',
+                      role: 'Contributor (Ideas & Improvements)',
                     ),
                     const SizedBox(height: 16),
                     Text(
