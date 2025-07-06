@@ -170,7 +170,6 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
   late final Animation<double> _fadeAnimation;
   late final Animation<double> _slideAnimation;
   late ScrollController _scrollController; // Added ScrollController
-  bool _isFabExtended = true; // State for FAB extension
 
   @override
   void initState() {
@@ -198,17 +197,6 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
     _animationController.forward();
 
     _scrollController = ScrollController();
-    _scrollController.addListener(() {
-      if (_scrollController.offset > 0 && _isFabExtended) {
-        setState(() {
-          _isFabExtended = false;
-        });
-      } else if (_scrollController.offset <= 0 && !_isFabExtended) {
-        setState(() {
-          _isFabExtended = true;
-        });
-      }
-    });
   }
 
   @override
@@ -521,33 +509,9 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                 ),
               ),
             ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 16.0, right: 16.0),
-        child: _isFabExtended
-            ? FloatingActionButton.extended(
-                key: widget.fillIssueButtonKey, // Assign the passed key here
-                onPressed: () {
-                  Navigator.pushNamed(context, '/issue_tracker');
-                },
-                label: const Text('Fill Issue Tracker'),
-                icon: const Icon(Icons.add_task_rounded),
-                backgroundColor: Theme.of(context).primaryColor,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                elevation: 8,
-              )
-            : FloatingActionButton(
-                key: widget.fillIssueButtonKey, // Assign the passed key here
-                onPressed: () {
-                  Navigator.pushNamed(context, '/issue_tracker');
-                },
-                backgroundColor: Theme.of(context).primaryColor,
-                foregroundColor: Colors.white,
-                elevation: 8,
-                child: const Icon(Icons.add_task_rounded),
-              ),
+      floatingActionButton: _FabExtensionButton(
+        scrollController: _scrollController,
+        fillIssueButtonKey: widget.fillIssueButtonKey,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
@@ -734,6 +698,71 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
           }).toList(),
         ],
       ),
+    );
+  }
+}
+
+class _FabExtensionButton extends StatefulWidget {
+  final ScrollController scrollController;
+  final Key? fillIssueButtonKey;
+
+  const _FabExtensionButton({
+    required this.scrollController,
+    this.fillIssueButtonKey,
+  });
+
+  @override
+  State<_FabExtensionButton> createState() => _FabExtensionButtonState();
+}
+
+class _FabExtensionButtonState extends State<_FabExtensionButton> {
+  bool _isFabExtended = true;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.scrollController.addListener(() {
+      if (widget.scrollController.offset > 0 && _isFabExtended) {
+        setState(() {
+          _isFabExtended = false;
+        });
+      } else if (widget.scrollController.offset <= 0 && !_isFabExtended) {
+        setState(() {
+          _isFabExtended = true;
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0, right: 16.0),
+      child: _isFabExtended
+          ? FloatingActionButton.extended(
+              key: widget.fillIssueButtonKey,
+              onPressed: () {
+                Navigator.pushNamed(context, '/issue_tracker');
+              },
+              label: const Text('Fill Issue Tracker'),
+              icon: const Icon(Icons.add_task_rounded),
+              backgroundColor: Theme.of(context).primaryColor,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              elevation: 8,
+            )
+          : FloatingActionButton(
+              key: widget.fillIssueButtonKey,
+              onPressed: () {
+                Navigator.pushNamed(context, '/issue_tracker');
+              },
+              backgroundColor: Theme.of(context).primaryColor,
+              foregroundColor: Colors.white,
+              elevation: 8,
+              child: const Icon(Icons.add_task_rounded),
+            ),
     );
   }
 }
