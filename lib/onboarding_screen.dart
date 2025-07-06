@@ -18,22 +18,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       _buildOnboardingPage(
         image: 'assets/images/app_logo.png', // Placeholder image
         title: 'Welcome to Issue Tracker!',
-        description: 'Your ultimate tool for tracking and managing issues efficiently. Let's get you started!',
+        description: "Your ultimate tool for tracking and managing issues efficiently. Let's get you started!",
       ),
       _buildOnboardingPage(
         image: 'assets/images/app_launcher_icon.png', // Placeholder image
         title: 'Effortless Issue Submission',
-        description: 'Tap the 'Fill Issue Tracker' button to open the form. Provide details like CRM ID, issue type, and explanation.',
+        description: "Tap the 'Fill Issue Tracker' button to open the form. Provide details like CRM ID, issue type, and explanation.",
       ),
       _buildOnboardingPage(
         image: 'assets/images/developer_profile.jpg', // Placeholder image
         title: 'Track Your Progress',
-        description: 'The 'History' tab shows all your submitted issues. The 'Home' dashboard provides analytics on your activity.',
+        description: "The 'History' tab shows all your submitted issues. The 'Home' dashboard provides analytics on your activity.",
       ),
       _buildOnboardingPage(
         image: 'assets/images/app_logo.png', // Placeholder image
         title: 'Personalize Your Experience',
-        description: 'In 'Settings', you can update your profile (CRM ID, TL Name, Advisor Name) and customize app themes.',
+        description: "In 'Settings', you can update your profile (CRM ID, TL Name, Advisor Name) and customize app themes.",
         isLastPage: true,
       ),
     ];
