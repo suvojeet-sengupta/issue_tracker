@@ -217,6 +217,7 @@ class OnboardingTour {
       onSkip: () {
         print("Onboarding tour skipped");
         // Optionally mark onboarding as complete in SharedPreferences here
+        return true; // Return true to indicate skip
       },
     ).show(context: context);
   }
