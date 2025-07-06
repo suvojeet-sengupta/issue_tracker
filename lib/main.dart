@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:issue_tracker_app/initial_setup_screen.dart';
 import 'package:issue_tracker_app/issue_tracker_screen.dart';
 import 'package:issue_tracker_app/history_screen.dart';
+import 'package:issue_tracker_app/splash_screen.dart'; // New import for splash screen
 import 'package:issue_tracker_app/onboarding_tour.dart'; // Import the new onboarding tour
 
 import 'package:issue_tracker_app/edit_profile_screen.dart';
@@ -26,19 +27,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool _isSetupComplete = false;
-
   @override
   void initState() {
     super.initState();
-    _checkSetupStatus();
-  }
-
-  _checkSetupStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _isSetupComplete = prefs.containsKey("crmId");
-    });
   }
 
   @override
@@ -47,7 +38,7 @@ class _MyAppState extends State<MyApp> {
       title: 'Issue Tracker App',
       debugShowCheckedModeBanner: false,
       theme: AppThemes.lightTheme,
-      home: _isSetupComplete ? const MainAppScreen() : const InitialSetupScreen(),
+      home: const SplashScreen(), // Set SplashScreen as the initial home
       routes: {
         '/home': (context) => const MainAppScreen(),
         '/issue_tracker': (context) => const IssueTrackerScreen(),
