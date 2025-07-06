@@ -7,6 +7,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:issue_tracker_app/utils/issue_parser.dart';
+import 'package:issue_tracker_app/history_onboarding_tour.dart'; // New import
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -24,6 +25,13 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
   late AnimationController _listController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _slideAnimation;
+
+  // GlobalKeys for onboarding tour
+  final GlobalKey _firstHistoryItemKey = GlobalKey();
+  final GlobalKey _dateFilterButtonKey = GlobalKey();
+  final GlobalKey _startTimeFilterButtonKey = GlobalKey();
+  final GlobalKey _endTimeFilterButtonKey = GlobalKey();
+  final GlobalKey _clearHistoryButtonKey = GlobalKey();
 
   @override
   void initState() {
@@ -53,6 +61,28 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
     ));
     _animationController.forward();
     _listController.forward();
+
+    _checkAndShowHistoryOnboardingTour();
+  }
+
+  _checkAndShowHistoryOnboardingTour() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bool onboardingComplete = prefs.getBool('history_onboarding_complete') ?? false;
+
+    if (!onboardingComplete && _issueHistory.isNotEmpty) {
+      // Delay showing the tour until the UI is rendered
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        HistoryOnboardingTour onboardingTour = HistoryOnboardingTour(
+          firstHistoryItemKey: _firstHistoryItemKey,
+          dateFilterButtonKey: _dateFilterButtonKey,
+          startTimeFilterButtonKey: _startTimeFilterButtonKey,
+          endTimeFilterButtonKey: _endTimeFilterButtonKey,
+          clearHistoryButtonKey: _clearHistoryButtonKey,
+        );
+        onboardingTour.show(context);
+        prefs.setBool('history_onboarding_complete', true);
+      });
+    }
   }
 
   @override
@@ -298,6 +328,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                     ),
                     if (_issueHistory.isNotEmpty)
                       Container(
+                        key: _clearHistoryButtonKey, // Assign key
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(12),
@@ -327,6 +358,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                                     children: [
                                       Expanded(
                                         child: ElevatedButton.icon(
+                                          key: _dateFilterButtonKey, // Assign key
                                           onPressed: () async {
                                             final DateTime? picked = await showDatePicker(
                                               context: context,
@@ -380,6 +412,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                                       children: [
                                         Expanded(
                                           child: ElevatedButton.icon(
+                                            key: _startTimeFilterButtonKey, // Assign key
                                             onPressed: () async {
                                               final TimeOfDay? picked = await showTimePicker(
                                                 context: context,
@@ -410,6 +443,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                                         const SizedBox(width: 8),
                                         Expanded(
                                           child: ElevatedButton.icon(
+                                            key: _endTimeFilterButtonKey, // Assign key
                                             onPressed: () async {
                                               final TimeOfDay? picked = await showTimePicker(
                                                 context: context,
@@ -580,7 +614,11 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                   return AnimatedContainer(
                     duration: Duration(milliseconds: 200 + (index * 50)),
                     curve: Curves.easeOutCubic,
-                    child: _buildHistoryItem(_filteredHistory[index], index),
+                    child: _buildHistoryItem(
+                      _filteredHistory[index],
+                      index,
+                      key: index == 0 ? _firstHistoryItemKey : null, // Assign key to the first item
+                    ),
                   );
                 },
               ),
@@ -643,11 +681,12 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
     );
   }
 
-  Widget _buildHistoryItem(String entry, int index) {
+  Widget _buildHistoryItem(String entry, int index, {Key? key}) {
     Map<String, String> parsedEntry = parseHistoryEntry(entry);
     List<String> imagePaths = parsedEntry['Images']?.split('|') ?? [];
 
     return Container(
+      key: key, // Assign the key here
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
