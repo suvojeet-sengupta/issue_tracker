@@ -32,7 +32,23 @@ class CreditsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Project Contributors',
+                      'Project Lead',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildContributorTile(
+                      context,
+                      name: 'Suvojeet Sengupta',
+                      role: 'Core Developer',
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'DishTV Advisors',
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.bold,
@@ -44,26 +60,21 @@ class CreditsScreen extends StatelessWidget {
                     _buildContributorTile(
                       context,
                       name: 'Dheeraj Ravidas',
-                      role: 'Core Developer',
+                      role: 'DishTV Advisor',
                     ),
                     _buildContributorTile(
                       context,
                       name: 'Mouma Sengupta',
-                      role: 'Core Developer',
+                      role: 'DishTV Advisor',
                     ),
                     _buildContributorTile(
                       context,
                       name: 'Sudhanshu',
-                      role: 'Core Developer',
-                    ),
-                    _buildContributorTile(
-                      context,
-                      name: 'Suvojeet Sengupta',
-                      role: 'Core Developer',
+                      role: 'DishTV Advisor',
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Advisory Team',
+                      'Team Leadership',
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.bold,
@@ -75,7 +86,7 @@ class CreditsScreen extends StatelessWidget {
                     _buildContributorTile(
                       context,
                       name: 'Manish Sir',
-                      role: 'Technical Advisor & Team Lead',
+                      role: 'Team Leader',
                     ),
                   ],
                 ),
