@@ -1050,31 +1050,6 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
             offset: const Offset(0, 2),
           ),
         ],
-      Widget _buildRadioOption({
-    required String title,
-    required String value,
-    required String groupValue,
-    required Function(String?) onChanged,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: value == groupValue
-            ? const Color(0xFF1E3A8A).withOpacity(0.1)
-            : Colors.white, // Changed background color
-        borderRadius: BorderRadius.circular(12), // Slightly smaller radius
-        border: Border.all(
-          color: value == groupValue
-              ? const Color(0xFF1E3A8A)
-              : const Color(0xFFE2E8F0),
-          width: value == groupValue ? 2 : 1,
-        ),
-        boxShadow: [ // Added subtle shadow
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: RadioListTile<String>(
         title: Text(
