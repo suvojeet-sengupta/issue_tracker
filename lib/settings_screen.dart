@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:issue_tracker_app/theme_notifier.dart';
+
 import 'package:issue_tracker_app/admin_settings_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -21,17 +20,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Consumer<ThemeNotifier>(
-              builder: (context, notifier, child) {
-                return SwitchListTile(
-                  title: const Text('Dark Mode'),
-                  value: notifier.darkTheme,
-                  onChanged: (value) {
-                    notifier.toggleTheme();
-                  },
-                );
-              },
-            ),
+            
             ListTile(
               title: const Text('Admin Settings'),
               onTap: () {

@@ -6,17 +6,14 @@ import 'package:issue_tracker_app/issue_tracker_screen.dart';
 import 'package:issue_tracker_app/history_screen.dart';
 
 import 'package:issue_tracker_app/edit_profile_screen.dart';
-import 'package:issue_tracker_app/theme_notifier.dart';
+
 
 import 'package:issue_tracker_app/settings_screen.dart';
 import 'package:issue_tracker_app/developer_info_screen.dart';
 import 'package:issue_tracker_app/theme.dart';
 
 void main() {
-  runApp(ChangeNotifierProvider<ThemeNotifier>(
-    create: (_) => ThemeNotifier(),
-    child: const MyApp(),
-  ));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
@@ -44,23 +41,17 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeNotifier>(
-      builder: (context, theme, child) {
-        return MaterialApp(
-          title: 'Issue Tracker App',
-          debugShowCheckedModeBanner: false,
-          theme: theme.darkTheme ? AppThemes.darkTheme : AppThemes.lightTheme,
-          darkTheme: AppThemes.darkTheme,
-          themeMode: theme.darkTheme ? ThemeMode.dark : ThemeMode.light,
-          home: _isSetupComplete ? const MainAppScreen() : const InitialSetupScreen(),
-          routes: {
-            '/home': (context) => const MainAppScreen(),
-            '/issue_tracker': (context) => const IssueTrackerScreen(),
-            '/history': (context) => const HistoryScreen(),
-            '/settings': (context) => const SettingsScreen(),
-            '/edit_profile': (context) => const EditProfileScreen(),
-          },
-        );
+    return MaterialApp(
+      title: 'Issue Tracker App',
+      debugShowCheckedModeBanner: false,
+      theme: AppThemes.lightTheme,
+      home: _isSetupComplete ? const MainAppScreen() : const InitialSetupScreen(),
+      routes: {
+        '/home': (context) => const MainAppScreen(),
+        '/issue_tracker': (context) => const IssueTrackerScreen(),
+        '/history': (context) => const HistoryScreen(),
+        '/settings': (context) => const SettingsScreen(),
+        '/edit_profile': (context) => const EditProfileScreen(),
       },
     );
   }
