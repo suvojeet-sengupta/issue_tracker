@@ -102,7 +102,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       title: 'View App Source Code',
                       subtitle: 'Explore the code on GitHub',
                       onTap: () async {
-                        const url = 'https://github.com/suvojit213/issue_tracker';
+                        const url = 'https://github.com/suvojit213/issue_tracker.git';
                         if (await canLaunchUrl(Uri.parse(url))) {
                           await launchUrl(Uri.parse(url));
                         } else {
