@@ -8,67 +8,101 @@ class AdminSettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Admin Settings'),
+        title: const Text(
+          'Admin Settings',
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Colors.white,
       ),
-      body: const Center(
-        child: Text('Welcome to Admin Settings!'),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              margin: const EdgeInsets.only(bottom: 20),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Column(
+                  children: [
+                    _buildSettingsTile(
+                      context,
+                      icon: Icons.storage,
+                      title: 'View Raw SharedPreferences',
+                      subtitle: 'Display all locally stored key-value pairs',
+                      onTap: () {
+                        _showRawSharedPreferences(context);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  // These methods and variables were part of the reverted commit and are no longer needed.
-  // void _showClearDataConfirmationDialog() {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: const Text('Confirm Clear Data'),
-  //         content: const Text(
-  //             'Are you sure you want to clear all saved user data and settings? This action cannot be undone.'),
-  //         actions: <Widget>[
-  //           TextButton(
-  //             child: const Text('Cancel'),
-  //             onPressed: () {
-  //               Navigator.of(context).pop();
-  //             },
-  //           ),
-  //           TextButton(
-  //             child: const Text('Clear'),
-  //             onPressed: () async {
-  //               Navigator.of(context).pop(); // Close dialog
-  //               await _clearAllData();
-  //             },
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
+  Widget _buildSettingsTile(BuildContext context, {required IconData icon, required String title, required String subtitle, required VoidCallback onTap}) {
+    return ListTile(
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(icon, color: Theme.of(context).primaryColor),
+      ),
+      title: Text(
+        title,
+        style: const TextStyle(
+          fontFamily: 'Poppins',
+          fontWeight: FontWeight.w600,
+          fontSize: 16,
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(
+          fontFamily: 'Poppins',
+          fontSize: 13,
+          color: Colors.grey[600],
+        ),
+      ),
+      trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+      onTap: onTap,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    );
+  }
 
-  // Future<void> _clearAllData() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   await prefs.clear();
-  //   _googleFormUrlController.clear();
-  //   _crmIdEntryController.clear();
-  //   _advisorNameEntryController.clear();
-  //   _issueStartTimeHourEntryController.clear();
-  //   _issueStartTimeMinuteEntryController.clear();
-  //   _issueEndTimeHourEntryController.clear();
-  //   _issueEndTimeMinuteEntryController.clear();
-  //   _tlNameEntryController.clear();
-  //   _organizationEntryController.clear();
-  //   _issueStartDateYearEntryController.clear();
-  //   _issueStartDateMonthEntryController.clear();
-  //   _issueStartDateDayEntryController.clear();
-  //   _issueEndDateYearEntryController.clear();
-  //   _issueEndDateMonthEntryController.clear();
-  //   _issueEndDateDayEntryController.clear();
+  void _showRawSharedPreferences(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final allData = prefs.getKeys().map((key) => '$key: ${prefs.get(key)}').join('\n');
 
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     const SnackBar(content: Text('All data cleared successfully!')),
-  //   );
-
-  //   // Reload default values after clearing
-  //   _loadSettings();
-  // }
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Raw SharedPreferences Data'),
+          content: SingleChildScrollView(
+            child: Text(allData.isNotEmpty ? allData : 'No data found.'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
