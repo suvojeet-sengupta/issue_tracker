@@ -25,24 +25,21 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     if (_formKey.currentState!.validate()) {
       final String name = _nameController.text;
       final String feedback = _feedbackController.text;
-      final String subject = 'App Feedback from $name';
-      final String body = 'Rating: $_rating stars\n\nFeedback/Suggestions:\n$feedback\n\nName: $name';
+      final String phoneNumber = "9234577086"; // Your WhatsApp number
 
-      final Uri emailLaunchUri = Uri(
-        scheme: 'mailto',
-        path: 'suvojitsengupta21@gmail.com',
-        query: encodeQueryParameters(<String, String>{
-          'subject': subject,
-          'body': body,
-        }),
-      );
+      final String message = "*App Feedback*\n\n" +
+          "*Rating:* $_rating stars\n" +
+          "*Feedback/Suggestions:*\n$feedback\n\n" +
+          "*Name:* $name";
 
-      if (await canLaunchUrl(emailLaunchUri)) {
-        await launchUrl(emailLaunchUri, mode: LaunchMode.externalApplication);
+      final Uri whatsappUri = Uri.parse("https://wa.me/$phoneNumber?text=${Uri.encodeComponent(message)}");
+
+      if (await canLaunchUrl(whatsappUri)) {
+        await launchUrl(whatsappUri, mode: LaunchMode.externalApplication);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Opening email client to send feedback.')),
+          const SnackBar(content: Text('Opening WhatsApp to send feedback.')),
         );
-        // Optionally clear fields after opening email client
+        // Optionally clear fields after opening WhatsApp
         setState(() {
           _rating = 0;
           _nameController.clear();
@@ -50,16 +47,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not launch email client. Please ensure you have one configured.')),
+          const SnackBar(content: Text('Could not launch WhatsApp. Please ensure WhatsApp is installed.')),
         );
       }
     }
-  }
-
-  String? encodeQueryParameters(Map<String, String> params) {
-    return params.entries
-        .map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
-        .join('&');
   }
 
   @override
