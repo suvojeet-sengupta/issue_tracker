@@ -165,7 +165,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
           "CRM ID: $_crmId, TL Name: $_tlName, Advisor Name: $_advisorName, "
           "Organization: $_organization, Issue Explanation: $_selectedIssueExplanation, "
           "Reason: $_selectedReason, Start Time: ${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, startTime!.hour, startTime.minute).toIso8601String()}, "
-          "End Time: ${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, endTime!.hour, endTime.minute).toIso8601String()}, Fill Time: ${DateTime.now().toIso8601String()}, "
+          "End Time: ${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + (endTime!.hour < startTime!.hour || (endTime.hour == startTime.hour && endTime.minute < startTime.minute) ? 1 : 0), endTime.hour, endTime.minute).toIso8601String()}, Fill Time: ${DateTime.now().toIso8601String()}, "
           "Issue Remarks: ${_issueRemarksController.text}";
       if (imagePaths.isNotEmpty) {
         entry += ", Images: ${imagePaths.join('|')}";
