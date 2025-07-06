@@ -25,10 +25,44 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
       ..setBackgroundColor(const Color(0x00000000))
       ..setNavigationDelegate(
         NavigationDelegate(
-          onPageFinished: (String url) {
+          onPageFinished: (String url) async {
             setState(() {
               _isLoading = false;
             });
+            // Inject JavaScript to scroll to the submit button
+            await _controller.runJavaScript('''
+              (function() {
+                  var buttons = document.querySelectorAll('div[role="button"]');
+                  for (var i = 0; i < buttons.length; i++) {
+                      if (buttons[i].innerText.includes('Submit') || buttons[i].innerText.includes('Send')) {
+                          buttons[i].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                          return;
+                      }
+                  }
+              })();
+            ''');
+
+            // Show instruction to the user
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Row(
+                  children: [
+                    const Icon(Icons.info_outline_rounded, color: Colors.white),
+                    const SizedBox(width: 12),
+                    const Text(
+                      "Please scroll down and click the 'Submit' button on the form.",
+                      style: TextStyle(fontFamily: 'Poppins'),
+                    ),
+                  ],
+                ),
+                backgroundColor: Colors.blueAccent,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                margin: const EdgeInsets.all(16),
+              ),
+            );
           },
         ),
       )
