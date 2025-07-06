@@ -9,7 +9,7 @@ import 'package:issue_tracker_app/edit_profile_screen.dart';
 import 'package:issue_tracker_app/theme_notifier.dart';
 
 import 'package:issue_tracker_app/settings_screen.dart';
-import 'package:issue_tracker_app/developer_info_screen.dart';
+import 'package:issue_tracker_app/theme.dart';
 
 void main() {
   runApp(ChangeNotifierProvider<ThemeNotifier>(
@@ -48,8 +48,8 @@ class _MyAppState extends State<MyApp> {
         return MaterialApp(
           title: 'Issue Tracker App',
           debugShowCheckedModeBanner: false,
-          theme: theme.darkTheme ? darkTheme : lightTheme,
-          darkTheme: darkTheme,
+          theme: theme.darkTheme ? AppThemes.darkTheme : AppThemes.lightTheme,
+          darkTheme: AppThemes.darkTheme,
           themeMode: theme.darkTheme ? ThemeMode.dark : ThemeMode.light,
           home: _isSetupComplete ? const MainAppScreen() : const InitialSetupScreen(),
           routes: {
@@ -65,125 +65,7 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-final ThemeData lightTheme = ThemeData(
-  useMaterial3: true,
-  colorScheme: ColorScheme.fromSeed(
-    seedColor: const Color(0xFF3B82F6),
-    brightness: Brightness.light,
-  ),
-  primaryColor: const Color(0xFF1E3A8A),
-  scaffoldBackgroundColor: const Color(0xFFF8FAFC),
-  fontFamily: 'Poppins',
-  appBarTheme: const AppBarTheme(
-    backgroundColor: Colors.transparent,
-    elevation: 0,
-    foregroundColor: Colors.white,
-    titleTextStyle: TextStyle(
-      fontSize: 22,
-      fontWeight: FontWeight.bold,
-      color: Colors.white,
-    ),
-  ),
-  elevatedButtonTheme: ElevatedButtonThemeData(
-    style: ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xFF1E3A8A),
-      foregroundColor: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      elevation: 4,
-      shadowColor: const Color(0xFF1E3A8A).withOpacity(0.3),
-    ),
-  ),
-  cardTheme: CardThemeData(
-    elevation: 8,
-    shadowColor: Colors.black.withOpacity(0.1),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(20),
-    ),
-    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    color: Colors.white,
-  ),
-  inputDecorationTheme: InputDecorationTheme(
-    filled: true,
-    fillColor: Colors.white,
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(16),
-      borderSide: BorderSide.none,
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(16),
-      borderSide: const BorderSide(color: Color(0xFFE2E8F0), width: 1.5),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(16),
-      borderSide: const BorderSide(color: Color(0xFF1E3A8A), width: 2),
-    ),
-    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-  ),
-  visualDensity: VisualDensity.adaptivePlatformDensity,
-);
 
-final ThemeData darkTheme = ThemeData(
-  useMaterial3: true,
-  colorScheme: ColorScheme.fromSeed(
-    seedColor: const Color(0xFF3B82F6),
-    brightness: Brightness.dark,
-  ),
-  primaryColor: const Color(0xFF90CAF9),
-  scaffoldBackgroundColor: const Color(0xFF121212),
-  fontFamily: 'Poppins',
-  appBarTheme: const AppBarTheme(
-    backgroundColor: Colors.transparent,
-    elevation: 0,
-    foregroundColor: Colors.white,
-    titleTextStyle: TextStyle(
-      fontSize: 22,
-      fontWeight: FontWeight.bold,
-      color: Colors.white,
-    ),
-  ),
-  elevatedButtonTheme: ElevatedButtonThemeData(
-    style: ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xFF90CAF9),
-      foregroundColor: Colors.black,
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      elevation: 4,
-      shadowColor: const Color(0xFF90CAF9).withOpacity(0.3),
-    ),
-  ),
-  cardTheme: CardThemeData(
-    elevation: 8,
-    shadowColor: Colors.black.withOpacity(0.3),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(20),
-    ),
-    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    color: const Color(0xFF1E1E1E),
-  ),
-  inputDecorationTheme: InputDecorationTheme(
-    filled: true,
-    fillColor: const Color(0xFF1E1E1E),
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(16),
-      borderSide: BorderSide.none,
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(16),
-      borderSide: const BorderSide(color: Color(0xFF333333), width: 1.5),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(16),
-      borderSide: const BorderSide(color: Color(0xFF90CAF9), width: 2),
-    ),
-    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-  ),
-  visualDensity: VisualDensity.adaptivePlatformDensity,
-);
 
 class MainAppScreen extends StatefulWidget {
   const MainAppScreen({super.key});
@@ -235,10 +117,10 @@ class _MainAppScreenState extends State<MainAppScreen> {
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Theme.of(context).primaryColor,
-        unselectedItemColor: Colors.grey,
+        unselectedItemColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 10,
       ),
     );
@@ -256,6 +138,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
   String _crmId = "";
   String _tlName = "";
   String _advisorName = "";
+  bool _isLoading = true; // Added loading state
   late final AnimationController _animationController;
   late final Animation<double> _fadeAnimation;
   late final Animation<double> _slideAnimation;
@@ -292,6 +175,9 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
   }
 
   _loadUserData() async {
+    setState(() {
+      _isLoading = true; // Set loading to true
+    });
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _crmId = prefs.getString("crmId") ?? "";
@@ -300,220 +186,230 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
         _tlName = prefs.getString("otherTlName") ?? "";
       }
       _advisorName = prefs.getString("advisorName") ?? "";
+      _isLoading = false; // Set loading to false after data is loaded
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF1E3A8A),
-              Color(0xFF3B82F6),
-              Color(0xFFF8FAFC),
-            ],
-            stops: [0.0, 0.3, 1.0],
-          ),
-        ),
-        child: SafeArea(
-          child: FadeTransition(
-            opacity: _fadeAnimation,
-            child: SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(0, 0.3),
-                end: Offset.zero,
-              ).animate(_slideAnimation),
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Custom App Bar
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Issue Tracker App',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Poppins',
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.info_outline_rounded, color: Colors.white),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const DeveloperInfoScreen()),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // Hero Section
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            Colors.white.withOpacity(0.95),
-                            Colors.white.withOpacity(0.85),
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFF1E3A8A),
+                    Color(0xFF3B82F6),
+                    Color(0xFFF8FAFC),
+                  ],
+                  stops: [0.0, 0.3, 1.0],
+                ),
+              ),
+              child: SafeArea(
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: SlideTransition(
+                    position: Tween<Offset>(
+                      begin: const Offset(0, 0.3),
+                      end: Offset.zero,
+                    ).animate(_slideAnimation),
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(24),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Welcome Back, ${_advisorName.split(" ").first}!',
-                            style: const TextStyle(
-                              color: Color(0xFF1E3A8A),
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Poppins',
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 6),
-                          const Text(
-                            'Track and manage your issues with precision',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: 'Poppins',
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // User Information Card with Enhanced Design
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 8,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
-                                      colors: [
-                                        Color(0xFF1E3A8A),
-                                        Color(0xFF3B82F6)
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: const Icon(
-                                    Icons.person_outline,
-                                    color: Colors.white,
-                                    size: 20,
-                                  ),
+                          // Custom App Bar
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Issue Tracker App',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Poppins',
                                 ),
-                                const SizedBox(width: 12),
-                                const Text(
-                                  'User Profile',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF1E3A8A),
-                                    fontFamily: 'Poppins',
-                                  ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.info_outline_rounded,
+                                    color: Colors.white),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const DeveloperInfoScreen()),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          // Hero Section
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Colors.white.withOpacity(0.95),
+                                  Colors.white.withOpacity(0.85),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.05),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 4),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 20),
-                            _buildInfoRow(Icons.badge_outlined, 'CRM ID', _crmId),
-                            const SizedBox(height: 12),
-                            _buildInfoRow(
-                                Icons.supervisor_account_outlined,
-                                'Team Leader',
-                                _tlName),
-                            const SizedBox(height: 12),
-                            _buildInfoRow(Icons.person_outline,
-                                'Advisor Name', _advisorName),
-                            const SizedBox(height: 20),
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton.icon(
-                                onPressed: () async {
-                                  final result = await Navigator.pushNamed(context, '/edit_profile');
-                                  if (result == true) {
-                                    _loadUserData(); // Reload data if profile was updated
-                                  }
-                                },
-                                icon: const Icon(Icons.edit_rounded, color: Colors.white),
-                                label: const Text(
-                                  'Edit Profile',
-                                  style: TextStyle(
-                                    fontSize: 14,
+                            child: Column(
+                              children: [
+                                Text(
+                                  'Welcome Back, ${_advisorName.split(" ").first}!',
+                                  style: const TextStyle(
+                                    color: Color(0xFF1E3A8A),
+                                    fontSize: 28,
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Poppins',
-                                    color: Colors.white,
                                   ),
+                                  textAlign: TextAlign.center,
                                 ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF3B82F6),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
+                                const SizedBox(height: 6),
+                                const Text(
+                                  'Track and manage your issues with precision',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: 'Poppins',
                                   ),
-                                  elevation: 3,
-                                  shadowColor: const Color(0xFF3B82F6).withOpacity(0.2),
+                                  textAlign: TextAlign.center,
                                 ),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          // User Information Card with Enhanced Design
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.05),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(20),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          gradient: const LinearGradient(
+                                            colors: [
+                                              Color(0xFF1E3A8A),
+                                              Color(0xFF3B82F6)
+                                            ],
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: const Icon(
+                                          Icons.person_outline,
+                                          color: Colors.white,
+                                          size: 20,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      const Text(
+                                        'User Profile',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF1E3A8A),
+                                          fontFamily: 'Poppins',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 20),
+                                  _buildInfoRow(
+                                      Icons.badge_outlined, 'CRM ID', _crmId),
+                                  const SizedBox(height: 12),
+                                  _buildInfoRow(
+                                      Icons.supervisor_account_outlined,
+                                      'Team Leader',
+                                      _tlName),
+                                  const SizedBox(height: 12),
+                                  _buildInfoRow(Icons.person_outline,
+                                      'Advisor Name', _advisorName),
+                                  const SizedBox(height: 20),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton.icon(
+                                      onPressed: () async {
+                                        final result = await Navigator.pushNamed(
+                                            context, '/edit_profile');
+                                        if (result == true) {
+                                          _loadUserData(); // Reload data if profile was updated
+                                        }
+                                      },
+                                      icon: const Icon(Icons.edit_rounded,
+                                          color: Colors.white),
+                                      label: const Text(
+                                        'Edit Profile',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Poppins',
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color(0xFF3B82F6),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        elevation: 3,
+                                        shadowColor: const Color(0xFF3B82F6)
+                                            .withOpacity(0.2),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+
+                          const SizedBox(height: 20),
+                        ],
                       ),
                     ),
-
-                    const SizedBox(height: 20),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
-      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.pushNamed(context, '/issue_tracker');
