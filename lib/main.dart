@@ -70,12 +70,12 @@ class _MainAppScreenState extends State<MainAppScreen> {
   final GlobalKey _fillIssueButtonKey = GlobalKey();
 
 
-  static final List<Widget> _widgetOptions = <Widget>[
-    DashboardScreen(key: _fillIssueButtonKey), // Pass the key to DashboardScreen
-    const IssueTrackerScreen(),
-    const HistoryScreen(),
-    const SettingsScreen(), // Settings screen is now part of bottom nav
-  ];
+  List<Widget> get _widgetOptions => <Widget>[
+        DashboardScreen(fillIssueButtonKey: _fillIssueButtonKey), // Pass the key to DashboardScreen
+        const IssueTrackerScreen(),
+        const HistoryScreen(),
+        const SettingsScreen(), // Settings screen is now part of bottom nav
+      ];
 
   @override
   void initState() {
@@ -90,13 +90,14 @@ class _MainAppScreenState extends State<MainAppScreen> {
     if (!onboardingComplete) {
       // Delay showing the tour until the UI is rendered
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        OnboardingTour(
+        OnboardingTour onboardingTour = OnboardingTour(
           homeTabKey: _homeTabKey,
           trackerTabKey: _trackerTabKey,
           historyTabKey: _historyTabKey,
           settingsTabKey: _settingsTabKey,
           fillIssueButtonKey: _fillIssueButtonKey,
-        ).show(context);
+        );
+        onboardingTour.show(context);
         prefs.setBool('interactive_onboarding_complete', true);
       });
     }
