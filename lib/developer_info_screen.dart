@@ -368,7 +368,7 @@ This app may not be perfect, but it's built with real-life experience, practical
                                                 ),
                                                 const SizedBox(height: 4),
                                                 Text(
-                                                  'Version 1.0.1',
+                                                  'Version 1.0.2',
                                                   style: TextStyle(
                                                     fontSize: 14,
                                                     color: Colors.grey[600],

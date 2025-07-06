@@ -43,7 +43,7 @@ class OnboardingTour {
                 Padding(
                   padding: EdgeInsets.only(top: 10.0),
                   child: Text(
-                    "This is your main dashboard. Here you can see your CRM ID, Team Leader, Advisor Name, and a summary of your issue activity.",
+                    "                    "This is your main dashboard. Here you can see your Advisor Profile and a summary of your issue activity.",",
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
