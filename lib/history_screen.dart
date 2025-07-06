@@ -548,31 +548,6 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                   ),
                   Row(
                     children: [
-                      if (parsedEntry['Fill Time'] != null)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              '${_formatOnlyDate(parsedEntry['Fill Time']!)}',
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Poppins',
-                              ),
-                            ),
-                            Text(
-                              'Filled: ${_formatTime(parsedEntry['Fill Time']!)}',
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Poppins',
-                              ),
-                            ),
-                          ],
-                        ),
-                      const SizedBox(width: 8),
                       IconButton(
                         icon: const Icon(Icons.share_rounded, color: Colors.blueAccent),
                         onPressed: () => _shareIssue(parsedEntry, imagePaths),
