@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:issue_tracker_app/admin_settings_screen.dart';
 import 'package:issue_tracker_app/about_app_screen.dart'; // New import
+import 'package:issue_tracker_app/developer_info_screen.dart'; // New import
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
