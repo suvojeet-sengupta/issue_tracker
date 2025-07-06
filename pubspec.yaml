@@ -36,6 +36,7 @@ flutter:
     - assets/images/
     - assets/icon/ # Added
     - assets/images/developer_profile.jpg
+    - android/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png # Specific logo for About App
 
   fonts:
     - family: Poppins

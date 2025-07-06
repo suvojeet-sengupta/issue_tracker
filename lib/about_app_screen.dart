@@ -26,7 +26,7 @@ class AboutAppScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Image.asset(
-                    'assets/icon/app_icon_foreground.png', // Your app logo
+                    'android/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png', // Specific logo for About App
                     height: 120,
                   ),
                   const SizedBox(height: 16),
