@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:issue_tracker_app/main.dart'; // Import main.dart to access themeModeNotifier
+
 
 class DeveloperInfoScreen extends StatefulWidget {
   const DeveloperInfoScreen({super.key});
@@ -279,11 +279,11 @@ class _DeveloperInfoScreenState extends State<DeveloperInfoScreen>
                                 ),
                                 const SizedBox(height: 20),
                                 Text(
-                                  '''Hi, I'm Suvojeet Sengupta – currently working as an Advisor at DishTV (GSC). \n I've always been interested in technology, and with some basic knowledge of Flutter and the help of AI tools, I started exploring app development.
+                                  '''Hi, I'm Suvojeet Sengupta – currently working as an Advisor at DishTV (GSC). I've always been interested in technology, and with some basic knowledge of Flutter and the help of AI tools, I started exploring app development.
 
-During my work,\n I noticed how time-consuming and frustrating it was to fill out Google Forms again and again for issue tracking.\n So, I created this simple app as a solution – to make the process smoother and more efficient.
+During my work, I noticed how time-consuming and frustrating it was to fill out Google Forms again and again for issue tracking. So, I created this simple app as a solution – to make the process smoother and more efficient.
 
-This app may not be perfect,\n but it's built with real-life experience, practical thinking, and a passion to solve problems in smarter ways.''',
+This app may not be perfect, but it's built with real-life experience, practical thinking, and a passion to solve problems in smarter ways.''',
                                   style: TextStyle(
                                     fontSize: 16,
                                     height: 1.6,
@@ -560,11 +560,11 @@ This app may not be perfect,\n but it's built with real-life experience, practic
   Widget _buildEnhancedCard({required Widget child}) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -631,7 +631,7 @@ This app may not be perfect,\n but it's built with real-life experience, practic
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white, // Changed background color
+              color: Theme.of(context).cardColor, // Changed background color
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: const Color(0xFFE2E8F0),
@@ -690,7 +690,7 @@ This app may not be perfect,\n but it's built with real-life experience, practic
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF8FAFC), // Changed background color
+                    color: Theme.of(context).colorScheme.surface, // Changed background color
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
