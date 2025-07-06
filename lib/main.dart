@@ -169,6 +169,8 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
   late final AnimationController _animationController;
   late final Animation<double> _fadeAnimation;
   late final Animation<double> _slideAnimation;
+  late ScrollController _scrollController; // Added ScrollController
+  bool _isFabExtended = true; // State for FAB extension
 
   @override
   void initState() {
@@ -194,11 +196,25 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
       curve: Curves.easeOutCubic,
     ));
     _animationController.forward();
+
+    _scrollController = ScrollController();
+    _scrollController.addListener(() {
+      if (_scrollController.offset > 0 && _isFabExtended) {
+        setState(() {
+          _isFabExtended = false;
+        });
+      } else if (_scrollController.offset <= 0 && !_isFabExtended) {
+        setState(() {
+          _isFabExtended = true;
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
     _animationController.dispose();
+    _scrollController.dispose(); // Dispose the scroll controller
     super.dispose();
   }
 
@@ -276,6 +292,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                       end: Offset.zero,
                     ).animate(_slideAnimation),
                     child: SingleChildScrollView(
+                      controller: _scrollController, // Assign the scroll controller
                       padding: const EdgeInsets.all(24),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -506,20 +523,31 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
             ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 16.0, right: 16.0),
-        child: FloatingActionButton.extended(
-          key: widget.fillIssueButtonKey, // Assign the passed key here
-          onPressed: () {
-            Navigator.pushNamed(context, '/issue_tracker');
-          },
-          label: const Text('Fill Issue Tracker'),
-          icon: const Icon(Icons.add_task_rounded),
-          backgroundColor: Theme.of(context).primaryColor,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          elevation: 8,
-        ),
+        child: _isFabExtended
+            ? FloatingActionButton.extended(
+                key: widget.fillIssueButtonKey, // Assign the passed key here
+                onPressed: () {
+                  Navigator.pushNamed(context, '/issue_tracker');
+                },
+                label: const Text('Fill Issue Tracker'),
+                icon: const Icon(Icons.add_task_rounded),
+                backgroundColor: Theme.of(context).primaryColor,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                elevation: 8,
+              )
+            : FloatingActionButton(
+                key: widget.fillIssueButtonKey, // Assign the passed key here
+                onPressed: () {
+                  Navigator.pushNamed(context, '/issue_tracker');
+                },
+                backgroundColor: Theme.of(context).primaryColor,
+                foregroundColor: Colors.white,
+                elevation: 8,
+                child: const Icon(Icons.add_task_rounded),
+              ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
