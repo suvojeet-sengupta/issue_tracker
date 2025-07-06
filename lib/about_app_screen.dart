@@ -82,7 +82,7 @@ class AboutAppScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             const Text(
-              'At its core, the Issue Tracker App seamlessly integrates with the existing Google Form-based issue tracking system previously utilized by DishTV/D2H. This intelligent integration eliminates the cumbersome manual entry process, automatically populating critical data fields within the Google Form. Advisors can now effortlessly record details such as CRM ID, full name, team leader, brand (DISH/D2H), issue type, and precise start and end times directly through the app's intuitive interface. This not only saves valuable time but also significantly reduces the potential for human error, ensuring data accuracy and consistency.',
+              """At its core, the Issue Tracker App seamlessly integrates with the existing Google Form-based issue tracking system previously utilized by DishTV/D2H. This intelligent integration eliminates the cumbersome manual entry process, automatically populating critical data fields within the Google Form. Advisors can now effortlessly record details such as CRM ID, full name, team leader, brand (DISH/D2H), issue type, and precise start and end times directly through the app's intuitive interface. This not only saves valuable time but also significantly reduces the potential for human error, ensuring data accuracy and consistency.""",
               style: TextStyle(
                 fontSize: 16,
                 fontFamily: 'Poppins',
@@ -139,7 +139,7 @@ class AboutAppScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             const Text(
-              'This application is the result of Suvojeet's commitment to creating practical and efficient tools that empower users. It reflects a deep understanding of the challenges faced by advisors and a passion for leveraging technology to simplify complex processes.',
+              """This application is the result of Suvojeet's commitment to creating practical and efficient tools that empower users. It reflects a deep understanding of the challenges faced by advisors and a passion for leveraging technology to simplify complex processes.""",
               style: TextStyle(
                 fontSize: 16,
                 fontFamily: 'Poppins',
