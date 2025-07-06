@@ -107,7 +107,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           await launchUrl(Uri.parse(url));
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Could not launch $url')),
+                            SnackBar(content: Text('Could not launch $url. Please ensure you have a web browser installed and an active internet connection.')),
                           );
                         }
                       },
