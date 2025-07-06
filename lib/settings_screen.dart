@@ -94,6 +94,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         );
                       },
                     ),
+                    _buildSettingsTile(
+                      context,
+                      icon: Icons.data_object,
+                      title: 'View App Source Code',
+                      subtitle: 'Explore the code on GitHub',
+                      onTap: () async {
+                        const url = 'https://github.com/suvojit213/issue_tracker';
+                        if (await canLaunchUrl(Uri.parse(url))) {
+                          await launchUrl(Uri.parse(url));
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Could not launch $url')),
+                          );
+                        }
+                      },
+                    ),
                   ],
                 ),
               ),
