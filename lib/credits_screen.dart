@@ -72,6 +72,11 @@ class CreditsScreen extends StatelessWidget {
                       name: 'Sudhanshu',
                       role: 'Contributor (Ideas & Improvements)',
                     ),
+                    _buildContributorTile(
+                      context,
+                      name: 'Monika',
+                      role: 'Contributor (Ideas & Improvements)',
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       'Team Leadership',
