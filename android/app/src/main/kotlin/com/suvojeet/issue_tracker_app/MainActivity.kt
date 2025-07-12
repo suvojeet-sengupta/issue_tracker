@@ -1,24 +1,106 @@
 package com.suvojeet.issue_tracker_app
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
+import android.os.Bundle
 import android.os.Environment
 import android.webkit.MimeTypeMap
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.util.concurrent.TimeUnit
 
 class MainActivity : FlutterActivity() {
-    private val CHANNEL = "com.suvojeet.issue_tracker_app/file_opener"
+    private val FILE_CHANNEL = "com.suvojeet.issue_tracker_app/file_opener"
+    private val NOTIFICATION_CHANNEL = "com.suvojeet.issue_tracker_app/notifications"
+    private val PERMISSION_REQUEST_CODE = 100
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requestNotificationPermission()
+        handleIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent != null) {
+            handleIntent(intent)
+        }
+    }
+
+    private fun handleIntent(intent: Intent) {
+        if (intent.getBooleanExtra(NotificationHelper.EXTRA_NOTIFICATION_CLICKED, false)) {
+            navigateToHistory()
+        }
+    }
+
+    private fun navigateToHistory() {
+        MethodChannel(flutterEngine!!.dartExecutor.binaryMessenger, NOTIFICATION_CHANNEL).invokeMethod("navigateToHistory")
+    }
+
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    PERMISSION_REQUEST_CODE
+                )
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted
+            } else {
+                // Permission denied, you might want to show a dialog or close the app
+                // For now, we'll just finish the activity to make it mandatory
+                finish()
+            }
+        }
+    }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler {
+
+        // Initialize notification channel
+        NotificationHelper.createNotificationChannel(this)
+
+        // Schedule the initial notification worker
+        val initialNotificationWork = OneTimeWorkRequest.Builder(NotificationWorker::class.java)
+            .setInitialDelay(1, TimeUnit.MINUTES) // Start after 1 minute
+            .build()
+        WorkManager.getInstance(this).enqueueUniqueWork(
+            "IssueTrackerInitialNotificationWork",
+            ExistingWorkPolicy.KEEP,
+            initialNotificationWork
+        )
+
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, FILE_CHANNEL).setMethodCallHandler {
             call, result ->
             if (call.method == "openFile") {
                 val filePath = call.argument<String>("filePath")
@@ -29,6 +111,22 @@ class MainActivity : FlutterActivity() {
                 }
             } else {
                 result.notImplemented()
+            }
+        }
+
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, NOTIFICATION_CHANNEL).setMethodCallHandler {
+            call, result ->
+            when (call.method) {
+                "scheduleNotification" -> {
+                    NotificationWorker.scheduleNextNotification(this)
+                    result.success(null)
+                }
+                "getNotificationHistory" -> {
+                    val sharedPreferences = applicationContext.getSharedPreferences("notification_prefs", Context.MODE_PRIVATE)
+                    val history = sharedPreferences.getStringSet("notification_history", emptySet())?.toList() ?: emptyList()
+                    result.success(history)
+                }
+                else -> result.notImplemented()
             }
         }
     }

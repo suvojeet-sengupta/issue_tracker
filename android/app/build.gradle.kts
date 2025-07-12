@@ -5,6 +5,10 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+flutter {
+    source = "../.."
+}
+
 android {
     namespace = "com.suvojeet.issue_tracker_app"
     compileSdk = 35
@@ -13,6 +17,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -40,9 +45,7 @@ android {
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-}
-
-flutter {
-    source = "../.."
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22")
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
 }
