@@ -63,9 +63,37 @@ object NotificationHelper {
         val history = sharedPreferences.getStringSet(HISTORY_KEY, mutableSetOf())?.toMutableSet() ?: mutableSetOf()
 
         val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
-        history.add("$timestamp: $message")
+        val notificationEntry = "{"timestamp":"$timestamp", "message":"${message.replace(""", "\"")}", "isRead":false}"
+        history.add(notificationEntry)
 
         editor.putStringSet(HISTORY_KEY, history)
+        editor.apply()
+    }
+
+    fun getUnreadNotificationCount(context: Context): Int {
+        val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val history = sharedPreferences.getStringSet(HISTORY_KEY, emptySet()) ?: emptySet()
+        var unreadCount = 0
+        for (entry in history) {
+            if (!entry.contains(""isRead":true")) { // Simple check for unread status
+                unreadCount++
+            }
+        }
+        return unreadCount
+    }
+
+    fun markAllNotificationsAsRead(context: Context) {
+        val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val history = sharedPreferences.getStringSet(HISTORY_KEY, mutableSetOf())?.toMutableSet() ?: mutableSetOf()
+
+        val updatedHistory = mutableSetOf<String>()
+        for (entry in history) {
+            val updatedEntry = entry.replace(""isRead":false", ""isRead":true")
+            updatedHistory.add(updatedEntry)
+        }
+
+        editor.putStringSet(HISTORY_KEY, updatedHistory)
         editor.apply()
     }
 }

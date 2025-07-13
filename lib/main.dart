@@ -172,7 +172,7 @@ class DashboardScreen extends StatefulWidget {
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> with TickerProviderStateMixin {
+class _DashboardScreenState extends State<DashboardScreen> with TickerProviderStateMixin, WidgetsBindingObserver {
   String _crmId = "";
   String _tlName = "";
   String _advisorName = "";
@@ -184,12 +184,16 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
   late final Animation<double> _fadeAnimation;
   late final Animation<double> _slideAnimation;
   late ScrollController _scrollController; // Added ScrollController
+  int _unreadNotificationCount = 0;
+  static const platform = MethodChannel('com.suvojeet.issue_tracker_app/notifications');
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _loadUserData();
     _loadAnalyticsData(); // Load analytics data
+    _getUnreadNotificationCount();
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 400),
       vsync: this,
@@ -211,6 +215,32 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
     _animationController.forward();
 
     _scrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _scrollController.dispose(); // Dispose the scroll controller
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _getUnreadNotificationCount();
+    }
+  }
+
+  Future<void> _getUnreadNotificationCount() async {
+    try {
+      final int? count = await platform.invokeMethod('getUnreadNotificationCount');
+      setState(() {
+        _unreadNotificationCount = count ?? 0;
+      });
+    } on PlatformException catch (e) {
+      print("Failed to get unread notification count: '${e.message}'.");
+    }
   }
 
   @override
@@ -324,18 +354,47 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                                   );
                                 },
                               ),
-                              IconButton(
-                                key: widget.notificationIconKey,
-                                icon: const Icon(Icons.notifications_active_outlined,
-                                    color: Colors.white),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const NotificationHistoryScreen()),
-                                  );
-                                },
+                              Stack(
+                                children: [
+                                  IconButton(
+                                    key: widget.notificationIconKey,
+                                    icon: const Icon(Icons.notifications_active_outlined,
+                                        color: Colors.white),
+                                    onPressed: () async {
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const NotificationHistoryScreen()),
+                                      );
+                                      _getUnreadNotificationCount(); // Refresh count after returning
+                                    },
+                                  ),
+                                  if (_unreadNotificationCount > 0)
+                                    Positioned(
+                                      right: 11,
+                                      top: 11,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(2),
+                                        decoration: BoxDecoration(
+                                          color: Colors.red,
+                                          borderRadius: BorderRadius.circular(6),
+                                        ),
+                                        constraints: const BoxConstraints(
+                                          minWidth: 14,
+                                          minHeight: 14,
+                                        ),
+                                        child: Text(
+                                          '$_unreadNotificationCount',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 8,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    )
+                                ],
                               ),
                             ],
                           ),

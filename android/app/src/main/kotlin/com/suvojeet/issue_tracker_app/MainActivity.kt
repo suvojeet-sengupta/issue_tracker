@@ -120,6 +120,13 @@ class MainActivity : FlutterActivity() {
                     val history = sharedPreferences.getStringSet("notification_history", emptySet())?.toList() ?: emptyList()
                     result.success(history)
                 }
+                "getUnreadNotificationCount" -> {
+                    result.success(NotificationHelper.getUnreadNotificationCount(applicationContext))
+                }
+                "markAllNotificationsAsRead" -> {
+                    NotificationHelper.markAllNotificationsAsRead(applicationContext)
+                    result.success(null)
+                }
                 else -> result.notImplemented()
             }
         }

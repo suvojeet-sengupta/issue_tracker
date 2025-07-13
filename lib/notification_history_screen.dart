@@ -17,6 +17,15 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
   void initState() {
     super.initState();
     _getNotificationHistory();
+    _markAllNotificationsAsRead();
+  }
+
+  Future<void> _markAllNotificationsAsRead() async {
+    try {
+      await platform.invokeMethod('markAllNotificationsAsRead');
+    } on PlatformException catch (e) {
+      print("Failed to mark notifications as read: '${e.message}'.");
+    }
   }
 
   Future<void> _getNotificationHistory() async {
