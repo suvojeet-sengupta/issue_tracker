@@ -19,11 +19,27 @@ class DailySchedulerWorker(appContext: Context, workerParams: WorkerParameters) 
 
     companion object {
         private val messages = listOf(
-            "Login and logout time pe, tagging miss pe, wifi off,system off,system hang, voice issue pe, Tagging missing pe issue tracker real time pe fill hona chahiye.",
-            "Team one more important update ek sec bhi agar app ki voice na jaye ya observe ho ki headphone issue or system issue hai real time me issue tracker fill hona chahiye",
-            "Kya apko system issue hua hai ?  ya CX voice break please fill issue tracker",
-            "Don't be lazy to fill issue tracker it's for our safe side",
-            "Kuch bhi issue aa raha hai\nFill issue Tracker on Real time\nCx ki awaj nhi aa rahi hai call par\nFill issue Tracker"
+            "Customer ki awaaz clear nahi thi? Please fill the Issue Tracker.",
+            "Agar 1 sec bhi voice break ya mute hua ho, real-time pe log karein.",
+            "Mic ya headphone properly work nahi kar raha? Tracker update zaruri hai.",
+            "Call par CX ki voice drop hui? Please report in the tracker.",
+            "Voice transmission issue detect hua – kindly log now.",
+            "System hang, lag ya auto restart ho gaya? Real-time pe fill karein.",
+            "Slow performance observe kiya? Tracker mein mention karein.",
+            "System error face hua during call? Please update the tracker.",
+            "System crash ya freeze hua? Don’t forget to log it.",
+            "Login/logout issue report karna mandatory hai.",
+            "Wi-Fi disconnect ya internet slow hua? Real-time update karein.",
+            "CX ki voice cut ho rahi thi due to network? Tracker mein mention karein.",
+            "Call disconnect network issue ke wajah se? Log it properly.",
+            "Internet down tha? Please fill the Issue Tracker now.",
+            "Network fluctuations observed? Real-time reporting required.",
+            "Koi bhi technical ya voice issue ho – Issue Tracker pe turant likhna hai.",
+            "Don’t delay – tracker is for your protection during audits.",
+            "Real-time reporting helps maintain process quality.",
+            "Please don’t ignore even minor issues – log them now.",
+            "Issue Tracker is your responsibility – keep it updated at all times.",
+            "System ya voice ka koi bhi glitch ho – real-time pe report karein."
         )
 
         fun scheduleDailyNotifications(context: Context) {
