@@ -6,6 +6,10 @@ import 'package:issue_tracker_app/credits_screen.dart'; // New import
 import 'package:issue_tracker_app/feedback_screen.dart'; // New import
 import 'package:issue_tracker_app/changelog_screen.dart'; // New import for changelog
 import 'package:url_launcher/url_launcher.dart'; // New import for url_launcher
+import 'package:package_info_plus/package_info_plus.dart'; // For app version
+import 'package:http/http.dart' as http; // For making HTTP requests
+import 'dart:convert'; // For JSON decoding
+import 'package:flutter/services.dart'; // For MethodChannel
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -15,6 +19,113 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  String _currentVersion = 'Loading...';
+  String _latestVersion = 'Loading...';
+  String? _downloadUrl;
+  bool _updateAvailable = false;
+  bool _checkingForUpdate = false;
+
+  static const platform = MethodChannel('com.suvojeet.issue_tracker_app/update');
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentAppVersion();
+    _checkForUpdate();
+  }
+
+  Future<void> _getCurrentAppVersion() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      _currentVersion = packageInfo.version;
+    });
+  }
+
+  Future<void> _checkForUpdate() async {
+    setState(() {
+      _checkingForUpdate = true;
+    });
+    try {
+      const String repo = 'suvojit213/issue_tracker'; // Your GitHub repo
+      final response = await http.get(Uri.parse('https://api.github.com/repos/$repo/releases/latest'));
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> release = json.decode(response.body);
+        final String latestVersionTag = release['tag_name'];
+        final String latestVersion = latestVersionTag.startsWith('v') ? latestVersionTag.substring(1) : latestVersionTag;
+
+        // Find the APK asset
+        final assets = release['assets'] as List;
+        final apkAsset = assets.firstWhere(
+          (asset) => asset['name'].endsWith('.apk'),
+          orElse: () => null,
+        );
+
+        setState(() {
+          _latestVersion = latestVersion;
+          if (apkAsset != null) {
+            _downloadUrl = apkAsset['browser_download_url'];
+          }
+
+          // Simple version comparison (you might want a more robust one for complex versioning)
+          if (_currentVersion != 'Loading...' && _compareVersions(_latestVersion, _currentVersion) > 0) {
+            _updateAvailable = true;
+          } else {
+            _updateAvailable = false;
+          }
+        });
+      } else {
+        // Handle API error
+        setState(() {
+          _latestVersion = 'Error fetching updates';
+          _updateAvailable = false;
+        });
+        print('Failed to load latest release: ${response.statusCode}');
+      }
+    } catch (e) {
+      setState(() {
+        _latestVersion = 'Error fetching updates';
+        _updateAvailable = false;
+      });
+      print('Error checking for update: $e');
+    } finally {
+      setState(() {
+        _checkingForUpdate = false;
+      });
+    }
+  }
+
+  int _compareVersions(String v1, String v2) {
+    final v1Parts = v1.split('.').map(int.parse).toList();
+    final v2Parts = v2.split('.').map(int.parse).toList();
+
+    for (int i = 0; i < v1Parts.length && i < v2Parts.length; i++) {
+      if (v1Parts[i] > v2Parts[i]) return 1;
+      if (v1Parts[i] < v2Parts[i]) return -1;
+    }
+    return v1Parts.length.compareTo(v2Parts.length);
+  }
+
+  Future<void> _downloadAndInstallApk() async {
+    if (_downloadUrl == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No download URL available.')),
+      );
+      return;
+    }
+
+    try {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Downloading update...')),
+      );
+      await platform.invokeMethod('downloadAndInstallApk', {'url': _downloadUrl});
+    } on PlatformException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to download/install: ${e.message}')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,6 +197,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           MaterialPageRoute(builder: (context) => const AboutAppScreen()),
                         );
                       },
+                    ),
+                    // Check for Update Section
+                    _buildSettingsTile(
+                      context,
+                      icon: Icons.update,
+                      title: 'Check for Update',
+                      subtitle: _checkingForUpdate
+                          ? 'Checking for updates...'
+                          : _updateAvailable
+                              ? 'Update Available (v$_latestVersion)'
+                              : 'You are on the latest version (v$_currentVersion)',
+                      onTap: _checkingForUpdate ? null : _checkForUpdate,
+                      trailing: _updateAvailable
+                          ? ElevatedButton(
+                              onPressed: _downloadAndInstallApk,
+                              child: const Text('Download'),
+                            )
+                          : null,
                     ),
                     _buildSettingsTile(
                       context,
@@ -161,7 +290,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildSettingsTile(BuildContext context, {required IconData icon, required String title, required String subtitle, required VoidCallback onTap}) {
+  Widget _buildSettingsTile(BuildContext context, {required IconData icon, required String title, required String subtitle, VoidCallback? onTap, Widget? trailing}) {
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(8),
@@ -187,7 +316,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           color: Colors.grey[600],
         ),
       ),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+      trailing: trailing ?? const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     );

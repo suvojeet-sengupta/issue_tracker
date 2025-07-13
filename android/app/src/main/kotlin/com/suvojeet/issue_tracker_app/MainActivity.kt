@@ -1,9 +1,13 @@
 package com.suvojeet.issue_tracker_app
 
 import android.Manifest
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -26,12 +30,47 @@ import java.util.concurrent.TimeUnit
 class MainActivity : FlutterActivity() {
     private val FILE_CHANNEL = "com.suvojeet.issue_tracker_app/file_opener"
     private val NOTIFICATION_CHANNEL = "com.suvojeet.issue_tracker_app/notifications"
+    private val UPDATE_CHANNEL = "com.suvojeet.issue_tracker_app/update"
     private val PERMISSION_REQUEST_CODE = 100
+
+    private var downloadId: Long = -1
+    private lateinit var downloadManager: DownloadManager
+
+    private val onDownloadComplete = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+            if (DownloadManager.ACTION_DOWNLOAD_COMPLETE == intent.action && downloadId == id) {
+                val query = DownloadManager.Query()
+                query.setFilterById(id)
+                val cursor: Cursor = downloadManager.query(query)
+                if (cursor.moveToFirst()) {
+                    val columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
+                    if (DownloadManager.STATUS_SUCCESSFUL == cursor.getInt(columnIndex)) {
+                        val uriString = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI))
+                        val downloadedFileUri = Uri.parse(uriString)
+                        installApk(context, downloadedFileUri)
+                    } else {
+                        // Handle download failure
+                        println("Download failed")
+                    }
+                }
+                cursor.close()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestNotificationPermission()
         intent?.let { handleIntent(it) }
+
+        downloadManager = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(onDownloadComplete)
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -130,6 +169,50 @@ class MainActivity : FlutterActivity() {
                 else -> result.notImplemented()
             }
         }
+
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, UPDATE_CHANNEL).setMethodCallHandler {
+            call, result ->
+            if (call.method == "downloadAndInstallApk") {
+                val url = call.argument<String>("url")
+                if (url != null) {
+                    downloadApk(url)
+                    result.success(null)
+                } else {
+                    result.error("INVALID_ARGUMENT", "Download URL cannot be null", null)
+                }
+            } else {
+                result.notImplemented()
+            }
+        }
+    }
+
+    private fun downloadApk(url: String) {
+        val request = DownloadManager.Request(Uri.parse(url))
+            .setTitle("App Update")
+            .setDescription("Downloading new version of the app")
+            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "issue_tracker_app.apk")
+
+        downloadId = downloadManager.enqueue(request)
+    }
+
+    private fun installApk(context: Context, apkUri: Uri) {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setDataAndType(apkUri, "application/vnd.android.package-archive")
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            val contentUri = FileProvider.getUriForFile(
+                context,
+                context.applicationContext.packageName + ".provider",
+                File(apkUri.path!!)
+            )
+            intent.setDataAndType(contentUri, "application/vnd.android.package-archive")
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        context.startActivity(intent)
     }
 
     private fun saveAndOpenFile(filePath: String, context: Context, result: MethodChannel.Result) {
