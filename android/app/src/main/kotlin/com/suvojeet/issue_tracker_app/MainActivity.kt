@@ -88,14 +88,14 @@ class MainActivity : FlutterActivity() {
         // Initialize notification channel
         NotificationHelper.createNotificationChannel(this)
 
-        // Schedule the initial notification worker
-        val initialNotificationWork = OneTimeWorkRequest.Builder(NotificationWorker::class.java)
-            .setInitialDelay(1, TimeUnit.MINUTES) // Start after 1 minute
+        // Schedule the daily notification scheduler
+        val dailySchedulerWorkRequest = OneTimeWorkRequest.Builder(DailySchedulerWorker::class.java)
+            .setInitialDelay(1, TimeUnit.MINUTES) // Schedule to run shortly after app launch
             .build()
         WorkManager.getInstance(this).enqueueUniqueWork(
-            "IssueTrackerInitialNotificationWork",
-            ExistingWorkPolicy.KEEP,
-            initialNotificationWork
+            "DailyNotificationScheduler",
+            ExistingWorkPolicy.REPLACE,
+            dailySchedulerWorkRequest
         )
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, FILE_CHANNEL).setMethodCallHandler {
