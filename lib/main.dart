@@ -243,12 +243,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
     }
   }
 
-  @override
-  void dispose() {
-    _animationController.dispose();
-    _scrollController.dispose(); // Dispose the scroll controller
-    super.dispose();
-  }
+  
 
   _loadUserData() async {
     setState(() {
