@@ -31,14 +31,12 @@ class MainActivity : FlutterActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestNotificationPermission()
-        handleIntent(intent)
+        intent?.let { handleIntent(it) }
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        if (intent != null) {
-            handleIntent(intent)
-        }
+        handleIntent(intent)
     }
 
     private fun handleIntent(intent: Intent) {
@@ -48,7 +46,7 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun navigateToHistory() {
-        MethodChannel(flutterEngine!!.dartExecutor.binaryMessenger, NOTIFICATION_CHANNEL).invokeMethod("navigateToHistory")
+        MethodChannel(flutterEngine!!.dartExecutor.binaryMessenger, NOTIFICATION_CHANNEL).invokeMethod("navigateToHistory", null)
     }
 
     private fun requestNotificationPermission() {
