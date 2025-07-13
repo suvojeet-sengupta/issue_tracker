@@ -27,6 +27,48 @@ class ChangelogScreen extends StatelessWidget {
           children: [
             _buildChangelogEntry(
               context,
+              'fe49146a04ffa8ae95cea5e6408ad3f3908730e9',
+              'suvojit213',
+              '2025-07-13 20:45:13',
+              'feat: Enhance ChangelogScreen UI/UX',
+            ),
+            _buildChangelogEntry(
+              context,
+              'fe49146a04ffa8ae95cea5e6408ad3f3908730e9',
+              'suvojit213',
+              '2025-07-13 20:45:13',
+              'feat: Enhance ChangelogScreen UI/UX',
+            ),
+            _buildChangelogEntry(
+              context,
+              '01942a879e5d3ee4dcafe36661118b2a2e057acd',
+              'suvojit213',
+              '2025-07-13 20:40:03',
+              'feat: Update app version to 1.0.3',
+            ),
+            _buildChangelogEntry(
+              context,
+              'df39a363fee3cc03fd3ee64325ab0aa8775c3bfe',
+              'suvojit213',
+              '2025-07-13 20:03:37',
+              'fix: Escape single quotes in changelog entry',
+            ),
+            _buildChangelogEntry(
+              context,
+              '73ae8ef2560bf8db96cfc2338daf7f3d164b300b',
+              'suvojit213',
+              '2025-07-13 20:00:52',
+              'feat: Enable Android Auto Backup for app data persistence',
+            ),
+            _buildChangelogEntry(
+              context,
+              '92687e0a3dbf757fe404a3ac8357cf2cb802d1ee',
+              'suvojit213',
+              '2025-07-13 19:51:16',
+              'feat: Update app version to 1.0.3 and add Changelog screen',
+            ),
+            _buildChangelogEntry(
+              context,
               'bc50a335262a4351f24196b369940f86bc51c621',
               'suvojit213',
               '2025-07-13 17:04:43',
