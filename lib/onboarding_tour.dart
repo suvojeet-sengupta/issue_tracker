@@ -7,6 +7,7 @@ class OnboardingTour {
   final GlobalKey historyTabKey;
   final GlobalKey settingsTabKey;
   final GlobalKey fillIssueButtonKey;
+  final GlobalKey notificationIconKey;
 
   OnboardingTour({
     required this.homeTabKey,
@@ -14,6 +15,7 @@ class OnboardingTour {
     required this.historyTabKey,
     required this.settingsTabKey,
     required this.fillIssueButtonKey,
+    required this.notificationIconKey,
   });
 
   List<TargetFocus> _buildTargets() {
@@ -239,6 +241,53 @@ class OnboardingTour {
                     padding: EdgeInsets.only(top: 8.0),
                     child: Text(
                       "This section allows you to manage your personal information, including your CRM ID, Team Leader, and Advisor Name. You can also access administrative settings, view app information, and see the project credits.",
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 14.0,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    // Target for Notification Icon
+    targets.add(
+      TargetFocus(
+        keyTarget: notificationIconKey,
+        alignSkip: Alignment.topRight,
+        enableOverlayTab: true,
+        contents: [
+          TargetContent(
+            align: ContentAlign.top,
+            child: Container(
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.9),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(
+                    "Notification History",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1E3A8A),
+                      fontSize: 20.0,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      "Tap here to view your notification history. This section keeps a record of all the important reminders and updates from the app.",
                       style: TextStyle(
                         color: Colors.black87,
                         fontSize: 14.0,

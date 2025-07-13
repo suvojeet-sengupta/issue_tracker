@@ -79,6 +79,7 @@ class _MainAppScreenState extends State<MainAppScreen> {
   final GlobalKey _historyTabKey = GlobalKey();
   final GlobalKey _settingsTabKey = GlobalKey();
   final GlobalKey _fillIssueButtonKey = GlobalKey();
+  final GlobalKey _notificationIconKey = GlobalKey();
 
 
   List<Widget> get _widgetOptions => <Widget>[
@@ -107,6 +108,7 @@ class _MainAppScreenState extends State<MainAppScreen> {
           historyTabKey: _historyTabKey,
           settingsTabKey: _settingsTabKey,
           fillIssueButtonKey: _fillIssueButtonKey,
+          notificationIconKey: _notificationIconKey,
         );
         onboardingTour.show(context);
         prefs.setBool('interactive_onboarding_complete', true);
@@ -322,6 +324,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                                 },
                               ),
                               IconButton(
+                                key: _notificationIconKey,
                                 icon: const Icon(Icons.notifications_active_outlined,
                                     color: Colors.white),
                                 onPressed: () {
