@@ -8,6 +8,15 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -63,8 +72,12 @@ object NotificationHelper {
         val history = sharedPreferences.getStringSet(HISTORY_KEY, mutableSetOf())?.toMutableSet() ?: mutableSetOf()
 
         val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
-        val notificationEntry = "{"timestamp":"$timestamp", "message":"${message.replace(""", "\"")}", "isRead":false}"
-        history.add(notificationEntry)
+        val notificationJson = JSONObject().apply {
+            put("timestamp", timestamp)
+            put("message", message)
+            put("isRead", false)
+        }
+        history.add(notificationJson.toString())
 
         editor.putStringSet(HISTORY_KEY, history)
         editor.apply()
@@ -75,8 +88,14 @@ object NotificationHelper {
         val history = sharedPreferences.getStringSet(HISTORY_KEY, emptySet()) ?: emptySet()
         var unreadCount = 0
         for (entry in history) {
-            if (!entry.contains(""isRead":true")) { // Simple check for unread status
-                unreadCount++
+            try {
+                val jsonObject = JSONObject(entry)
+                if (!jsonObject.getBoolean("isRead")) {
+                    unreadCount++
+                }
+            } catch (e: Exception) {
+                // Handle parsing error, e.g., log it
+                e.printStackTrace()
             }
         }
         return unreadCount
@@ -89,8 +108,15 @@ object NotificationHelper {
 
         val updatedHistory = mutableSetOf<String>()
         for (entry in history) {
-            val updatedEntry = entry.replace(""isRead":false", ""isRead":true")
-            updatedHistory.add(updatedEntry)
+            try {
+                val jsonObject = JSONObject(entry)
+                jsonObject.put("isRead", true)
+                updatedHistory.add(jsonObject.toString())
+            } catch (e: Exception) {
+                // Handle parsing error, e.g., log it
+                e.printStackTrace()
+                updatedHistory.add(entry) // Add original entry if parsing fails
+            }
         }
 
         editor.putStringSet(HISTORY_KEY, updatedHistory)
