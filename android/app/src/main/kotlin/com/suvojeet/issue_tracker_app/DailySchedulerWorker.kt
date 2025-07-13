@@ -71,7 +71,7 @@ class DailySchedulerWorker(appContext: Context, workerParams: WorkerParameters) 
 
             val minGapMillis = 30 * 60 * 1000L // 30 minutes in milliseconds
 
-            for (i in 0 until 15) {
+            for (i in 0 until messages.size) {
                 var randomTime: Long
                 var isValidTime: Boolean
                 do {
