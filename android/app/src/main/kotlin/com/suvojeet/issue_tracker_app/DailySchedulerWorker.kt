@@ -47,7 +47,33 @@ class DailySchedulerWorker(appContext: Context, workerParams: WorkerParameters) 
             // Cancel any previously scheduled daily notifications to avoid duplicates
             workManager.cancelUniqueWork("DailyNotificationScheduler")
 
+            val sharedPreferences = context.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
+            val advisorName = sharedPreferences.getString("flutter.advisorName", "User") ?: "User"
+
+            // Schedule Good Morning notification at 6 AM
+            val goodMorningCalendar = Calendar.getInstance()
+            goodMorningCalendar.timeInMillis = System.currentTimeMillis()
+            goodMorningCalendar.set(Calendar.HOUR_OF_DAY, 6)
+            goodMorningCalendar.set(Calendar.MINUTE, 0)
+            goodMorningCalendar.set(Calendar.SECOND, 0)
+            goodMorningCalendar.set(Calendar.MILLISECOND, 0)
+
+            var goodMorningDelay = goodMorningCalendar.timeInMillis - System.currentTimeMillis()
+            if (goodMorningDelay < 0) {
+                // If 6 AM has already passed today, schedule for 6 AM tomorrow
+                goodMorningCalendar.add(Calendar.DAY_OF_YEAR, 1)
+                goodMorningDelay = goodMorningCalendar.timeInMillis - System.currentTimeMillis()
+            }
+
+            val goodMorningMessage = "Good Morning $advisorName!"
+            val goodMorningWorkRequest = OneTimeWorkRequest.Builder(NotificationWorker::class.java)
+                .setInitialDelay(goodMorningDelay, TimeUnit.MILLISECONDS)
+                .setInputData(Data.Builder().putString("message", goodMorningMessage).build())
+                .build()
+            workManager.enqueue(goodMorningWorkRequest)
+
             val scheduledTimes = mutableListOf<Long>() // Store scheduled times in milliseconds
+            scheduledTimes.add(goodMorningCalendar.timeInMillis) // Add good morning time to avoid conflicts
 
             val calendar = Calendar.getInstance()
             calendar.timeInMillis = System.currentTimeMillis()
@@ -71,7 +97,8 @@ class DailySchedulerWorker(appContext: Context, workerParams: WorkerParameters) 
 
             val minGapMillis = 30 * 60 * 1000L // 30 minutes in milliseconds
 
-            for (i in 0 until messages.size) {
+            // Schedule remaining notifications (messages.size - 1 because one is for Good Morning)
+            for (i in 0 until messages.size - 1) {
                 var randomTime: Long
                 var isValidTime: Boolean
                 do {
