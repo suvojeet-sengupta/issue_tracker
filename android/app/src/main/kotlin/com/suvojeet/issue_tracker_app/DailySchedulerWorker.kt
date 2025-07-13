@@ -12,20 +12,20 @@ import kotlin.random.Random
 
 class DailySchedulerWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams) {
 
-    private val messages = listOf(
-        "Login and logout time pe, tagging miss pe, wifi off,system off,system hang, voice issue pe, Tagging missing pe issue tracker real time pe fill hona chahiye.",
-        "Team one more important update ek sec bhi agar app ki voice na jaye ya observe ho ki headphone issue or system issue hai real time me issue tracker fill hona chahiye",
-        "Kya apko system issue hua hai ?  ya CX voice break please fill issue tracker",
-        "Don't be lazy to fill issue tracker it's for our safe side",
-        "Kuch bhi issue aa raha hai\nFill issue Tracker on Real time\nCx ki awaj nhi aa rahi hai call par\nFill issue Tracker"
-    )
-
     override fun doWork(): Result {
-        scheduleDailyNotifications(applicationContext)
+        Companion.scheduleDailyNotifications(applicationContext)
         return Result.success()
     }
 
     companion object {
+        private val messages = listOf(
+            "Login and logout time pe, tagging miss pe, wifi off,system off,system hang, voice issue pe, Tagging missing pe issue tracker real time pe fill hona chahiye.",
+            "Team one more important update ek sec bhi agar app ki voice na jaye ya observe ho ki headphone issue or system issue hai real time me issue tracker fill hona chahiye",
+            "Kya apko system issue hua hai ?  ya CX voice break please fill issue tracker",
+            "Don't be lazy to fill issue tracker it's for our safe side",
+            "Kuch bhi issue aa raha hai\nFill issue Tracker on Real time\nCx ki awaj nhi aa rahi hai call par\nFill issue Tracker"
+        )
+
         fun scheduleDailyNotifications(context: Context) {
             val workManager = WorkManager.getInstance(context)
             // Cancel any previously scheduled daily notifications to avoid duplicates

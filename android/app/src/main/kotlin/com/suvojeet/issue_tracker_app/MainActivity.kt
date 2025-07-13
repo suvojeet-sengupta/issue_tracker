@@ -115,10 +115,6 @@ class MainActivity : FlutterActivity() {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, NOTIFICATION_CHANNEL).setMethodCallHandler {
             call, result ->
             when (call.method) {
-                "scheduleNotification" -> {
-                    NotificationWorker.scheduleNextNotification(this)
-                    result.success(null)
-                }
                 "getNotificationHistory" -> {
                     val sharedPreferences = applicationContext.getSharedPreferences("notification_prefs", Context.MODE_PRIVATE)
                     val history = sharedPreferences.getStringSet("notification_history", emptySet())?.toList() ?: emptyList()
