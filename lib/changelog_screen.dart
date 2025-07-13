@@ -20,7 +20,7 @@ class ChangelogScreen extends StatelessWidget {
             'bc50a335262a4351f24196b369940f86bc51c621',
             'suvojit213',
             '2025-07-13 17:04:43',
-            'feat: Add 'Good Morning' notification with advisor name',
+            "feat: Add 'Good Morning' notification with advisor name",
           ),
           _buildChangelogEntry(
             context,
