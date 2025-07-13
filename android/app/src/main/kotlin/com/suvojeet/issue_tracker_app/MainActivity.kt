@@ -65,7 +65,7 @@ class MainActivity : FlutterActivity() {
         intent?.let { handleIntent(it) }
 
         downloadManager = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-        registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+        registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE), Context.RECEIVER_NOT_EXPORTED)
     }
 
     override fun onDestroy() {
