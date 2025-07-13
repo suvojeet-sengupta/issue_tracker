@@ -264,7 +264,7 @@ class OnboardingTour {
         enableOverlayTab: true,
         contents: [
           TargetContent(
-            align: ContentAlign.top,
+            align: ContentAlign.bottom,
             child: Container(
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
