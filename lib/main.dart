@@ -83,7 +83,7 @@ class _MainAppScreenState extends State<MainAppScreen> {
 
 
   List<Widget> get _widgetOptions => <Widget>[
-        DashboardScreen(fillIssueButtonKey: _fillIssueButtonKey), // Pass the key to DashboardScreen
+        DashboardScreen(fillIssueButtonKey: _fillIssueButtonKey, notificationIconKey: _notificationIconKey), // Pass the key to DashboardScreen
         const IssueTrackerScreen(),
         const HistoryScreen(),
         const SettingsScreen(), // Settings screen is now part of bottom nav
@@ -165,7 +165,8 @@ class _MainAppScreenState extends State<MainAppScreen> {
 
 class DashboardScreen extends StatefulWidget {
   final Key? fillIssueButtonKey;
-  const DashboardScreen({super.key, this.fillIssueButtonKey});
+  final Key? notificationIconKey;
+  const DashboardScreen({super.key, this.fillIssueButtonKey, this.notificationIconKey});
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
@@ -324,7 +325,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                                 },
                               ),
                               IconButton(
-                                key: _notificationIconKey,
+                                key: widget.notificationIconKey,
                                 icon: const Icon(Icons.notifications_active_outlined,
                                     color: Colors.white),
                                 onPressed: () {
