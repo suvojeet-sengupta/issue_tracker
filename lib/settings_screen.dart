@@ -4,6 +4,7 @@ import 'package:issue_tracker_app/about_app_screen.dart'; // New import
 import 'package:issue_tracker_app/developer_info_screen.dart'; // New import
 import 'package:issue_tracker_app/credits_screen.dart'; // New import
 import 'package:issue_tracker_app/feedback_screen.dart'; // New import
+import 'package:issue_tracker_app/changelog_screen.dart'; // New import for changelog
 import 'package:url_launcher/url_launcher.dart'; // New import for url_launcher
 
 class SettingsScreen extends StatefulWidget {
@@ -135,6 +136,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => const CreditsScreen()),
+                        );
+                      },
+                    ),
+                    _buildSettingsTile(
+                      context,
+                      icon: Icons.history,
+                      title: 'Changelog',
+                      subtitle: 'View app version history and updates',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const ChangelogScreen()),
                         );
                       },
                     ),
