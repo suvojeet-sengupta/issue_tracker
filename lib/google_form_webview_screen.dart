@@ -36,6 +36,7 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
                   for (var i = 0; i < buttons.length; i++) {
                       if (buttons[i].innerText.includes('Submit') || buttons[i].innerText.includes('Send')) {
                           buttons[i].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                          buttons[i].click(); // Add this line to click the button
                           return;
                       }
                   }
@@ -50,7 +51,7 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
                     const Icon(Icons.ads_click, color: Colors.white, size: 28),
                     const SizedBox(width: 12),
                     const Text(
-                      "Click on Submit button",
+                      "Form submitted automatically!", // Changed message
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.bold,
@@ -60,7 +61,7 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
                     ),
                   ],
                 ),
-                backgroundColor: Colors.deepPurple,
+                backgroundColor: Colors.green, // Changed color
                 behavior: SnackBarBehavior.floating,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
