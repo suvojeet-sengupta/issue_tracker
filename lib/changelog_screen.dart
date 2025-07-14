@@ -27,6 +27,13 @@ class ChangelogScreen extends StatelessWidget {
           children: [
             _buildChangelogEntry(
               context,
+              '99f1bec98d3841a06d9b6b623fa58e03c27f4b2d',
+              'suvojit213',
+              '2025-07-14 12:00:00',
+              'feat: Add notification settings screen',
+            ),
+            _buildChangelogEntry(
+              context,
               'fe49146a04ffa8ae95cea5e6408ad3f3908730e9',
               'suvojit213',
               '2025-07-13 20:45:13',
