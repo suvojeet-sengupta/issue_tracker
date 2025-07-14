@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:issue_tracker_app/notification_settings_screen.dart';
+
 class AdminSettingsScreen extends StatelessWidget {
   const AdminSettingsScreen({super.key});
 
@@ -30,6 +32,20 @@ class AdminSettingsScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Column(
                   children: [
+                    _buildSettingsTile(
+                      context,
+                      icon: Icons.notifications,
+                      title: 'Notification Settings',
+                      subtitle: 'Manage notification preferences',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const NotificationSettingsScreen(),
+                          ),
+                        );
+                      },
+                    ),
                     _buildSettingsTile(
                       context,
                       icon: Icons.storage,

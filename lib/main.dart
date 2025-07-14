@@ -35,9 +35,19 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _initNotifications() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bool notificationsEnabled = prefs.getBool('notificationsEnabled') ?? true;
+    final int notificationInterval = prefs.getInt('notificationInterval') ?? 24;
+
     const platform = MethodChannel('com.suvojeet.issue_tracker_app/notifications');
     try {
-      await platform.invokeMethod('scheduleNotification');
+      if (notificationsEnabled) {
+        await platform.invokeMethod('scheduleNotification', {
+          'interval': notificationInterval,
+        });
+      } else {
+        await platform.invokeMethod('cancelAllNotifications');
+      }
     } on PlatformException catch (e) {
       print("Failed to schedule notifications: '${e.message}'.");
     }

@@ -44,3 +44,7 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 /android/key.properties
+keystore.jks
+keystore.jks.base64
+crash.txt
+update.txt

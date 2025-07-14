@@ -127,6 +127,22 @@ class MainActivity : FlutterActivity() {
                     NotificationHelper.markAllNotificationsAsRead(applicationContext)
                     result.success(null)
                 }
+                "scheduleNotification" -> {
+                    val interval = call.argument<Int>("interval")?.toLong() ?: 24L
+                    val dailySchedulerWorkRequest = OneTimeWorkRequest.Builder(DailySchedulerWorker::class.java)
+                        .setInitialDelay(interval, TimeUnit.HOURS)
+                        .build()
+                    WorkManager.getInstance(this).enqueueUniqueWork(
+                        "DailyNotificationScheduler",
+                        ExistingWorkPolicy.REPLACE,
+                        dailySchedulerWorkRequest
+                    )
+                    result.success(null)
+                }
+                "cancelAllNotifications" -> {
+                    WorkManager.getInstance(this).cancelUniqueWork("DailyNotificationScheduler")
+                    result.success(null)
+                }
                 else -> result.notImplemented()
             }
         }
