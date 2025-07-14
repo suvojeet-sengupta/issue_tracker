@@ -27,10 +27,31 @@ class ChangelogScreen extends StatelessWidget {
           children: [
             _buildChangelogEntry(
               context,
+              'cad24b6e86677c3158b930ffc06f80677dde810e',
+              'suvojit213',
+              '2025-07-14 07:18:10',
+              'docs: Update changelog',
+            ),
+            _buildChangelogEntry(
+              context,
               '99f1bec98d3841a06d9b6b623fa58e03c27f4b2d',
               'suvojit213',
-              '2025-07-14 12:00:00',
+              '2025-07-14 07:05:55',
               'feat: Add notification settings screen',
+            ),
+            _buildChangelogEntry(
+              context,
+              '91dc76b1be77f0c7d463fb9436025b30fe98db82',
+              'suvojit213',
+              '2025-07-14 06:45:16',
+              'fix: Add required imports to build.gradle.kts',
+            ),
+            _buildChangelogEntry(
+              context,
+              '7badca48ba9d336cbfcdb1a42c1b894fe1f24a0c',
+              'suvojit213',
+              '2025-07-14 06:41:39',
+              'feat: Implement secure and consistent APK signing',
             ),
             _buildChangelogEntry(
               context,
