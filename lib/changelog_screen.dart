@@ -27,6 +27,13 @@ class ChangelogScreen extends StatelessWidget {
           children: [
             _buildChangelogEntry(
               context,
+              'f97d928a8f2603d9dfa38573be52b8feb849b754',
+              'suvojit213',
+              '2025-07-14 07:38:46',
+              'feat: Automate Google Form submission',
+            ),
+            _buildChangelogEntry(
+              context,
               'cad24b6e86677c3158b930ffc06f80677dde810e',
               'suvojit213',
               '2025-07-14 07:18:10',
