@@ -1,28 +1,52 @@
-# 🚀 Issue Tracker App: Streamlined Issue Management
+# 🚀 Issue Tracker App
 
-Welcome to the **Issue Tracker App**, a powerful and intuitive Flutter application designed to revolutionize how you log and track issues. Seamlessly integrating with Google Forms, this app ensures detailed record-keeping with minimal effort, making it an indispensable tool for advisors and team leaders.
+[![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev/)
+[![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com/)
+[![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)](https://kotlinlang.org/)
+[![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)](https://docs.github.com/en/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+A robust and intuitive Flutter application designed to streamline the process of logging and tracking issues, seamlessly integrating with Google Forms for efficient data management. This app is built to enhance productivity for advisors and team leaders by automating data entry and providing a user-friendly interface.
 
 ---
 
-## ✨ Features at a Glance
+## 🌟 Features
 
-Our app is packed with features engineered for efficiency and user-friendliness:
+The Issue Tracker App is packed with functionalities designed for efficiency and a superior user experience:
 
--   **Secure & Consistent APK Signing:** Ensures that app updates can be installed seamlessly without requiring uninstallation, thanks to consistent signing across builds.
--   **Admin Notification Control:** Admins now have full control over notifications, including the ability to enable/disable them and set custom intervals.
--   **Automated Google Form Submission:** The app now automatically submits the Google Form after pre-filling, eliminating manual interaction.
--   **User Profile Management:** Effortlessly input and manage your CRM ID, Advisor Name, and Team Leader (TL) Name. Your details are securely saved for quick access in future sessions.
--   **Dynamic TL Selection:** Choose from a curated list of Team Leaders or easily add an 'Other' TL name if yours isn't predefined.
--   **Precise Issue Timing:** Accurately log the start and end times of issues using an elegant and intuitive time picker.
--   **Persistent Organization Preference:** Set your organization (DISH or D2H) once, and the app intelligently remembers your choice, auto-filling it for all subsequent Google Form submissions.
--   **Automated Date Pre-fill:** The current date is automatically fetched and pre-filled for both issue start and end dates in the Google Form, drastically cutting down on manual entry and boosting accuracy.
--   **Seamless Google Form Integration:** All captured issue details are automatically and intelligently pre-filled into a designated Google Form, eliminating manual data entry and significantly reducing errors.
--   **In-App Webview Experience:** The Google Form opens directly within the application via a built-in webview, providing a smooth, integrated, and uninterrupted user experience.
--   **Smart Auto-Scroll & Instruction:** Upon opening the Google Form, the webview automatically scrolls to the submit button, and a clear, visually appealing instruction guides the user to complete the submission.
--   **Intelligent Submission Detection:** The app now accurately detects if the Google Form has been successfully submitted by monitoring URL changes, providing instant feedback.
--   **Enhanced Back Navigation:** Smart navigation ensures that if a form is submitted, you're seamlessly redirected to the home screen with a success message. If not, a clear warning prompts you before exiting.
--   **Intuitive & Modern UI:** Experience a clean, modern, and highly responsive user interface designed for maximum ease of use and visual appeal.
--   **Automated Name Pre-fill in Feedback:** Your advisor name is automatically fetched and pre-filled in the feedback section, making it easier to share your thoughts.
+-   **Automated Google Form Submission:** Automatically pre-fills and submits Google Forms, eliminating manual data entry and significantly reducing errors.
+-   **Admin Notification Control:** Provides administrators with comprehensive control over in-app notifications, including enabling/disabling and setting custom reminder intervals.
+-   **Secure & Consistent APK Signing:** Ensures seamless app updates without requiring prior uninstallation, maintaining signature consistency across all builds.
+-   **User Profile Management:** Effortlessly input and manage CRM ID, Advisor Name, and Team Leader (TL) Name. Details are securely saved for quick access.
+-   **Dynamic TL Selection:** Choose from a predefined list of Team Leaders or add an 'Other' TL name if not listed.
+-   **Precise Issue Timing:** Accurately log the start and end times of issues using an intuitive time picker.
+-   **Persistent Organization Preference:** The app intelligently remembers your organization (DISH or D2H) for auto-filling in subsequent Google Form submissions.
+-   **Automated Date Pre-fill:** Current date is automatically fetched and pre-filled for issue start and end dates in the Google Form, enhancing accuracy and saving time.
+-   **In-App Webview Experience:** Google Forms open directly within the application via a built-in webview, providing a smooth and uninterrupted user experience.
+-   **Smart Auto-Scroll & Instruction:** The webview automatically scrolls to the submit button, with clear, visually appealing instructions for user guidance.
+-   **Intelligent Submission Detection:** Accurately detects successful Google Form submissions by monitoring URL changes, providing instant feedback.
+-   **Enhanced Back Navigation:** Smart navigation ensures seamless redirection to the home screen with a success message upon form submission, or a clear warning before exiting if not submitted.
+-   **Intuitive & Modern UI:** Features a clean, modern, and highly responsive user interface designed for maximum ease of use and visual appeal.
+-   **Automated Name Pre-fill in Feedback:** Your advisor name is automatically fetched and pre-filled in the feedback section for convenience.
+-   **Comprehensive Changelog:** An in-app changelog screen provides a detailed history of updates, features, and bug fixes.
+
+---
+
+## 🛠️ Technologies Used
+
+-   **Flutter:** UI Toolkit for building natively compiled applications for mobile, web, and desktop from a single codebase.
+-   **Dart:** Programming language optimized for UI.
+-   **Kotlin:** For native Android functionalities and WorkManager integration.
+-   **`webview_flutter`:** For embedding web content (Google Forms) within the app.
+-   **`shared_preferences`:** For lightweight, persistent key-value storage.
+-   **`url_launcher`:** For launching URLs.
+-   **`provider`:** For state management.
+-   **`image_picker`:** For picking images from the gallery or camera.
+-   **`path_provider`:** For accessing file system paths.
+-   **`pdf` & `excel`:** For generating reports.
+-   **`flutter_local_notifications`:** For handling local notifications.
+-   **`tutorial_coach_mark`:** For interactive onboarding tours.
+-   **GitHub Actions:** For Continuous Integration and automated APK builds.
 
 ---
 
@@ -36,6 +60,7 @@ Before you begin, ensure you have the following installed:
 
 -   **Flutter SDK:** [Install Flutter](https://flutter.dev/docs/get-started/install)
 -   **Android Studio / VS Code:** With the official Flutter and Dart plugins installed.
+-   **Java Development Kit (JDK):** Required for Android development.
 
 ### Installation
 
@@ -61,6 +86,8 @@ Before you begin, ensure you have the following installed:
     ```xml
     <manifest xmlns:android="http://schemas.android.com/apk/res/android">
         <uses-permission android:name="android.permission.INTERNET"/>
+        <!-- Add other necessary permissions here, e.g., for notifications -->
+        <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
         <application
             android:label="issue_tracker_app"
             android:name="${applicationName}"
@@ -69,6 +96,37 @@ Before you begin, ensure you have the following installed:
         </application>
     </manifest>
     ```
+
+4.  **Generate a Keystore (for Release Builds):**
+
+    To sign your Android APKs consistently, generate a keystore. **Keep this file and its passwords secure.**
+
+    ```bash
+    keytool -genkey -v -keystore keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias <your-key-alias>
+    ```
+    Replace `<your-key-alias>` with your desired alias (e.g., `mykey`). Remember the keystore password and key password.
+
+5.  **Configure `key.properties`:**
+
+    Create a file named `key.properties` in the `android/` directory (at the same level as `build.gradle.kts`) with the following content, replacing placeholders with your actual keystore details:
+
+    ```properties
+    storePassword=<YOUR_KEYSTORE_PASSWORD>
+    keyPassword=<YOUR_KEY_PASSWORD>
+    keyAlias=<YOUR_KEY_ALIAS>
+    storeFile=<PATH_TO_YOUR_KEYSTORE_FILE>/keystore.jks
+    ```
+    **Important:** Ensure `key.properties` is added to your `.gitignore` to prevent it from being committed to version control.
+
+6.  **Set up GitHub Secrets (for CI/CD):**
+
+    For automated builds via GitHub Actions, you need to securely store your keystore and passwords as repository secrets.
+    -   Base64 encode your `keystore.jks` file: `base64 keystore.jks`
+    -   In your GitHub repository, go to `Settings` > `Secrets and variables` > `Actions` and add the following secrets:
+        -   `KEYSTORE_BASE64`: Paste the base64 encoded string.
+        -   `KEY_ALIAS`: Your key alias (e.g., `mykey`).
+        -   `KEY_PASSWORD`: Your key password.
+        -   `STORE_PASSWORD`: Your keystore password.
 
 ### Running the App
 
@@ -83,77 +141,62 @@ Before you begin, ensure you have the following installed:
 
 ## 💡 Usage
 
-1.  **Initial Setup:** Upon the very first launch, you'll be guided through a quick setup process. Here, you'll enter your CRM ID, Advisor Name, Team Leader, and select your Organization (DISH/D2H). These details are saved for future convenience.
-2.  **Issue Tracking:** From the main screen, you can easily record the start and end times of any issue.
-3.  **Automated Submission:** After filling in the required times, tap the prominent `Submit Issue and Open Form` button. The app will intelligently pre-fill the Google Form with your collected data, open it directly within the app's webview, and automatically submit it.
-4.  **Feedback:** Navigate to the feedback section to share your experience, where your name will be pre-filled for convenience.
+1.  **Initial Setup:** On first launch, complete a quick setup by entering your CRM ID, Advisor Name, Team Leader, and Organization. These details are saved for future use.
+2.  **Issue Tracking:** From the main screen, record issue start and end times.
+3.  **Automated Submission:** Tap "Submit Issue and Open Form". The app pre-fills the Google Form, opens it in a webview, and automatically submits it.
+4.  **Notification Settings:** Access Admin Settings to enable/disable notifications and customize their frequency.
+5.  **Feedback:** Provide feedback via the dedicated section, with your name pre-filled for convenience.
 
 ---
 
 ## 📂 Project Structure
 
-A well-organized project structure ensures maintainability and scalability:
-
 ```
 issue_tracker/
-├── android/                  # Android specific files
+├── android/                  # Android specific files (Kotlin source, Gradle configs)
 ├── assets/                   # Application assets (fonts, images, icons)
 │   ├── fonts/
 │   ├── icon/
 │   └── images/
-├── ios/                      # iOS specific files
-├── lib/                      # Core application source code
+├── lib/                      # Core application source code (Dart)
 │   ├── about_app_screen.dart
-│   ├── admin_settings_screen.dart
+│   ├── admin_settings_screen.dart    # Admin settings including notification controls
+│   ├── changelog_screen.dart         # In-app changelog display
 │   ├── credits_screen.dart
 │   ├── developer_info_screen.dart
 │   ├── edit_profile_screen.dart
 │   ├── feedback_screen.dart          # Feedback screen with auto-filled name
-│   ├── google_form_webview_screen.dart # Handles Google Form display and submission logic
+│   ├── google_form_webview_screen.dart # Handles Google Form display and automated submission
 │   ├── history_onboarding_tour.dart
 │   ├── history_screen.dart
 │   ├── initial_setup_screen.dart     # Initial user setup
 │   ├── issue_detail_screen.dart
 │   ├── issue_tracker_screen.dart     # Main issue tracking screen
-│   ├── main.dart                     # Application entry point
+│   ├── main.dart                     # Application entry point and notification initialization
+│   ├── notification_history_screen.dart # Displays history of notifications
+│   ├── notification_settings_screen.dart # New screen for notification preferences
 │   ├── onboarding_tour.dart
+│   ├── report_generator.dart         # Logic for generating PDF/XLSX reports
 │   ├── settings_screen.dart
 │   ├── splash_screen.dart
 │   ├── theme_notifier.dart
 │   ├── theme.dart
 │   └── utils/
-│       └── issue_parser.dart
-├── linux/                    # Linux specific files
-├── macos/                    # macOS specific files
+│       └── issue_parser.dart         # Utility for parsing issue data (candidate for refactoring)
 ├── test/                     # Unit and widget tests
-├── web/                      # Web specific files
-├── windows/                  # Windows specific files
-├── .github/                  # GitHub Actions workflows
+├── .github/                  # GitHub Actions workflows for CI/CD
 │   └── workflows/
-│       └── flutter_apk_build.yml # Workflow for building APK
+│       └── flutter_apk_build.yml # Workflow for building and signing APK
 ├── .gitignore                # Files and directories to ignore in Git
-├── .metadata                 # Flutter metadata
-├── analysis_options.yaml     # Dart analyzer options
-├── pubspec.lock              # Pinpoint versions of dependencies
 ├── pubspec.yaml              # Project dependencies and metadata
-├── README.md                 # This documentation file
-└── UI_IMPROVEMENTS_SUMMARY.md # Summary of UI improvements
+└── README.md                 # This documentation file
 ```
-
-### Key Files & Directories:
-
--   `lib/main.dart`: The heart of the application, where the Flutter app starts.
--   `lib/initial_setup_screen.dart`: Manages the first-time user setup, capturing essential user and team details.
--   `lib/issue_tracker_screen.dart`: The central hub for logging issues, managing timings, and initiating the Google Form process.
--   `lib/google_form_webview_screen.dart`: A dedicated screen that hosts the Google Form within an in-app webview, handling auto-scrolling, submission detection, and navigation.
--   `lib/feedback_screen.dart`: Allows users to provide feedback, with their name automatically populated for convenience.
--   `assets/`: Contains all static resources like custom fonts, application icons, and images, contributing to the app's visual identity.
 
 ---
 
 ## 🔗 Google Form Integration Details
 
-The app is meticulously configured to pre-fill a specific Google Form. The `entry` IDs used within `lib/issue_tracker_screen.dart` are crucial as they directly correspond to the fields in your Google Form. If you intend to use a different Google Form, you **must** update these `entry` IDs accordingly to ensure proper data mapping.
+The app is configured to pre-fill a specific Google Form. The `entry` IDs used within `lib/issue_tracker_screen.dart` are crucial as they directly correspond to the fields in your Google Form. If you intend to use a different Google Form, you **must** update these `entry` IDs accordingly to ensure proper data mapping.
 
 **Current Google Form Entry IDs Used:**
 
@@ -187,7 +230,7 @@ The Issue Tracker App boasts a modern and intuitive design, focusing on a seamle
 -   **Custom Typography:** Integration of the 'Poppins' font family across the app ensures a consistent, modern, and highly legible text presentation.
 -   **Enhanced Input Fields:** Thoughtfully designed input fields and dropdowns with clear labels and subtle visual cues for improved usability.
 -   **Animated Transitions:** Smooth and engaging animations for screen transitions and button interactions, adding a polished feel to the user journey.
--   **Informative SnackBars:** Contextual and visually distinct `SnackBar` messages provide clear feedback to the user, including a prominent, animated instruction for Google Form submission.
+-   **Informative SnackBars:** Contextual and visually distinct `SnackBar` messages provide clear feedback to the user.
 -   **Adaptive Design:** The UI components are designed to be responsive, ensuring a consistent experience across various device sizes.
 
 ---
@@ -202,6 +245,12 @@ We welcome contributions to enhance the Issue Tracker App! If you have suggestio
 4.  Commit your changes (`git commit -m 'feat: Add new feature'`).
 5.  Push to the branch (`git push origin feature/your-feature-name`).
 6.  Open a Pull Request.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
