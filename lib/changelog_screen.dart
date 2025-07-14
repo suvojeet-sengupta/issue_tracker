@@ -27,6 +27,27 @@ class ChangelogScreen extends StatelessWidget {
           children: [
             _buildChangelogEntry(
               context,
+              'ccaa0ec',
+              'suvojit213',
+              '2025-07-14 00:00:00',
+              'feat: Add Lottie animation for success dialog',
+            ),
+            _buildChangelogEntry(
+              context,
+              '783fcee',
+              'suvojit213',
+              '2025-07-14 00:00:00',
+              'fix: Correct Lottie import statement in google_form_webview_screen.dart',
+            ),
+            _buildChangelogEntry(
+              context,
+              '4425bf3',
+              'github-actions[bot]',
+              '2025-07-14 00:00:00',
+              'chore: Update pubspec.lock [skip ci]',
+            ),
+            _buildChangelogEntry(
+              context,
               'f97d928a8f2603d9dfa38573be52b8feb849b754',
               'suvojit213',
               '2025-07-14 07:38:46',
