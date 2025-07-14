@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:issue_tracker_app/issue_tracker_screen.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:lottie/lottie.dart'; // Import Lottie package
 
 class GoogleFormWebviewScreen extends StatefulWidget {
   final String formUrl;
@@ -56,10 +57,6 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
       )
       ..loadRequest(Uri.parse(widget.formUrl));
   }
-
-  import 'package:lottie/lottie.dart'; // Import Lottie package
-
-// ... (rest of the file)
 
   void _showSuccessDialog() {
     showDialog(
