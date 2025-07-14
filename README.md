@@ -8,6 +8,9 @@ Welcome to the **Issue Tracker App**, a powerful and intuitive Flutter applicati
 
 Our app is packed with features engineered for efficiency and user-friendliness:
 
+-   **Secure & Consistent APK Signing:** Ensures that app updates can be installed seamlessly without requiring uninstallation, thanks to consistent signing across builds.
+-   **Admin Notification Control:** Admins now have full control over notifications, including the ability to enable/disable them and set custom intervals.
+-   **Automated Google Form Submission:** The app now automatically submits the Google Form after pre-filling, eliminating manual interaction.
 -   **User Profile Management:** Effortlessly input and manage your CRM ID, Advisor Name, and Team Leader (TL) Name. Your details are securely saved for quick access in future sessions.
 -   **Dynamic TL Selection:** Choose from a curated list of Team Leaders or easily add an 'Other' TL name if yours isn't predefined.
 -   **Precise Issue Timing:** Accurately log the start and end times of issues using an elegant and intuitive time picker.
@@ -82,9 +85,8 @@ Before you begin, ensure you have the following installed:
 
 1.  **Initial Setup:** Upon the very first launch, you'll be guided through a quick setup process. Here, you'll enter your CRM ID, Advisor Name, Team Leader, and select your Organization (DISH/D2H). These details are saved for future convenience.
 2.  **Issue Tracking:** From the main screen, you can easily record the start and end times of any issue.
-3.  **Submit and Open Form:** After filling in the required times, tap the prominent `Submit Issue and Open Form` button. The app will intelligently pre-fill the Google Form with your collected data and open it directly within the app's webview.
-4.  **Final Submission:** The webview will automatically scroll to the Google Form's submit button. Follow the on-screen instruction to click the "Submit" button within the form to finalize your entry.
-5.  **Feedback:** Navigate to the feedback section to share your experience, where your name will be pre-filled for convenience.
+3.  **Automated Submission:** After filling in the required times, tap the prominent `Submit Issue and Open Form` button. The app will intelligently pre-fill the Google Form with your collected data, open it directly within the app's webview, and automatically submit it.
+4.  **Feedback:** Navigate to the feedback section to share your experience, where your name will be pre-filled for convenience.
 
 ---
 
