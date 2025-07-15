@@ -18,6 +18,7 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
   late final WebViewController _controller;
   bool _isLoading = true;
   bool _isSubmitting = false;
+  bool _isProcessComplete = false;
 
   @override
   void initState() {
@@ -152,6 +153,9 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
     );
 
     Future.delayed(const Duration(seconds: 5), () {
+      setState(() {
+        _isProcessComplete = true;
+      });
       Navigator.of(context).pop();
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const IssueTrackerScreen()),
@@ -160,7 +164,7 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
   }
 
   Future<bool> _onWillPop() async {
-    if (_isLoading || _isSubmitting) {
+    if (!_isProcessComplete) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please wait for the submission to complete.'),
@@ -190,11 +194,13 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
           ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_rounded),
-            onPressed: () async {
-              if (await _onWillPop()) {
-                Navigator.of(context).pop();
-              }
-            },
+            onPressed: _isProcessComplete
+                ? () async {
+                    if (await _onWillPop()) {
+                      Navigator.of(context).pop();
+                    }
+                  }
+                : null,
           ),
         ),
         body: Stack(
