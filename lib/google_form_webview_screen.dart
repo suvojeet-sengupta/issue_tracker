@@ -161,25 +161,13 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
 
   Future<bool> _onWillPop() async {
     if (_isLoading || _isSubmitting) {
-      return (await showDialog<bool>(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Are you sure?'),
-              content: const Text(
-                  'The form is currently being processed. Do you want to cancel?'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text('No'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: const Text('Yes'),
-                ),
-              ],
-            ),
-          )) ??
-          false;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please wait for the submission to complete.'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return false;
     }
     return true;
   }
@@ -222,7 +210,8 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
                       const CircularProgressIndicator(),
                       const SizedBox(height: 20),
                       Text(
-                        'Loading Form...',
+                        'Please wait, the issue is being submitted...',
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
