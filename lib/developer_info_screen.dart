@@ -508,7 +508,7 @@ This app may not be perfect, but it's built with real-life experience, practical
                                       ' using Flutter',
                                       style: TextStyle(
                                         fontSize: 14,
-                                        color: Colors.grey[600],
+                                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                                         fontWeight: FontWeight.w500,
                                         fontFamily: 'Poppins', // Added Poppins font
                                       ),

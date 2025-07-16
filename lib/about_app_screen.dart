@@ -153,7 +153,7 @@ class AboutAppScreen extends StatelessWidget {
                 '© 2025 Issue Tracker App. All rights reserved.',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.grey[600],
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                   fontFamily: 'Poppins',
                 ),
               ),
@@ -192,10 +192,10 @@ class AboutAppScreen extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   description,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     fontFamily: 'Poppins',
-                    color: Colors.black54,
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
                     height: 1.4,
                   ),
                 ),
