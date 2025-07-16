@@ -361,22 +361,6 @@ This app may not be perfect, but it's built with real-life experience, practical
                                                     fontFamily: 'Poppins', // Added Poppins font
                                                   ),
                                                 ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 16),
-                                      Text(
-                                        'A smart issue tracking app built using basic Flutter skills and AI support — designed to replace repetitive Google Form entries with a faster, smoother, and more efficient solution, inspired by real work needs at DishTV (GSC).',
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          color: Colors.grey[700],
-                                          height: 1.5,
-                                          fontWeight: FontWeight.w500,
-                                          fontFamily: 'Poppins', // Added Poppins font
-                                        ),
-                                      ),
                                     ],
                                   ),
                                 ),
