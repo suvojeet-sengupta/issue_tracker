@@ -5,6 +5,8 @@ import 'package:issue_tracker_app/developer_info_screen.dart'; // New import
 import 'package:issue_tracker_app/credits_screen.dart'; // New import
 import 'package:issue_tracker_app/feedback_screen.dart'; // New import
 import 'package:issue_tracker_app/changelog_screen.dart'; // New import for changelog
+import 'package:issue_tracker_app/theme_notifier.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart'; // New import for url_launcher
 
 class SettingsScreen extends StatefulWidget {
@@ -17,6 +19,8 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -26,8 +30,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Theme.of(context).primaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -59,6 +63,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       subtitle: 'Access administrative configurations',
                       onTap: () {
                         _showAdminPasswordDialog(context);
+                      },
+                    ),
+                    SwitchListTile(
+                      title: const Text('Dark Mode'),
+                      value: themeNotifier.isDarkMode,
+                      onChanged: (value) {
+                        themeNotifier.toggleTheme();
                       },
                     ),
                   ],

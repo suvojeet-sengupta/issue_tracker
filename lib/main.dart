@@ -7,6 +7,7 @@ import 'package:issue_tracker_app/issue_tracker_screen.dart';
 import 'package:issue_tracker_app/history_screen.dart';
 import 'package:issue_tracker_app/splash_screen.dart'; // New import for splash screen
 import 'package:issue_tracker_app/onboarding_tour.dart'; // Import the new onboarding tour
+import 'package:issue_tracker_app/theme_notifier.dart';
 
 import 'package:issue_tracker_app/edit_profile_screen.dart';
 import 'package:issue_tracker_app/notification_history_screen.dart';
@@ -17,7 +18,12 @@ import 'package:issue_tracker_app/theme.dart';
 import 'package:issue_tracker_app/utils/issue_parser.dart'; // New import for issue parsing utility
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeNotifier(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -55,17 +61,23 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Issue Tracker App',
-      debugShowCheckedModeBanner: false,
-      theme: AppThemes.lightTheme,
-      home: const SplashScreen(), // Set SplashScreen as the initial home
-      routes: {
-        '/home': (context) => const MainAppScreen(),
-        '/issue_tracker': (context) => const IssueTrackerScreen(),
-        '/history': (context) => const HistoryScreen(),
-        '/settings': (context) => const SettingsScreen(),
-        '/edit_profile': (context) => const EditProfileScreen(),
+    return Consumer<ThemeNotifier>(
+      builder: (context, theme, child) {
+        return MaterialApp(
+          title: 'Issue Tracker App',
+          debugShowCheckedModeBanner: false,
+          theme: AppThemes.lightTheme,
+          darkTheme: AppThemes.darkTheme,
+          themeMode: theme.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          home: const SplashScreen(), // Set SplashScreen as the initial home
+          routes: {
+            '/home': (context) => const MainAppScreen(),
+            '/issue_tracker': (context) => const IssueTrackerScreen(),
+            '/history': (context) => const HistoryScreen(),
+            '/settings': (context) => const SettingsScreen(),
+            '/edit_profile': (context) => const EditProfileScreen(),
+          },
+        );
       },
     );
   }
