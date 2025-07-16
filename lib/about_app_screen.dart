@@ -105,7 +105,7 @@ class AboutAppScreen extends StatelessWidget {
             _buildMotivePoint('Automated Data Pre-filling', 'Say goodbye to repetitive typing. The app intelligently pre-fills relevant information into the Google Form, including user details, organization preference, and current date.'),
             _buildMotivePoint('Dynamic Team Leader Selection', 'Easily select your team leader from a predefined list or add a new one, ensuring accurate reporting hierarchies.'),
             _buildMotivePoint('Precise Issue Timing', 'Accurately log the start and end times of issues with a user-friendly time picker, providing comprehensive data for analysis.'),
-            _buildMotivePoint('Persistent Preferences', 'The app remembers your organization (DISH/D2H) and other key details, minimizing setup time for subsequent issue reports.'),
+            _buildMotivePoint(context, 'Persistent Preferences', 'The app remembers your organization (DISH/D2H) and other key details, minimizing setup time for subsequent issue reports.'),
             _buildMotivePoint(context, 'In-App Webview', 'Experience a fully integrated workflow as the Google Form opens directly within the app, eliminating the need to switch between applications.'),
             const SizedBox(height: 24),
             const Text(
