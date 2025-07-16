@@ -164,7 +164,7 @@ class AboutAppScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMotivePoint(String title, String description) {
+  Widget _buildMotivePoint(BuildContext context, String title, String description) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Row(
