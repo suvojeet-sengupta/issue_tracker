@@ -361,6 +361,11 @@ This app may not be perfect, but it's built with real-life experience, practical
                                                     fontFamily: 'Poppins', // Added Poppins font
                                                   ),
                                                 ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ],
                                   ),
                                 ),
