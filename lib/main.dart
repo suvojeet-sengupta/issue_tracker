@@ -168,7 +168,7 @@ class _MainAppScreenState extends State<MainAppScreen> with SingleTickerProvider
       bottomNavigationBar: SlideTransition(
         position: _bottomBarSlideAnimation,
         child: Padding(
-          padding: const EdgeInsets.only(bottom: 8, left: 16, right: 16), // Reduced bottom padding
+          padding: const EdgeInsets.only(bottom: 24, left: 16, right: 16), // Shifted upward
           child: Container(
             height: 60, // Explicitly set height for a more compact look
             decoration: BoxDecoration(
