@@ -490,9 +490,9 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                                 const Text(
                                   'Track and manage your issues with precision',
                                   style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFF1E3A8A), // Changed to a darker blue for better visibility
+                                    fontSize: 16, // Increased font size
+                                    fontWeight: FontWeight.w600, // Made it semi-bold
                                     fontFamily: 'Poppins',
                                   ),
                                   textAlign: TextAlign.center,
