@@ -14,7 +14,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
+import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
+import androidx.work.ExistingPeriodicWorkPolicy
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -89,12 +91,12 @@ class MainActivity : FlutterActivity() {
         NotificationHelper.createNotificationChannel(this)
 
         // Schedule the daily notification scheduler
-        val dailySchedulerWorkRequest = OneTimeWorkRequest.Builder(DailySchedulerWorker::class.java)
+        val dailySchedulerWorkRequest = PeriodicWorkRequest.Builder(DailySchedulerWorker::class.java, 24, TimeUnit.HOURS)
             .setInitialDelay(1, TimeUnit.MINUTES) // Schedule to run shortly after app launch
             .build()
-        WorkManager.getInstance(this).enqueueUniqueWork(
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
             "DailyNotificationScheduler",
-            ExistingWorkPolicy.REPLACE,
+            ExistingPeriodicWorkPolicy.REPLACE,
             dailySchedulerWorkRequest
         )
 
@@ -129,12 +131,11 @@ class MainActivity : FlutterActivity() {
                 }
                 "scheduleNotification" -> {
                     val interval = call.argument<Int>("interval")?.toLong() ?: 24L
-                    val dailySchedulerWorkRequest = OneTimeWorkRequest.Builder(DailySchedulerWorker::class.java)
-                        .setInitialDelay(interval, TimeUnit.HOURS)
+                    val dailySchedulerWorkRequest = PeriodicWorkRequest.Builder(DailySchedulerWorker::class.java, interval, TimeUnit.HOURS)
                         .build()
-                    WorkManager.getInstance(this).enqueueUniqueWork(
+                    WorkManager.getInstance(this).enqueueUniquePeriodicWork(
                         "DailyNotificationScheduler",
-                        ExistingWorkPolicy.REPLACE,
+                        ExistingPeriodicWorkPolicy.REPLACE,
                         dailySchedulerWorkRequest
                     )
                     result.success(null)
