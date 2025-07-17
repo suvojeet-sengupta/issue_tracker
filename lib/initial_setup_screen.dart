@@ -17,6 +17,9 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
   final _otherTlNameController = TextEditingController();
   String _selectedOrganization = 'DISH';
 
+  final _accessPasswordController = TextEditingController();
+  bool _isAccessGranted = false;
+
   late AnimationController _animationController;
   late AnimationController _buttonController;
   late Animation<double> _slideAnimation;
@@ -26,6 +29,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
   @override
   void initState() {
     super.initState();
+    _checkAccessPassword();
     _loadSavedData();
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 750),
@@ -66,7 +70,126 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
     _crmIdController.dispose();
     _advisorNameController.dispose();
     _otherTlNameController.dispose();
+    _accessPasswordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _checkAccessPassword() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool firstLaunch = prefs.getBool('firstLaunch') ?? true;
+
+    if (firstLaunch) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showAccessPasswordDialog();
+      });
+    } else {
+      setState(() {
+        _isAccessGranted = true;
+      });
+    }
+  }
+
+  Future<void> _showAccessPasswordDialog() async {
+    String? errorMessage;
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // User must enter password
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              title: const Text(
+                'Access Required',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Poppins',
+                  color: Color(0xFF1E3A8A),
+                ),
+              ),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    const Text(
+                      'Please enter the access password to use this app.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        color: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: _accessPasswordController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        labelText: 'Access Password',
+                        labelStyle: const TextStyle(fontFamily: 'Poppins'),
+                        hintText: 'Suvo1241@',
+                        hintStyle: const TextStyle(fontFamily: 'Poppins'),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        prefixIcon: const Icon(Icons.lock_outline_rounded),
+                      ),
+                      style: const TextStyle(fontFamily: 'Poppins'),
+                    ),
+                    if (errorMessage != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Text(
+                          errorMessage!,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontFamily: 'Poppins',
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (_accessPasswordController.text == "Suvo1241@") {
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                          await prefs.setBool('firstLaunch', false);
+                          setState(() {
+                            _isAccessGranted = true;
+                          });
+                          Navigator.of(context).pop();
+                        } else {
+                          setState(() {
+                            errorMessage = "You do not have access to use this app. Ask access password to app developer if you don't have access password then you can't use this app.";
+                          });
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1E3A8A),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                      ),
+                      child: const Text(
+                        'Verify',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   _loadSavedData() async {
@@ -153,6 +276,13 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
 
   @override
   Widget build(BuildContext context) {
+    if (!_isAccessGranted) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(), // Or a blank screen while dialog is shown
+        ),
+      );
+    }
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
