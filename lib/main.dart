@@ -92,7 +92,7 @@ class MainAppScreen extends StatefulWidget {
   State<MainAppScreen> createState() => _MainAppScreenState();
 }
 
-class _MainAppScreenState extends State<MainAppScreen> {
+class _MainAppScreenState extends State<MainAppScreen> with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
 
   // GlobalKeys for onboarding tour
@@ -102,6 +102,9 @@ class _MainAppScreenState extends State<MainAppScreen> {
   final GlobalKey _settingsTabKey = GlobalKey();
   final GlobalKey _fillIssueButtonKey = GlobalKey();
   final GlobalKey _notificationIconKey = GlobalKey();
+
+  late AnimationController _bottomBarAnimationController;
+  late Animation<Offset> _bottomBarSlideAnimation;
 
 
   List<Widget> get _widgetOptions => <Widget>[
@@ -115,6 +118,18 @@ class _MainAppScreenState extends State<MainAppScreen> {
   void initState() {
     super.initState();
     _checkAndShowOnboardingTour();
+    _bottomBarAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _bottomBarSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 1),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _bottomBarAnimationController,
+      curve: Curves.easeOutBack,
+    ));
+    _bottomBarAnimationController.forward();
   }
 
   _checkAndShowOnboardingTour() async {
@@ -150,36 +165,59 @@ class _MainAppScreenState extends State<MainAppScreen> {
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            key: _homeTabKey, // Assign key
-            icon: const Icon(Icons.home_rounded),
-            label: 'Home',
+      bottomNavigationBar: SlideTransition(
+        position: _bottomBarSlideAnimation,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface.withOpacity(0.8), // Subtle transparency
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 20,
+                  spreadRadius: 5,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: BottomNavigationBar(
+                items: <BottomNavigationBarItem>[
+                  BottomNavigationBarItem(
+                    key: _homeTabKey, // Assign key
+                    icon: const Icon(Icons.home_rounded),
+                    label: 'Home',
+                  ),
+                  BottomNavigationBarItem(
+                    key: _trackerTabKey, // Assign key
+                    icon: const Icon(Icons.add_task_rounded),
+                    label: 'Tracker',
+                  ),
+                  BottomNavigationBarItem(
+                    key: _historyTabKey, // Assign key
+                    icon: const Icon(Icons.history_rounded),
+                    label: 'History',
+                  ),
+                  BottomNavigationBarItem(
+                    key: _settingsTabKey, // Assign key
+                    icon: const Icon(Icons.settings_rounded),
+                    label: 'Settings',
+                  ),
+                ],
+                currentIndex: _selectedIndex,
+                selectedItemColor: Theme.of(context).primaryColor,
+                unselectedItemColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                onTap: _onItemTapped,
+                type: BottomNavigationBarType.fixed,
+                backgroundColor: Colors.transparent, // Make it transparent to show container's color
+                elevation: 0, // Remove default elevation
+              ),
+            ),
           ),
-          BottomNavigationBarItem(
-            key: _trackerTabKey, // Assign key
-            icon: const Icon(Icons.add_task_rounded),
-            label: 'Tracker',
-          ),
-          BottomNavigationBarItem(
-            key: _historyTabKey, // Assign key
-            icon: const Icon(Icons.history_rounded),
-            label: 'History',
-          ),
-          BottomNavigationBarItem(
-            key: _settingsTabKey, // Assign key
-            icon: const Icon(Icons.settings_rounded),
-            label: 'Settings',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Theme.of(context).primaryColor,
-        unselectedItemColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        elevation: 10,
+        ),
       ),
     );
   }
@@ -241,9 +279,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
 
   @override
   void dispose() {
-    _animationController.dispose();
-    _scrollController.dispose(); // Dispose the scroll controller
-    WidgetsBinding.instance.removeObserver(this);
+    _bottomBarAnimationController.dispose();
     super.dispose();
   }
 
