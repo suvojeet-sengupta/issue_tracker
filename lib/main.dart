@@ -168,8 +168,9 @@ class _MainAppScreenState extends State<MainAppScreen> with SingleTickerProvider
       bottomNavigationBar: SlideTransition(
         position: _bottomBarSlideAnimation,
         child: Padding(
-          padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
+          padding: const EdgeInsets.only(bottom: 8, left: 16, right: 16), // Reduced bottom padding
           child: Container(
+            height: 60, // Explicitly set height for a more compact look
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface.withOpacity(0.8), // Subtle transparency
               borderRadius: BorderRadius.circular(24),
@@ -214,6 +215,8 @@ class _MainAppScreenState extends State<MainAppScreen> with SingleTickerProvider
                 type: BottomNavigationBarType.fixed,
                 backgroundColor: Colors.transparent, // Make it transparent to show container's color
                 elevation: 0, // Remove default elevation
+                selectedFontSize: 12, // Adjust font size for compactness
+                unselectedFontSize: 12, // Adjust font size for compactness
               ),
             ),
           ),
