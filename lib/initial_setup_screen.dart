@@ -83,9 +83,8 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
         _showAccessPasswordDialog();
       });
     } else {
-      setState(() {
-        _isAccessGranted = true;
-      });
+      // If not first launch, directly proceed to main app (no password needed)
+      // This part is handled by SplashScreen, so no action needed here.
     }
   }
 
@@ -334,13 +333,6 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
 
   @override
   Widget build(BuildContext context) {
-    if (!_isAccessGranted) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(), // Or a blank screen while dialog is shown
-        ),
-      );
-    }
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
