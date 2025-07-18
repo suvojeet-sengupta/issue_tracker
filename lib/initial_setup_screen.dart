@@ -68,7 +68,6 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
     _otherTlNameController.dispose();
     super.dispose();
   }
-  }
 
   _loadSavedData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -153,10 +152,8 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
   }
 
   @override
-Widget build(BuildContext context) {
-  return WillPopScope(
-    onWillPop: () async => false,
-    child: Scaffold(
+  Widget build(BuildContext context) {
+    return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -399,9 +396,8 @@ Widget build(BuildContext context) {
           ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildEnhancedTextField({
     required TextEditingController controller,
