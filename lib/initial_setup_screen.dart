@@ -334,7 +334,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen>
   @override
 Widget build(BuildContext context) {
   return WillPopScope(
-    onWillPop: () async => _isAccessGranted,
+    onWillPop: () async => false,
     child: Scaffold(
       body: Container(
         decoration: const BoxDecoration(
