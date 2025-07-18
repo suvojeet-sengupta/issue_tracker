@@ -18,6 +18,7 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
   late final WebViewController _controller;
   bool _isLoading = true;
   bool _isSubmitting = false;
+  String _submissionStatus = "Initializing...";
   bool _isProcessComplete = false;
 
   @override
@@ -34,6 +35,10 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
               _isSubmitting = false;
             });
             _showSuccessDialog();
+          } else if (message.message.startsWith('status:')) {
+            setState(() {
+              _submissionStatus = message.message.substring(7);
+            });
           }
         },
       )
@@ -56,16 +61,17 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
   Future<void> _autoFillAndSubmit() async {
     setState(() {
       _isSubmitting = true;
+      _submissionStatus = "Preparing form for submission...";
     });
 
     // Scroll to show the form and then submit
     await _controller.runJavaScript('''
       (function() {
-          // Scroll to the top to show the whole form
+          FlutterChannel.postMessage('status:Scrolling to form...');
           window.scrollTo(0, 0);
 
           setTimeout(function() {
-              // Find the submit button
+              FlutterChannel.postMessage('status:Locating submit button...');
               var buttons = document.querySelectorAll('div[role="button"]');
               var submitButton = null;
               for (var i = 0; i < buttons.length; i++) {
@@ -76,14 +82,16 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
               }
 
               if (submitButton) {
-                  // Scroll to the submit button
+                  FlutterChannel.postMessage('status:Scrolling to submit button...');
                   submitButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-                  // Wait for a moment before clicking
                   setTimeout(function() {
+                      FlutterChannel.postMessage('status:Clicking submit button...');
                       submitButton.click();
                       FlutterChannel.postMessage('formSubmitted');
                   }, 2000); // Wait 2 seconds before clicking
+              } else {
+                  FlutterChannel.postMessage('status:Submit button not found. Please submit manually if needed.');
               }
           }, 1500); // Wait 1.5 seconds after scrolling to top
       })();
@@ -238,7 +246,7 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
                       const CircularProgressIndicator(),
                       const SizedBox(height: 20),
                       Text(
-                        'Submitting...',
+                        _submissionStatus,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
