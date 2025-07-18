@@ -34,6 +34,13 @@ The Issue Tracker App is packed with functionalities designed for efficiency and
 
 ## 🛠️ Technologies Used
 
+## 📱 Native Integrations
+
+The app leverages native Android capabilities for robust notification management and background task scheduling:
+
+-   **Kotlin WorkManager**: Utilized for efficient and reliable scheduling of daily notifications (`DailySchedulerWorker.kt`, `NotificationWorker.kt`).
+-   **Platform Channels**: Custom platform channels (`MainActivity.kt`, `NotificationHelper.kt`) are used to communicate between Flutter and native Android code for scheduling, canceling, and managing notification states, ensuring seamless integration and control over system notifications.
+
 -   **Flutter:** UI Toolkit for building natively compiled applications for mobile, web, and desktop from a single codebase.
 -   **Dart:** Programming language optimized for UI.
 -   **Kotlin:** For native Android functionalities and WorkManager integration.
@@ -43,9 +50,13 @@ The Issue Tracker App is packed with functionalities designed for efficiency and
 -   **`provider`:** For state management.
 -   **`image_picker`:** For picking images from the gallery or camera.
 -   **`path_provider`:** For accessing file system paths.
+-   **`share_plus`:** For sharing content from the app.
 -   **`pdf` & `excel`:** For generating reports.
 -   **`flutter_local_notifications`:** For handling local notifications.
+-   **`lottie`:** For displaying high-quality animations.
 -   **`tutorial_coach_mark`:** For interactive onboarding tours.
+-   **`flutter_launcher_icons`:** For managing app icons.
+-   **`change_app_package_name`:** For easily changing the app's package name.
 -   **GitHub Actions:** For Continuous Integration and automated APK builds.
 
 ---
@@ -136,6 +147,14 @@ Before you begin, ensure you have the following installed:
     ```bash
     flutter run
     ```
+
+### Running Tests
+
+To execute the project's tests, run the following command in your terminal:
+
+```bash
+flutter test
+```
 
 ---
 
@@ -256,6 +275,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🧑‍💻 About the Developer
 
-This application was passionately developed by **Suvojeet** to provide an efficient, user-friendly, and visually appealing solution for issue tracking and seamless Google Form integration.
+This application was passionately developed by **Suvojeet** to provide an efficient, user-friendly, and visually appealing solution for issue tracking and seamless Google Form integration. This is a personal project and not an official product.
 
 ---
