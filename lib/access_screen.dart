@@ -13,8 +13,20 @@ class AccessScreen extends StatefulWidget {
 class _AccessScreenState extends State<AccessScreen> {
   final _accessPasswordController = TextEditingController();
   String? errorMessage;
+  bool _isVerifying = false;
 
   void _verifyPassword() async {
+    setState(() {
+      _isVerifying = true;
+      errorMessage = null; // Clear previous error message
+    });
+
+    await Future.delayed(const Duration(seconds: 2)); // Simulate network delay
+
+    setState(() {
+      _isVerifying = false;
+    });
+
     if (_accessPasswordController.text == "Suvo1241@") {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setBool('isAccessGranted', true);
@@ -83,29 +95,45 @@ class _AccessScreenState extends State<AccessScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    TextField(
-                      controller: _accessPasswordController,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        labelText: 'Access Password',
-                        labelStyle: const TextStyle(fontFamily: 'Poppins', color: Color(0xFF1E3A8A)),
-                        hintText: 'Enter password',
-                        hintStyle: TextStyle(fontFamily: 'Poppins', color: Colors.grey[400]),
-                        filled: true,
-                        fillColor: Colors.white.withOpacity(0.8),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
+                    if (_isVerifying)
+                      const Column(
+                        children: [
+                          CircularProgressIndicator(),
+                          SizedBox(height: 20),
+                          Text(
+                            'Verifying your password...',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              color: Color(0xFF1E3A8A),
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ) 
+                    else
+                      TextField(
+                        controller: _accessPasswordController,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          labelText: 'Access Password',
+                          labelStyle: const TextStyle(fontFamily: 'Poppins', color: Color(0xFF1E3A8A)),
+                          hintText: 'Enter password',
+                          hintStyle: TextStyle(fontFamily: 'Poppins', color: Colors.grey[400]),
+                          filled: true,
+                          fillColor: Colors.white.withOpacity(0.8),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(color: Color(0xFF3B82F6), width: 2),
+                          ),
+                          prefixIcon: const Icon(Icons.lock_outline_rounded, color: Color(0xFF1E3A8A)),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Color(0xFF3B82F6), width: 2),
-                        ),
-                        prefixIcon: const Icon(Icons.lock_outline_rounded, color: Color(0xFF1E3A8A)),
-                        contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                        style: const TextStyle(fontFamily: 'Poppins', color: Color(0xFF1E3A8A), fontWeight: FontWeight.w500),
                       ),
-                      style: const TextStyle(fontFamily: 'Poppins', color: Color(0xFF1E3A8A), fontWeight: FontWeight.w500),
-                    ),
                     if (errorMessage != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 10),
@@ -139,7 +167,7 @@ class _AccessScreenState extends State<AccessScreen> {
                         ],
                       ),
                       child: ElevatedButton(
-                        onPressed: _verifyPassword,
+                        onPressed: _isVerifying ? null : _verifyPassword,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent,
                           shadowColor: Colors.transparent,
