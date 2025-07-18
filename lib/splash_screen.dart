@@ -43,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
     if (mounted) {
       if (!isSetupComplete) {
-        Navigator.of(context).pushReplacement(
+        Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => const InitialSetupScreen()),
         );
       } else if (!interactiveOnboardingComplete) {
