@@ -23,7 +23,7 @@ class _AccessScreenState extends State<AccessScreen> {
       );
     } else {
       setState(() {
-        errorMessage = "Incorrect password. Please try again.";
+        errorMessage = "Incorrect password. Please ask the app developer for the access password. You cannot use this app without it.";
       });
     }
   }
