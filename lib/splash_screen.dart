@@ -3,6 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:issue_tracker_app/initial_setup_screen.dart';
 import 'package:issue_tracker_app/main.dart'; // Import MainAppScreen
 
+import 'package:issue_tracker_app/access_screen.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -38,17 +40,17 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
   _navigateToNextScreen() async {
     final prefs = await SharedPreferences.getInstance();
-    final bool interactiveOnboardingComplete = prefs.getBool('interactive_onboarding_complete') ?? false;
+    final bool isAccessGranted = prefs.getBool('isAccessGranted') ?? false;
     final bool isSetupComplete = prefs.containsKey("crmId");
 
     if (mounted) {
-      if (!isSetupComplete) {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const InitialSetupScreen()),
-        );
-      } else if (!interactiveOnboardingComplete) {
+      if (!isAccessGranted) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const MainAppScreen()), // Navigate to MainAppScreen to start interactive tour
+          MaterialPageRoute(builder: (context) => const AccessScreen()),
+        );
+      } else if (!isSetupComplete) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const InitialSetupScreen()),
         );
       } else {
         Navigator.of(context).pushReplacement(
