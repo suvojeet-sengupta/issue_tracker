@@ -21,6 +21,7 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
   bool _isSubmitting = false;
   String _submissionStatus = "Initializing...";
   bool _isProcessComplete = false;
+  bool _submissionHandled = false;
 
   @override
   void initState() {
@@ -106,6 +107,9 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
   }
 
   Future<void> _handleSubmissionError() async {
+    if (_submissionHandled) return;
+    _submissionHandled = true;
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String> history = prefs.getStringList("issueHistory") ?? [];
     if (history.isNotEmpty) {
@@ -128,6 +132,9 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
   }
 
   void _showSuccessDialog() {
+    if (_submissionHandled) return;
+    _submissionHandled = true;
+
     showDialog(
       context: context,
       barrierDismissible: false,
