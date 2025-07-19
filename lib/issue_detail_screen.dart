@@ -57,6 +57,7 @@ class IssueDetailScreen extends StatelessWidget {
                     _buildDetailRow('Reason', issueDetails['Reason'] ?? 'N/A'),
                     if (issueDetails['Issue Remarks'] != null && issueDetails['Issue Remarks']!.isNotEmpty)
                       _buildDetailRow('Remarks', issueDetails['Issue Remarks']!),
+                    _buildDetailRow('Submission Status', issueDetails['submission_status'] ?? 'unknown'),
                   ],
                 ),
               ),

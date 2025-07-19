@@ -64,38 +64,65 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
       _submissionStatus = "Preparing form for submission...";
     });
 
-    // Scroll to show the form and then submit
-    await _controller.runJavaScript('''
-      (function() {
-          FlutterChannel.postMessage('status:Scrolling to form...');
-          window.scrollTo(0, 0);
+    try {
+      // Scroll to show the form and then submit
+      await _controller.runJavaScript('''
+        (function() {
+            FlutterChannel.postMessage('status:Scrolling to form...');
+            window.scrollTo(0, 0);
 
-          setTimeout(function() {
-              FlutterChannel.postMessage('status:Locating submit button...');
-              var buttons = document.querySelectorAll('div[role="button"]');
-              var submitButton = null;
-              for (var i = 0; i < buttons.length; i++) {
-                  if (buttons[i].innerText.includes('Submit') || buttons[i].innerText.includes('Send')) {
-                      submitButton = buttons[i];
-                      break;
-                  }
-              }
+            setTimeout(function() {
+                FlutterChannel.postMessage('status:Locating submit button...');
+                var buttons = document.querySelectorAll('div[role="button"]');
+                var submitButton = null;
+                for (var i = 0; i < buttons.length; i++) {
+                    if (buttons[i].innerText.includes('Submit') || buttons[i].innerText.includes('Send')) {
+                        submitButton = buttons[i];
+                        break;
+                    }
+                }
 
-              if (submitButton) {
-                  FlutterChannel.postMessage('status:Scrolling to submit button...');
-                  submitButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                if (submitButton) {
+                    FlutterChannel.postMessage('status:Scrolling to submit button...');
+                    submitButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-                  setTimeout(function() {
-                      FlutterChannel.postMessage('status:Clicking submit button...');
-                      submitButton.click();
-                      FlutterChannel.postMessage('formSubmitted');
-                  }, 2000); // Wait 2 seconds before clicking
-              } else {
-                  FlutterChannel.postMessage('status:Submit button not found. Please submit manually if needed.');
-              }
-          }, 1500); // Wait 1.5 seconds after scrolling to top
-      })();
-    ''');
+                    setTimeout(function() {
+                        FlutterChannel.postMessage('status:Clicking submit button...');
+                        submitButton.click();
+                        FlutterChannel.postMessage('formSubmitted');
+                    }, 2000); // Wait 2 seconds before clicking
+                } else {
+                    FlutterChannel.postMessage('status:Submit button not found. Please submit manually if needed.');
+                    throw new Error("Submit button not found");
+                }
+            }, 1500); // Wait 1.5 seconds after scrolling to top
+        })();
+      ''');
+    } catch (e) {
+      await _handleSubmissionError();
+    }
+  }
+
+  Future<void> _handleSubmissionError() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> history = prefs.getStringList("issueHistory") ?? [];
+    if (history.isNotEmpty) {
+      String lastEntry = history.last;
+      history[history.length - 1] = "$lastEntry<submission_status>failure";
+      await prefs.setStringList("issueHistory", history);
+    }
+    setState(() {
+      _isSubmitting = false;
+      _isProcessComplete = true;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Failed to submit the form automatically. Please try again.'),
+        backgroundColor: Colors.redAccent,
+      ),
+    );
+    // Optionally, navigate back or show a failure dialog
+    Navigator.of(context).pop();
   }
 
   void _showSuccessDialog() {
@@ -160,7 +187,16 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
       },
     );
 
-    Future.delayed(const Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 5), () async {
+      // Save submission status
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      List<String> history = prefs.getStringList("issueHistory") ?? [];
+      if (history.isNotEmpty) {
+        String lastEntry = history.last;
+        history[history.length - 1] = "$lastEntry<submission_status>success";
+        await prefs.setStringList("issueHistory", history);
+      }
+
       setState(() {
         _isProcessComplete = true;
       });

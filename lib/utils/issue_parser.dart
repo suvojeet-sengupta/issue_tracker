@@ -1,6 +1,10 @@
 Map<String, String> parseHistoryEntry(String entry) {
   Map<String, String> parsed = {};
-  List<String> parts = entry.split(', ');
+  List<String> submissionParts = entry.split('<submission_status>');
+  String mainEntry = submissionParts[0];
+  parsed['submission_status'] = submissionParts.length > 1 ? submissionParts[1] : 'unknown';
+
+  List<String> parts = mainEntry.split(', ');
   
   for (String part in parts) {
     List<String> keyValue = part.split(': ');

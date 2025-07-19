@@ -919,6 +919,13 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                   ),
                   Row(
                     children: [
+                      if (parsedEntry['submission_status'] == 'success')
+                        Icon(Icons.check_circle, color: Colors.green, size: 18)
+                      else if (parsedEntry['submission_status'] == 'failure')
+                        Icon(Icons.cancel, color: Colors.red, size: 18)
+                      else
+                        Icon(Icons.help, color: Colors.grey, size: 18),
+                      SizedBox(width: 8),
                       IconButton(
                         icon: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent),
                         onPressed: () => _confirmDelete(index),
