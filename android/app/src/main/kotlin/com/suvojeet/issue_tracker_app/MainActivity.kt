@@ -129,6 +129,19 @@ class MainActivity : FlutterActivity() {
                     NotificationHelper.markAllNotificationsAsRead(applicationContext)
                     result.success(null)
                 }
+                "clearAllNotifications" -> {
+                    NotificationHelper.clearAllNotifications(applicationContext)
+                    result.success(null)
+                }
+                "deleteNotification" -> {
+                    val notificationToDelete = call.argument<String>("notification")
+                    if (notificationToDelete != null) {
+                        NotificationHelper.deleteNotification(applicationContext, notificationToDelete)
+                        result.success(null)
+                    } else {
+                        result.error("INVALID_ARGUMENT", "Notification to delete cannot be null", null)
+                    }
+                }
                 "scheduleNotification" -> {
                     val interval = call.argument<Int>("interval")?.toLong() ?: 24L
                     val dailySchedulerWorkRequest = PeriodicWorkRequest.Builder(DailySchedulerWorker::class.java, interval, TimeUnit.HOURS)

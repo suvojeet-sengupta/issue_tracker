@@ -114,4 +114,25 @@ object NotificationHelper {
         editor.putStringSet(HISTORY_KEY, updatedHistory)
         editor.apply()
     }
+
+    fun clearAllNotifications(context: Context) {
+        val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.remove(HISTORY_KEY)
+        editor.apply()
+    }
+
+    fun deleteNotification(context: Context, notificationMessage: String) {
+        val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val history = sharedPreferences.getStringSet(HISTORY_KEY, mutableSetOf())?.toMutableSet() ?: mutableSetOf()
+
+        // Remove the notification that matches the message
+        // Note: This assumes the notificationMessage passed from Flutter is the exact string stored.
+        // If you have unique IDs for notifications, it would be better to use those.
+        history.remove(notificationMessage)
+
+        editor.putStringSet(HISTORY_KEY, history)
+        editor.apply()
+    }
 }

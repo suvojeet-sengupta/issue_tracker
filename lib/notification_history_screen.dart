@@ -48,6 +48,27 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
     });
   }
 
+  Future<void> _clearAllNotifications() async {
+    try {
+      await platform.invokeMethod('clearAllNotifications');
+      _getNotificationHistory(); // Refresh the list
+    } on PlatformException catch (e) {
+      print("Failed to clear all notifications: '${e.message}'.");
+    }
+  }
+
+  Future<void> _deleteNotification(int index) async {
+    try {
+      // Assuming the platform method can delete by index or a unique ID
+      // For now, we'll pass the notification string itself as a unique identifier
+      // You might need to adjust this if your native side uses a different identifier
+      await platform.invokeMethod('deleteNotification', {'notification': _notificationHistory[index]});
+      _getNotificationHistory(); // Refresh the list
+    } on PlatformException catch (e) {
+      print("Failed to delete notification: '${e.message}'.");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,8 +116,20 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
                         fontFamily: 'Poppins',
                       ),
                     ),
-                    // Placeholder for symmetry, or add another icon if needed
-                    const SizedBox(width: 48), 
+                    // Clear All Button
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.delete_forever_rounded,
+                            color: Colors.white),
+                        onPressed: () {
+                          _clearAllNotifications();
+                        },
+                      ),
+                    ), 
                   ],
                 ),
               ),
@@ -130,7 +163,18 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
                             itemCount: _notificationHistory.length,
                             itemBuilder: (context, index) {
                               final notification = _notificationHistory[index];
-                              return Container(
+                              return Dismissible(
+                                key: Key(notification), // Unique key for each dismissible item
+                                onDismissed: (direction) {
+                                  _deleteNotification(index);
+                                },
+                                background: Container(
+                                  color: Colors.red,
+                                  alignment: Alignment.centerRight,
+                                  padding: const EdgeInsets.only(right: 20.0),
+                                  child: const Icon(Icons.delete, color: Colors.white),
+                                ),
+                                child: Container(
                                 margin: const EdgeInsets.only(bottom: 12.0),
                                 padding: const EdgeInsets.all(16.0),
                                 decoration: BoxDecoration(
