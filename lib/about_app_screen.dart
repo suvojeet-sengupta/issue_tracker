@@ -40,7 +40,7 @@ class AboutAppScreen extends StatelessWidget {
                     ),
                   ),
                   const Text(
-                    'Version 1.0.3',
+                    'Version 1.0.4',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey,
