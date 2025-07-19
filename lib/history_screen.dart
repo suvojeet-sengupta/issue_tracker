@@ -453,6 +453,25 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
     }
   }
 
+  Widget _buildSubmissionStatusIcon(String? status) {
+    IconData icon;
+    Color color;
+    switch (status) {
+      case 'success':
+        icon = Icons.check_circle;
+        color = Colors.green;
+        break;
+      case 'failure':
+        icon = Icons.cancel;
+        color = Colors.red;
+        break;
+      default:
+        icon = Icons.help;
+        color = Colors.grey;
+    }
+    return Icon(icon, color: color, size: 18);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -919,13 +938,8 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
                   ),
                   Row(
                     children: [
-                      if (parsedEntry['submission_status'] == 'success')
-                        Icon(Icons.check_circle, color: Colors.green, size: 18)
-                      else if (parsedEntry['submission_status'] == 'failure')
-                        Icon(Icons.cancel, color: Colors.red, size: 18)
-                      else
-                        Icon(Icons.help, color: Colors.grey, size: 18),
-                      SizedBox(width: 8),
+                      _buildSubmissionStatusIcon(parsedEntry['submission_status']),
+                      const SizedBox(width: 8),
                       IconButton(
                         icon: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent),
                         onPressed: () => _confirmDelete(index),
