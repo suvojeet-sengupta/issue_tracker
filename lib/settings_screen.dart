@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:issue_tracker_app/admin_settings_screen.dart';
 import 'package:issue_tracker_app/about_app_screen.dart'; // New import
 import 'package:issue_tracker_app/developer_info_screen.dart'; // New import
@@ -17,6 +18,26 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  bool _notificationsEnabled = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _notificationsEnabled = prefs.getBool('notificationsEnabled') ?? true;
+    });
+  }
+
+  Future<void> _saveSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('notificationsEnabled', _notificationsEnabled);
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
@@ -70,6 +91,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       value: themeNotifier.isDarkMode,
                       onChanged: (value) {
                         themeNotifier.toggleTheme();
+                      },
+                    ),
+                    SwitchListTile(
+                      title: const Text('Enable Notifications'),
+                      value: _notificationsEnabled,
+                      onChanged: (value) {
+                        setState(() {
+                          _notificationsEnabled = value;
+                        });
+                        _saveSettings();
                       },
                     ),
                   ],
