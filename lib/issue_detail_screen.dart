@@ -165,6 +165,54 @@ class IssueDetailScreen extends StatelessWidget {
   }
 
   Widget _buildDetailRow(String label, String value) {
+    Widget valueWidget;
+    if (label == 'Submission Status') {
+      IconData icon;
+      Color color;
+      String text;
+      switch (value) {
+        case 'success':
+          icon = Icons.check_circle;
+          color = Colors.green;
+          text = 'Success';
+          break;
+        case 'failure':
+          icon = Icons.cancel;
+          color = Colors.red;
+          text = 'Failure';
+          break;
+        default:
+          icon = Icons.help;
+          color = Colors.grey;
+          text = 'Unknown';
+      }
+      valueWidget = Row(
+        children: [
+          Icon(icon, color: color, size: 18),
+          const SizedBox(width: 8),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: color,
+              fontFamily: 'Poppins',
+            ),
+          ),
+        ],
+      );
+    } else {
+      valueWidget = Text(
+        value,
+        style: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: Colors.black87,
+          fontFamily: 'Poppins',
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
@@ -180,15 +228,7 @@ class IssueDetailScreen extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-                fontFamily: 'Poppins',
-              ),
-            ),
+            child: valueWidget,
           ),
         ],
       ),
