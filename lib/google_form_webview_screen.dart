@@ -79,19 +79,25 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
       // Scroll to show the form and then submit
       await _controller.runJavaScript('''
         (function() {
-            var buttons = document.querySelectorAll('div[role="button"]');
-            var submitButton = null;
-            for (var i = 0; i < buttons.length; i++) {
-                if (buttons[i].innerText.includes('Submit') || buttons[i].innerText.includes('Send')) {
-                    submitButton = buttons[i];
-                    break;
-                }
-            }
-            if (submitButton) {
-                submitButton.click();
-            } else {
-                throw new Error("Submit button not found");
-            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => {
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                setTimeout(() => {
+                    var buttons = document.querySelectorAll('div[role="button"]');
+                    var submitButton = null;
+                    for (var i = 0; i < buttons.length; i++) {
+                        if (buttons[i].innerText.includes('Submit') || buttons[i].innerText.includes('Send')) {
+                            submitButton = buttons[i];
+                            break;
+                        }
+                    }
+                    if (submitButton) {
+                        submitButton.click();
+                    } else {
+                        throw new Error("Submit button not found");
+                    }
+                }, 3000);
+            }, 100);
         })();
       ''');
     } catch (e) {
