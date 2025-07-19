@@ -175,9 +175,29 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
                                   child: const Icon(Icons.delete, color: Colors.white),
                                 ),
                                 child: Container(
-                                margin: const EdgeInsets.only(bottom: 12.0),
-                                padding: const EdgeInsets.all(16.0),
-                                decoration: BoxDecoration(
+                                  margin: const EdgeInsets.only(bottom: 12.0),
+                                  padding: const EdgeInsets.all(16.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.05),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Text(
+                                    notification,
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      color: Color(0xFF1E3A8A),
+                                      fontFamily: 'Poppins',
+                                    ),
+                                  ),
+                                ),
+                              );
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(16),
                                   boxShadow: [
