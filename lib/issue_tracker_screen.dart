@@ -186,12 +186,14 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                 color: Color(0xFF1E3A8A),
               ),
               SizedBox(width: 12),
-              Text(
-                'Confirm Submission',
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1E3A8A),
+              Expanded(
+                child: Text(
+                  'Confirm Submission',
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1E3A8A),
+                  ),
                 ),
               ),
             ],
