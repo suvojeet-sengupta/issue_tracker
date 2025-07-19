@@ -46,13 +46,23 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageFinished: (String url) async {
-            setState(() {
-              _isLoading = false;
-            });
-            // Delay to ensure the form is fully rendered
-            await Future.delayed(const Duration(seconds: 2));
-            // Auto-fill and submit
-            await _autoFillAndSubmit();
+            if (url.contains('formResponse')) {
+              final String pageBody = await _controller
+                  .runJavaScriptReturningResult('document.body.innerText') as String;
+              if (pageBody.contains('Your response has been recorded')) {
+                _showSuccessDialog();
+              } else {
+                await _handleSubmissionError();
+              }
+            } else {
+              setState(() {
+                _isLoading = false;
+              });
+              // Delay to ensure the form is fully rendered
+              await Future.delayed(const Duration(seconds: 2));
+              // Auto-fill and submit
+              await _autoFillAndSubmit();
+            }
           },
         ),
       )
@@ -69,34 +79,19 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
       // Scroll to show the form and then submit
       await _controller.runJavaScript('''
         (function() {
-            FlutterChannel.postMessage('status:Scrolling to form...');
-            window.scrollTo(0, 0);
-
-            setTimeout(function() {
-                FlutterChannel.postMessage('status:Locating submit button...');
-                var buttons = document.querySelectorAll('div[role="button"]');
-                var submitButton = null;
-                for (var i = 0; i < buttons.length; i++) {
-                    if (buttons[i].innerText.includes('Submit') || buttons[i].innerText.includes('Send')) {
-                        submitButton = buttons[i];
-                        break;
-                    }
+            var buttons = document.querySelectorAll('div[role="button"]');
+            var submitButton = null;
+            for (var i = 0; i < buttons.length; i++) {
+                if (buttons[i].innerText.includes('Submit') || buttons[i].innerText.includes('Send')) {
+                    submitButton = buttons[i];
+                    break;
                 }
-
-                if (submitButton) {
-                    FlutterChannel.postMessage('status:Scrolling to submit button...');
-                    submitButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-                    setTimeout(function() {
-                        FlutterChannel.postMessage('status:Clicking submit button...');
-                        submitButton.click();
-                        FlutterChannel.postMessage('formSubmitted');
-                    }, 2000); // Wait 2 seconds before clicking
-                } else {
-                    FlutterChannel.postMessage('status:Submit button not found. Please submit manually if needed.');
-                    throw new Error("Submit button not found");
-                }
-            }, 1500); // Wait 1.5 seconds after scrolling to top
+            }
+            if (submitButton) {
+                submitButton.click();
+            } else {
+                throw new Error("Submit button not found");
+            }
         })();
       ''');
     } catch (e) {
