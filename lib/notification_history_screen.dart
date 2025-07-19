@@ -198,25 +198,7 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
                                   ),
                                 ),
                               );
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                child: Text(
-                                  notification,
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                    color: Color(0xFF1E3A8A),
-                                    fontFamily: 'Poppins',
-                                  ),
-                                ),
-                              );
+                                  
                             },
                           ),
               ),
