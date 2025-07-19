@@ -144,37 +144,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
       _buttonController.forward().then((_) {
         _buttonController.reverse();
       });
-
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      List<String> history = prefs.getStringList("issueHistory") ?? [];
-
-      TimeOfDay? startTime = _getStartTimeOfDay();
-      TimeOfDay? endTime = _getEndTimeOfDay();
-
-      List<String> imagePaths = [];
-      if (_images.isNotEmpty) {
-        final Directory appDir = await getApplicationDocumentsDirectory();
-        for (var image in _images) {
-          final String fileName = image.name;
-          final File localImage = await File(image.path).copy('${appDir.path}/$fileName');
-          imagePaths.add(localImage.path);
-        }
-      }
-
-      String entry =
-          "CRM ID: $_crmId, TL Name: $_tlName, Advisor Name: $_advisorName, "
-          "Organization: $_organization, Issue Explanation: $_selectedIssueExplanation, "
-          "Reason: $_selectedReason, Start Time: ${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, startTime!.hour, startTime.minute).toIso8601String()}, "
-          "End Time: ${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + (endTime!.hour < startTime!.hour || (endTime.hour == startTime.hour && endTime.minute < startTime.minute) ? 1 : 0), endTime.hour, endTime.minute).toIso8601String()}, Fill Time: ${DateTime.now().toIso8601String()}, "
-          "Issue Remarks: ${_issueRemarksController.text}";
-      if (imagePaths.isNotEmpty) {
-        entry += ", Images: ${imagePaths.join('|')}";
-      }
-
-      history.add(entry);
-      await prefs.setStringList("issueHistory", history);
-
-      await _openGoogleForm();
+      await _showConfirmationDialog();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -197,6 +167,215 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
         ),
       );
     }
+  }
+
+  Future<void> _showConfirmationDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          backgroundColor: const Color(0xFFF8FAFC),
+          title: const Row(
+            children: [
+              Icon(
+                Icons.check_circle_outline_rounded,
+                color: Color(0xFF1E3A8A),
+              ),
+              SizedBox(width: 12),
+              Text(
+                'Confirm Submission',
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1E3A8A),
+                ),
+              ),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                const Text(
+                  'Please review the details before submitting.',
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    color: Color(0xFF475569),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                _buildConfirmationInfoRow(Icons.badge_outlined, 'CRM ID', _crmId),
+                _buildConfirmationInfoRow(
+                    Icons.supervisor_account_outlined, 'Team Leader', _tlName),
+                _buildConfirmationInfoRow(
+                    Icons.person_outline, 'Advisor Name', _advisorName),
+                _buildConfirmationInfoRow(
+                    Icons.business_center_outlined, 'Organization', _organization),
+                const Divider(height: 20, thickness: 1),
+                _buildConfirmationInfoRow(
+                    Icons.play_circle_outline_rounded,
+                    'Start Time',
+                    _formatTime(_issueStartHour, _issueStartMinute, _issueStartPeriod)),
+                _buildConfirmationInfoRow(
+                    Icons.stop_circle_outlined,
+                    'End Time',
+                    _formatTime(_issueEndHour, _issueEndMinute, _issueEndPeriod)),
+                const Divider(height: 20, thickness: 1),
+                _buildConfirmationInfoRow(
+                    Icons.help_outline_rounded, 'Issue Explanation', _selectedIssueExplanation),
+                _buildConfirmationInfoRow(
+                    Icons.report_problem_outlined, 'Reason', _selectedReason),
+                if (_issueRemarksController.text.isNotEmpty)
+                  _buildConfirmationInfoRow(
+                      Icons.notes_rounded, 'Remarks', _issueRemarksController.text),
+                if (_images.isNotEmpty) ...[
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Attachments:',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1E3A8A),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    height: 80,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _images.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.file(
+                              File(_images[index].path),
+                              width: 80,
+                              height: 80,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ]
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  color: Color(0xFF475569),
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1E3A8A),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text(
+                'Confirm & Submit',
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  color: Colors.white,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _proceedWithSubmission();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildConfirmationInfoRow(IconData icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: const Color(0xFF3B82F6), size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[600],
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF1E3A8A),
+                    fontSize: 15,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  _proceedWithSubmission() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> history = prefs.getStringList("issueHistory") ?? [];
+
+    TimeOfDay? startTime = _getStartTimeOfDay();
+    TimeOfDay? endTime = _getEndTimeOfDay();
+
+    List<String> imagePaths = [];
+    if (_images.isNotEmpty) {
+      final Directory appDir = await getApplicationDocumentsDirectory();
+      for (var image in _images) {
+        final String fileName = image.name;
+        final File localImage =
+            await File(image.path).copy('${appDir.path}/$fileName');
+        imagePaths.add(localImage.path);
+      }
+    }
+
+    String entry =
+        "CRM ID: $_crmId, TL Name: $_tlName, Advisor Name: $_advisorName, "
+        "Organization: $_organization, Issue Explanation: $_selectedIssueExplanation, "
+        "Reason: $_selectedReason, Start Time: ${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, startTime!.hour, startTime.minute).toIso8601String()}, "
+        "End Time: ${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + (endTime!.hour < startTime.hour || (endTime.hour == startTime.hour && endTime.minute < startTime.minute) ? 1 : 0), endTime.hour, endTime.minute).toIso8601String()}, Fill Time: ${DateTime.now().toIso8601String()}, "
+        "Issue Remarks: ${_issueRemarksController.text}";
+    if (imagePaths.isNotEmpty) {
+      entry += ", Images: ${imagePaths.join('|')}";
+    }
+
+    history.add(entry);
+    await prefs.setStringList("issueHistory", history);
+
+    await _openGoogleForm();
   }
 
   _openGoogleForm() async {
