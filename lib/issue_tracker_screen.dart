@@ -44,6 +44,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
   void initState() {
     super.initState();
     _loadUserData();
+    _loadDraft(); // Load draft on initialization
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
@@ -74,14 +75,97 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
       curve: Curves.easeInOut,
     ));
     _animationController.forward();
+    _issueRemarksController.addListener(_saveDraft);
   }
 
   @override
   void dispose() {
+    _saveDraft(); // Save draft on dispose
     _animationController.dispose();
     _buttonController.dispose();
+    _issueRemarksController.removeListener(_saveDraft);
     _issueRemarksController.dispose();
     super.dispose();
+  }
+
+  _saveDraft() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('draft_crmId', _crmId);
+    prefs.setString('draft_tlName', _tlName);
+    prefs.setString('draft_advisorName', _advisorName);
+    prefs.setString('draft_organization', _organization);
+    prefs.setString('draft_selectedIssueExplanation', _selectedIssueExplanation);
+    prefs.setString('draft_selectedReason', _selectedReason);
+    prefs.setString('draft_issueRemarks', _issueRemarksController.text);
+    if (_issueStartHour != null) prefs.setInt('draft_issueStartHour', _issueStartHour!);
+    if (_issueStartMinute != null) prefs.setInt('draft_issueStartMinute', _issueStartMinute!);
+    prefs.setString('draft_issueStartPeriod', _issueStartPeriod);
+    if (_issueEndHour != null) prefs.setInt('draft_issueEndHour', _issueEndHour!);
+    if (_issueEndMinute != null) prefs.setInt('draft_issueEndMinute', _issueEndMinute!);
+    prefs.setString('draft_issueEndPeriod', _issueEndPeriod);
+    prefs.setStringList('draft_images', _images.map((e) => e.path).toList());
+  }
+
+  _loadDraft() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey('draft_crmId')) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Resume Draft?'),
+          content: const Text('You have a saved draft. Would you like to resume editing?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                _clearDraft();
+                Navigator.pop(context);
+              },
+              child: const Text('Discard'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  _crmId = prefs.getString('draft_crmId') ?? _crmId;
+                  _tlName = prefs.getString('draft_tlName') ?? _tlName;
+                  _advisorName = prefs.getString('draft_advisorName') ?? _advisorName;
+                  _organization = prefs.getString('draft_organization') ?? _organization;
+                  _selectedIssueExplanation = prefs.getString('draft_selectedIssueExplanation') ?? _selectedIssueExplanation;
+                  _selectedReason = prefs.getString('draft_selectedReason') ?? _selectedReason;
+                  _issueRemarksController.text = prefs.getString('draft_issueRemarks') ?? '';
+                  _issueStartHour = prefs.getInt('draft_issueStartHour');
+                  _issueStartMinute = prefs.getInt('draft_issueStartMinute');
+                  _issueStartPeriod = prefs.getString('draft_issueStartPeriod') ?? _issueStartPeriod;
+                  _issueEndHour = prefs.getInt('draft_issueEndHour');
+                  _issueEndMinute = prefs.getInt('draft_issueEndMinute');
+                  _issueEndPeriod = prefs.getString('draft_issueEndPeriod') ?? _issueEndPeriod;
+                  _images = (prefs.getStringList('draft_images') ?? []).map((path) => XFile(path)).toList();
+                });
+                Navigator.pop(context);
+              },
+              child: const Text('Resume'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  _clearDraft() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('draft_crmId');
+    prefs.remove('draft_tlName');
+    prefs.remove('draft_advisorName');
+    prefs.remove('draft_organization');
+    prefs.remove('draft_selectedIssueExplanation');
+    prefs.remove('draft_selectedReason');
+    prefs.remove('draft_issueRemarks');
+    prefs.remove('draft_issueStartHour');
+    prefs.remove('draft_issueStartMinute');
+    prefs.remove('draft_issueStartPeriod');
+    prefs.remove('draft_issueEndHour');
+    prefs.remove('draft_issueEndMinute');
+    prefs.remove('draft_issueEndPeriod');
+    prefs.remove('draft_images');
   }
 
   _loadUserData() async {
@@ -377,6 +461,8 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
     history.add(entry);
     await prefs.setStringList("issueHistory", history);
 
+    _clearDraft(); // Clear draft after submission
+
     await _openGoogleForm();
   }
 
@@ -629,11 +715,11 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                             minute: _issueStartMinute,
                             period: _issueStartPeriod,
                             onHourChanged: (value) =>
-                                setState(() => _issueStartHour = value),
+                                setState(() { _issueStartHour = value; _saveDraft(); }),
                             onMinuteChanged: (value) =>
-                                setState(() => _issueStartMinute = value),
+                                setState(() { _issueStartMinute = value; _saveDraft(); }),
                             onPeriodChanged: (value) =>
-                                setState(() => _issueStartPeriod = value!),
+                                setState(() { _issueStartPeriod = value!; _saveDraft(); }),
                             gradient: const LinearGradient(
                               colors: [Color(0xFF059669), Color(0xFF10B981)],
                             ),
@@ -648,11 +734,11 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                             minute: _issueEndMinute,
                             period: _issueEndPeriod,
                             onHourChanged: (value) =>
-                                setState(() => _issueEndHour = value),
+                                setState(() { _issueEndHour = value; _saveDraft(); }),
                             onMinuteChanged: (value) =>
-                                setState(() => _issueEndMinute = value),
+                                setState(() { _issueEndMinute = value; _saveDraft(); }),
                             onPeriodChanged: (value) =>
-                                setState(() => _issueEndPeriod = value!),
+                                setState(() { _issueEndPeriod = value!; _saveDraft(); }),
                             gradient: const LinearGradient(
                               colors: [Color(0xFFEF4444), Color(0xFFF87171)],
                             ),
@@ -945,6 +1031,16 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                           onHourChanged(pickedTime.hourOfPeriod);
                           onMinuteChanged(pickedTime.minute);
                           onPeriodChanged(pickedTime.period == DayPeriod.am ? 'AM' : 'PM');
+
+                          // Smart Time Suggestion
+                          final newStartTime = DateTime(2023, 1, 1, pickedTime.hour, pickedTime.minute);
+                          final newEndTime = newStartTime.add(const Duration(minutes: 15));
+                          setState(() {
+                            _issueEndHour = newEndTime.hour % 12 == 0 ? 12 : newEndTime.hour % 12;
+                            _issueEndMinute = newEndTime.minute;
+                            _issueEndPeriod = newEndTime.hour >= 12 ? 'PM' : 'AM';
+                          });
+                          _saveDraft();
                         }
                       },
                       child: Container(
@@ -1058,6 +1154,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
               onChanged: (String? newValue) {
                 setState(() {
                   _selectedIssueExplanation = newValue!;
+                  _saveDraft();
                 });
               },
             ),
@@ -1179,6 +1276,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                 onChanged: (String? value) {
                   setState(() {
                     _selectedReason = value!;
+                    _saveDraft();
                   });
                 },
               ),
@@ -1190,6 +1288,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                 onChanged: (String? value) {
                   setState(() {
                     _selectedReason = value!;
+                    _saveDraft();
                   });
                 },
               ),
