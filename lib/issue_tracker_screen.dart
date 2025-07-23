@@ -1031,6 +1031,15 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                           onHourChanged(pickedTime.hourOfPeriod);
                           onMinuteChanged(pickedTime.minute);
                           onPeriodChanged(pickedTime.period == DayPeriod.am ? 'AM' : 'PM');
+
+                          // Smart Time Suggestion
+                          final newStartTime = DateTime(2023, 1, 1, pickedTime.hour, pickedTime.minute);
+                          final newEndTime = newStartTime.add(const Duration(minutes: 15));
+                          setState(() {
+                            _issueEndHour = newEndTime.hour % 12 == 0 ? 12 : newEndTime.hour % 12;
+                            _issueEndMinute = newEndTime.minute;
+                            _issueEndPeriod = newEndTime.hour >= 12 ? 'PM' : 'AM';
+                          });
                           _saveDraft();
                         }
                       },
