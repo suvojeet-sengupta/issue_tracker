@@ -85,6 +85,33 @@ class _GoogleFormSettingsScreenState extends State<GoogleFormSettingsScreen> {
     }
   }
 
+  _resetSettings() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('google_form_url');
+    await prefs.remove('google_form_crmIdEntryId');
+    await prefs.remove('google_form_advisorNameEntryId');
+    await prefs.remove('google_form_startTimeHourEntryId');
+    await prefs.remove('google_form_startTimeMinuteEntryId');
+    await prefs.remove('google_form_endTimeHourEntryId');
+    await prefs.remove('google_form_endTimeMinuteEntryId');
+    await prefs.remove('google_form_tlNameEntryId');
+    await prefs.remove('google_form_organizationEntryId');
+    await prefs.remove('google_form_startDateYearEntryId');
+    await prefs.remove('google_form_startDateMonthEntryId');
+    await prefs.remove('google_form_startDateDayEntryId');
+    await prefs.remove('google_form_endDateYearEntryId');
+    await prefs.remove('google_form_endDateMonthEntryId');
+    await prefs.remove('google_form_endDateDayEntryId');
+    await prefs.remove('google_form_explainIssueEntryId');
+    await prefs.remove('google_form_reasonEntryId');
+
+    _loadSettings();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Settings reset to default.')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -271,6 +298,11 @@ class _GoogleFormSettingsScreenState extends State<GoogleFormSettingsScreen> {
               ElevatedButton(
                 onPressed: _saveSettings,
                 child: const Text('Save Settings'),
+              ),
+              const SizedBox(height: 10),
+              TextButton(
+                onPressed: _resetSettings,
+                child: const Text('Reset to Default'),
               ),
             ],
           ),
