@@ -19,7 +19,7 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateMixin {
-  List<String> _issueHistory = [];
+  List<Map<String, String>> _issueHistory = [];
   DateTime? _selectedDate;
   TimeOfDay? _selectedStartTime;
   TimeOfDay? _selectedEndTime;
@@ -98,15 +98,14 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
 
   _loadHistory() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> rawHistory = prefs.getStringList("issueHistory") ?? [];
     setState(() {
-      _issueHistory = prefs.getStringList("issueHistory") ?? [];
-      _issueHistory = _issueHistory.reversed.toList();
+      _issueHistory = rawHistory.reversed.map((entry) => parseHistoryEntry(entry)).toList();
     });
   }
 
-  List<String> get _filteredHistory {
-    List<String> filteredByDate = _issueHistory.where((entry) {
-      Map<String, String> parsedEntry = parseHistoryEntry(entry);
+  List<Map<String, String>> get _filteredHistory {
+    List<Map<String, String>> filteredByDate = _issueHistory.where((parsedEntry) {
       String? fillTime = parsedEntry['Fill Time'];
       if (fillTime == null) return false;
 
@@ -122,8 +121,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
     }).toList();
 
     if (_selectedDate != null && (_selectedStartTime != null || _selectedEndTime != null)) {
-      return filteredByDate.where((entry) {
-        Map<String, String> parsedEntry = parseHistoryEntry(entry);
+      return filteredByDate.where((parsedEntry) {
         String? startTimeStr = parsedEntry['Start Time'];
         String? endTimeStr = parsedEntry['End Time'];
 
@@ -362,11 +360,9 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
     );
 
     try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      List<String> history = prefs.getStringList("issueHistory") ?? [];
+      List<Map<String, String>> historyToDownload = _issueHistory;
 
-      List<String> filteredHistory = history.where((entry) {
-        Map<String, String> parsedEntry = parseHistoryEntry(entry);
+      List<Map<String, String>> filteredHistory = historyToDownload.where((parsedEntry) {
         String? fillTime = parsedEntry['Fill Time'];
         if (fillTime == null) return false;
 
@@ -404,11 +400,23 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
         return;
       }
 
+      // Convert List<Map<String, String>> back to List<String> for ReportGenerator
+      List<String> rawFilteredHistory = filteredHistory.map((entryMap) {
+        String mainEntry = entryMap.entries
+            .where((e) => e.key != 'submission_status')
+            .map((e) => '${e.key}: ${e.value}')
+            .join(', ');
+        if (entryMap.containsKey('submission_status')) {
+          mainEntry += '<submission_status>${entryMap['submission_status']}';
+        }
+        return mainEntry;
+      }).toList();
+
       File? file;
       if (format == 'pdf') {
-        file = await ReportGenerator.generatePdfReport(filteredHistory, downloadDate);
+        file = await ReportGenerator.generatePdfReport(rawFilteredHistory, downloadDate);
       } else if (format == 'xlsx') {
-        file = await ReportGenerator.generateXlsxReport(filteredHistory, downloadDate);
+        file = await ReportGenerator.generateXlsxReport(rawFilteredHistory, downloadDate);
       }
 
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -886,8 +894,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
     );
   }
 
-  Widget _buildHistoryItem(String entry, int index, {Key? key}) {
-    Map<String, String> parsedEntry = parseHistoryEntry(entry);
+  Widget _buildHistoryItem(Map<String, String> parsedEntry, int index, {Key? key}) {
     List<String> imagePaths = parsedEntry['Images']?.split('|') ?? [];
 
     return Container(
@@ -1367,12 +1374,12 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
 
   _deleteHistoryItem(int index) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> currentHistory = prefs.getStringList("issueHistory") ?? [];
+    List<String> currentRawHistory = prefs.getStringList("issueHistory") ?? [];
     // The displayed list is reversed, so we need to adjust the index for the actual stored list
-    int originalIndex = currentHistory.length - 1 - index;
-    if (originalIndex >= 0 && originalIndex < currentHistory.length) {
-      currentHistory.removeAt(originalIndex);
-      await prefs.setStringList("issueHistory", currentHistory);
+    int originalIndex = currentRawHistory.length - 1 - index;
+    if (originalIndex >= 0 && originalIndex < currentRawHistory.length) {
+      currentRawHistory.removeAt(originalIndex);
+      await prefs.setStringList("issueHistory", currentRawHistory);
       setState(() {
         _issueHistory.removeAt(index);
       });

@@ -326,16 +326,16 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
 
   _loadAnalyticsData() async {
     final prefs = await SharedPreferences.getInstance();
-    List<String> issueHistory = prefs.getStringList("issueHistory") ?? [];
+    List<String> rawIssueHistory = prefs.getStringList("issueHistory") ?? [];
+    List<Map<String, String>> issueHistory = rawIssueHistory.map((entry) => parseHistoryEntry(entry)).toList();
 
     int total = issueHistory.length;
     Map<String, int> issuesPerDay = {};
     Map<String, int> issueTypeBreakdown = {};
 
-    for (String entry in issueHistory) {
-      Map<String, String> parsedEntry = parseHistoryEntry(entry);
-      String? fillTime = parsedEntry['Fill Time'];
-      String? issueType = parsedEntry['Issue Explanation'];
+    for (Map<String, String> entry in issueHistory) {
+      String? fillTime = entry['Fill Time'];
+      String? issueType = entry['Issue Explanation'];
 
       if (fillTime != null) {
         DateTime date = DateTime.parse(fillTime);
