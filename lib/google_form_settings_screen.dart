@@ -116,197 +116,254 @@ class _GoogleFormSettingsScreenState extends State<GoogleFormSettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Google Form Settings'),
+        title: const Text(
+          'Google Form Settings',
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Colors.white,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                controller: _urlController,
-                decoration: const InputDecoration(labelText: 'Form URL'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a URL';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _crmIdController,
-                decoration: const InputDecoration(labelText: 'CRM ID Entry ID'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an Entry ID';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _advisorNameController,
-                decoration: const InputDecoration(labelText: 'Advisor Name Entry ID'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an Entry ID';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _startTimeHourController,
-                decoration: const InputDecoration(labelText: 'Start Time Hour Entry ID'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an Entry ID';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _startTimeMinuteController,
-                decoration: const InputDecoration(labelText: 'Start Time Minute Entry ID'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an Entry ID';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _endTimeHourController,
-                decoration: const InputDecoration(labelText: 'End Time Hour Entry ID'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an Entry ID';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _endTimeMinuteController,
-                decoration: const InputDecoration(labelText: 'End Time Minute Entry ID'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an Entry ID';
-                  }
-                  return null;
-                },
-              ),
-               TextFormField(
-                controller: _tlNameController,
-                decoration: const InputDecoration(labelText: 'TL Name Entry ID'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an Entry ID';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _organizationController,
-                decoration: const InputDecoration(labelText: 'Organization Entry ID'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an Entry ID';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _startDateYearController,
-                decoration: const InputDecoration(labelText: 'Start Date Year Entry ID'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an Entry ID';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _startDateMonthController,
-                decoration: const InputDecoration(labelText: 'Start Date Month Entry ID'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an Entry ID';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _startDateDayController,
-                decoration: const InputDecoration(labelText: 'Start Date Day Entry ID'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an Entry ID';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _endDateYearController,
-                decoration: const InputDecoration(labelText: 'End Date Year Entry ID'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an Entry ID';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _endDateMonthController,
-                decoration: const InputDecoration(labelText: 'End Date Month Entry ID'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an Entry ID';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _endDateDayController,
-                decoration: const InputDecoration(labelText: 'End Date Day Entry ID'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an Entry ID';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _explainIssueController,
-                decoration: const InputDecoration(labelText: 'Explain Issue Entry ID'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an Entry ID';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _reasonController,
-                decoration: const InputDecoration(labelText: 'Reason Entry ID'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an Entry ID';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _saveSettings,
-                child: const Text('Save Settings'),
-              ),
-              const SizedBox(height: 10),
-              TextButton(
-                onPressed: _resetSettings,
-                child: const Text('Reset to Default'),
-              ),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildSectionTitle(context, 'Form URL'),
+                _buildSettingsCard(
+                  context,
+                  children: [
+                    _buildTextField(
+                      controller: _urlController,
+                      labelText: 'Google Form URL',
+                      icon: Icons.link,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                _buildSectionTitle(context, 'General Entry IDs'),
+                _buildSettingsCard(
+                  context,
+                  children: [
+                    _buildTextField(
+                      controller: _crmIdController,
+                      labelText: 'CRM ID Entry ID',
+                      icon: Icons.badge,
+                    ),
+                    _buildTextField(
+                      controller: _advisorNameController,
+                      labelText: 'Advisor Name Entry ID',
+                      icon: Icons.person,
+                    ),
+                    _buildTextField(
+                      controller: _tlNameController,
+                      labelText: 'TL Name Entry ID',
+                      icon: Icons.supervisor_account,
+                    ),
+                    _buildTextField(
+                      controller: _organizationController,
+                      labelText: 'Organization Entry ID',
+                      icon: Icons.business,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                _buildSectionTitle(context, 'Time Entry IDs'),
+                _buildSettingsCard(
+                  context,
+                  children: [
+                    _buildTextField(
+                      controller: _startTimeHourController,
+                      labelText: 'Start Time Hour Entry ID',
+                      icon: Icons.hourglass_empty,
+                    ),
+                    _buildTextField(
+                      controller: _startTimeMinuteController,
+                      labelText: 'Start Time Minute Entry ID',
+                      icon: Icons.hourglass_empty,
+                    ),
+                    _buildTextField(
+                      controller: _endTimeHourController,
+                      labelText: 'End Time Hour Entry ID',
+                      icon: Icons.hourglass_full,
+                    ),
+                    _buildTextField(
+                      controller: _endTimeMinuteController,
+                      labelText: 'End Time Minute Entry ID',
+                      icon: Icons.hourglass_full,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                _buildSectionTitle(context, 'Date Entry IDs'),
+                _buildSettingsCard(
+                  context,
+                  children: [
+                    _buildTextField(
+                      controller: _startDateYearController,
+                      labelText: 'Start Date Year Entry ID',
+                      icon: Icons.calendar_today,
+                    ),
+                    _buildTextField(
+                      controller: _startDateMonthController,
+                      labelText: 'Start Date Month Entry ID',
+                      icon: Icons.calendar_today,
+                    ),
+                    _buildTextField(
+                      controller: _startDateDayController,
+                      labelText: 'Start Date Day Entry ID',
+                      icon: Icons.calendar_today,
+                    ),
+                    _buildTextField(
+                      controller: _endDateYearController,
+                      labelText: 'End Date Year Entry ID',
+                      icon: Icons.event,
+                    ),
+                    _buildTextField(
+                      controller: _endDateMonthController,
+                      labelText: 'End Date Month Entry ID',
+                      icon: Icons.event,
+                    ),
+                    _buildTextField(
+                      controller: _endDateDayController,
+                      labelText: 'End Date Day Entry ID',
+                      icon: Icons.event,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                _buildSectionTitle(context, 'Issue Details Entry IDs'),
+                _buildSettingsCard(
+                  context,
+                  children: [
+                    _buildTextField(
+                      controller: _explainIssueController,
+                      labelText: 'Explain Issue Entry ID',
+                      icon: Icons.help_outline,
+                    ),
+                    _buildTextField(
+                      controller: _reasonController,
+                      labelText: 'Reason Entry ID',
+                      icon: Icons.report_problem,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 30),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: _saveSettings,
+                        icon: const Icon(Icons.save, color: Colors.white),
+                        label: const Text(
+                          'Save Settings',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).primaryColor,
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: _resetSettings,
+                        icon: Icon(Icons.restore, color: Theme.of(context).primaryColor),
+                        label: Text(
+                          'Reset to Default',
+                          style: TextStyle(color: Theme.of(context).primaryColor),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          side: BorderSide(color: Theme.of(context).primaryColor),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(BuildContext context, String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontFamily: 'Poppins',
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+          color: Theme.of(context).primaryColor,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSettingsCard(BuildContext context, {required List<Widget> children}) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      margin: const EdgeInsets.only(bottom: 10),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: children,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String labelText,
+    required IconData icon,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: labelText,
+          prefixIcon: Icon(icon),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+          ),
+          filled: true,
+          fillColor: Colors.grey.shade50,
+          contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter a value';
+          }
+          return null;
+        },
       ),
     );
   }
