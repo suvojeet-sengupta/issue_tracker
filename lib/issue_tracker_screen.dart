@@ -6,7 +6,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:issue_tracker_app/google_form_webview_screen.dart';
 import 'package:issue_tracker_app/developer_info_screen.dart';
-import 'package:issue_tracker_app/admin_settings_screen.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -610,25 +609,6 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                     ),
                     Row(
                       children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: IconButton(
-                            icon: const Icon(Icons.settings_rounded,
-                                color: Colors.white),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const AdminSettingsScreen()),
-                              );
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 12),
                         Container(
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.2),
