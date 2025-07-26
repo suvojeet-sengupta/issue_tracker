@@ -6,6 +6,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:issue_tracker_app/google_form_webview_screen.dart';
 import 'package:issue_tracker_app/developer_info_screen.dart';
+import 'package:issue_tracker_app/admin_settings_screen.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class IssueTrackerScreen extends StatefulWidget {
   const IssueTrackerScreen({super.key});
@@ -467,22 +471,23 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
   }
 
   _openGoogleForm() async {
-    final String crmIdEntryId = "1005447471";
-    final String advisorNameEntryId = "44222229";
-    final String startTimeHourEntryId = "1521239602_hour";
-    final String startTimeMinuteEntryId = "1521239602_minute";
-    final String endTimeHourEntryId = "701130970_hour";
-    final String endTimeMinuteEntryId = "701130970_minute";
-    final String tlNameEntryId = "115861300";
-    final String organizationEntryId = "313975949";
-    final String startDateYearEntryId = "702818104_year";
-    final String startDateMonthEntryId = "702818104_month";
-    final String startDateDayEntryId = "702818104_day";
-    final String endDateYearEntryId = "514450388_year";
-    final String endDateMonthEntryId = "514450388_month";
-    final String endDateDayEntryId = "514450388_day";
-    final String explainIssueEntryId = "1211413190";
-    final String reasonEntryId = "1231067802";
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String crmIdEntryId = prefs.getString('google_form_crmIdEntryId') ?? '1005447471';
+    final String advisorNameEntryId = prefs.getString('google_form_advisorNameEntryId') ?? '44222229';
+    final String startTimeHourEntryId = prefs.getString('google_form_startTimeHourEntryId') ?? '1521239602_hour';
+    final String startTimeMinuteEntryId = prefs.getString('google_form_startTimeMinuteEntryId') ?? '1521239602_minute';
+    final String endTimeHourEntryId = prefs.getString('google_form_endTimeHourEntryId') ?? '701130970_hour';
+    final String endTimeMinuteEntryId = prefs.getString('google_form_endTimeMinuteEntryId') ?? '701130970_minute';
+    final String tlNameEntryId = prefs.getString('google_form_tlNameEntryId') ?? '115861300';
+    final String organizationEntryId = prefs.getString('google_form_organizationEntryId') ?? '313975949';
+    final String startDateYearEntryId = prefs.getString('google_form_startDateYearEntryId') ?? '702818104_year';
+    final String startDateMonthEntryId = prefs.getString('google_form_startDateMonthEntryId') ?? '702818104_month';
+    final String startDateDayEntryId = prefs.getString('google_form_startDateDayEntryId') ?? '702818104_day';
+    final String endDateYearEntryId = prefs.getString('google_form_endDateYearEntryId') ?? '514450388_year';
+    final String endDateMonthEntryId = prefs.getString('google_form_endDateMonthEntryId') ?? '514450388_month';
+    final String endDateDayEntryId = prefs.getString('google_form_endDateDayEntryId') ?? '514450388_day';
+    final String explainIssueEntryId = prefs.getString('google_form_explainIssueEntryId') ?? '1211413190';
+    final String reasonEntryId = prefs.getString('google_form_reasonEntryId') ?? '1231067802';
 
     final String encodedCrmId = Uri.encodeComponent(_crmId);
     final String encodedAdvisorName = Uri.encodeComponent(_advisorName);
@@ -508,8 +513,8 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
     final String currentMonth = now.month.toString();
     final String currentDay = now.day.toString();
 
-    String url =
-        "https://docs.google.com/forms/d/e/1FAIpQLSdeWylhfFaHmM3osSGRbxh9S_XvnAEPCIhTemuh-I7-LNds_w/viewform?usp=pp_url";
+    final String formUrl = prefs.getString('google_form_url') ?? 'https://docs.google.com/forms/d/e/1FAIpQLSdeWylhfFaHmM3osSGRbxh9S_XvnAEPCIhTemuh-I7-LNds_w/viewform?usp=pp_url';
+    String url = formUrl;
     url += "&entry." + crmIdEntryId + "=" + encodedCrmId;
     url += "&entry." + advisorNameEntryId + "=" + encodedAdvisorName;
     url += "&entry." + startTimeHourEntryId + "=" + startTimeHour;
@@ -605,6 +610,25 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                     ),
                     Row(
                       children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(Icons.settings_rounded,
+                                color: Colors.white),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const AdminSettingsScreen()),
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 12),
                         Container(
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.2),

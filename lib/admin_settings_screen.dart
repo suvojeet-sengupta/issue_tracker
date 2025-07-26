@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:issue_tracker_app/notification_settings_screen.dart';
+import 'package:issue_tracker_app/google_form_settings_screen.dart';
 
 class AdminSettingsScreen extends StatelessWidget {
   const AdminSettingsScreen({super.key});
@@ -53,6 +54,20 @@ class AdminSettingsScreen extends StatelessWidget {
                       subtitle: 'Display all locally stored key-value pairs',
                       onTap: () {
                         _showRawSharedPreferences(context);
+                      },
+                    ),
+                    _buildSettingsTile(
+                      context,
+                      icon: Icons.link,
+                      title: 'Google Form Settings',
+                      subtitle: 'Update Google Form URL and entry IDs',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const GoogleFormSettingsScreen(),
+                          ),
+                        );
                       },
                     ),
                   ],
