@@ -29,6 +29,7 @@ The Issue Tracker App is packed with functionalities designed for efficiency and
 -   **Intuitive & Modern UI:** Features a clean, modern, and highly responsive user interface designed for maximum ease of use and visual appeal.
 -   **Automated Name Pre-fill in Feedback:** Your advisor name is automatically fetched and pre-filled in the feedback section for convenience.
 -   **Comprehensive Changelog:** An in-app changelog screen provides a detailed history of updates, features, and bug fixes.
+-   **Accurate Time Logging with NTP:** Utilizes the Network Time Protocol (NTP) to fetch precise internet time, ensuring that all issue logs are timestamped with maximum accuracy, independent of device time settings.
 
 ---
 
@@ -194,6 +195,7 @@ issue_tracker/
 │   ├── main.dart                     # Application entry point and notification initialization
 │   ├── notification_history_screen.dart # Displays history of notifications
 │   ├── notification_settings_screen.dart # New screen for notification preferences
+│   ├── ntp_time.dart                 # Fetches accurate time from NTP servers
 │   ├── onboarding_tour.dart
 │   ├── report_generator.dart         # Logic for generating PDF/XLSX reports
 │   ├── settings_screen.dart
