@@ -10,6 +10,7 @@ class LoggerService {
 
   late Logger _logger;
   File? _logFile;
+  bool _isLoggingActive = false; // New flag to control logging
 
   Future<void> init() async {
     final directory = await getApplicationDocumentsDirectory();
@@ -22,7 +23,20 @@ class LoggerService {
   }
 
   void log(String message) {
-    _logger.i(message);
+    if (_isLoggingActive) { // Only log if active
+      _logger.i(message);
+    }
+  }
+
+  Future<void> startLogging() async {
+    _isLoggingActive = true;
+    await clearLog(); // Clear previous logs when starting new session
+    log('Logging session started.');
+  }
+
+  void stopLogging() {
+    log('Logging session stopped.');
+    _isLoggingActive = false;
   }
 
   Future<String?> getLogFilePath() async {
@@ -31,7 +45,7 @@ class LoggerService {
 
   Future<void> clearLog() async {
     if (_logFile != null && await _logFile!.exists()) {
-      await _logFile!.writeAsString('');
+      await _logFile!.writeAsString(''); // Clear file content
     }
   }
 }
