@@ -7,6 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:issue_tracker_app/google_form_webview_screen.dart';
 import 'package:issue_tracker_app/developer_info_screen.dart';
 import 'package:issue_tracker_app/ntp_time.dart';
+import 'package:issue_tracker_app/logger_service.dart';
+
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -464,6 +466,8 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
 
     history.add(entry);
     await prefs.setStringList("issueHistory", history);
+
+    LoggerService().log('Issue submitted: $entry');
 
     _clearDraft(); // Clear draft after submission
 

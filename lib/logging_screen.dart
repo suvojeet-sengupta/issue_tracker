@@ -1,6 +1,5 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:issue_tracker_app/logger_service.dart';
 import 'package:share_plus/share_plus.dart';
 
 class LoggingScreen extends StatefulWidget {
@@ -11,32 +10,31 @@ class LoggingScreen extends StatefulWidget {
 }
 
 class _LoggingScreenState extends State<LoggingScreen> {
+  final LoggerService _loggerService = LoggerService();
   bool _isLogging = false;
-  String? _logFilePath;
+
+  @override
+  void initState() {
+    super.initState();
+    _loggerService.init();
+  }
 
   void _toggleLogging() {
     setState(() {
       _isLogging = !_isLogging;
-      if (!_isLogging) {
-        _saveLog();
+      if (_isLogging) {
+        _loggerService.clearLog();
+        _loggerService.log('Logging started...');
+      } else {
+        _loggerService.log('Logging stopped...');
       }
     });
   }
 
-  Future<void> _saveLog() async {
-    // In a real app, you would be writing logs to this file.
-    // For this example, we'll just create an empty file.
-    final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/app_log.txt');
-    await file.writeAsString('This is a sample log file.');
-    setState(() {
-      _logFilePath = file.path;
-    });
-  }
-
-  void _shareLog() {
-    if (_logFilePath != null) {
-      Share.shareXFiles([XFile(_logFilePath!)], text: 'Here is the app log file.');
+  Future<void> _shareLog() async {
+    final path = await _loggerService.getLogFilePath();
+    if (path != null) {
+      Share.shareXFiles([XFile(path)], text: 'Here is the app log file.');
     }
   }
 
@@ -54,11 +52,10 @@ class _LoggingScreenState extends State<LoggingScreen> {
               onPressed: _toggleLogging,
               child: Text(_isLogging ? 'Stop Logging' : 'Start Logging'),
             ),
-            if (_logFilePath != null)
-              ElevatedButton(
-                onPressed: _shareLog,
-                child: const Text('Share with Developer'),
-              ),
+            ElevatedButton(
+              onPressed: _shareLog,
+              child: const Text('Share with Developer'),
+            ),
           ],
         ),
       ),

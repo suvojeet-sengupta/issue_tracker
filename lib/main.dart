@@ -16,8 +16,11 @@ import 'package:issue_tracker_app/settings_screen.dart';
 import 'package:issue_tracker_app/developer_info_screen.dart';
 import 'package:issue_tracker_app/theme.dart';
 import 'package:issue_tracker_app/utils/issue_parser.dart'; // New import for issue parsing utility
+import 'package:issue_tracker_app/logger_service.dart'; // New import for logging service
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await LoggerService().init();
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeNotifier(),
