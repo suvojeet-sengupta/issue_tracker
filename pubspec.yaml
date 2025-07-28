@@ -17,7 +17,7 @@ dependencies:
   provider: ^6.1.2
   image_picker: ^1.1.2
   path_provider: ^2.1.3
-  share_plus: ^9.0.0
+  share_plus: ^11.0.0
   tutorial_coach_mark: ^1.3.0 # For interactive onboarding tour
   pdf: ^3.11.0
   excel: ^4.0.6
