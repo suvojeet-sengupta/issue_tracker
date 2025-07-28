@@ -6,6 +6,7 @@ import 'package:issue_tracker_app/developer_info_screen.dart'; // New import
 import 'package:issue_tracker_app/credits_screen.dart'; // New import
 import 'package:issue_tracker_app/feedback_screen.dart'; // New import
 import 'package:issue_tracker_app/changelog_screen.dart'; // New import for changelog
+import 'package:issue_tracker_app/logging_screen.dart';
 import 'package:issue_tracker_app/theme_notifier.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart'; // New import for url_launcher
@@ -190,6 +191,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => const ChangelogScreen()),
+                        );
+                      },
+                    ),
+                    _buildSettingsTile(
+                      context,
+                      icon: Icons.bug_report,
+                      title: 'Logs',
+                      subtitle: 'Capture and share logs to help fix bugs',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const LoggingScreen()),
                         );
                       },
                     ),
