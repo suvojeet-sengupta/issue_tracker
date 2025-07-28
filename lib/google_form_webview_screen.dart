@@ -71,6 +71,10 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
               await _autoFillAndSubmit();
             }
           },
+          onWebResourceError: (WebResourceError error) async {
+            // Handle web resource loading errors
+            await _handleSubmissionError();
+          },
         ),
       )
       ..loadRequest(Uri.parse(widget.formUrl));
