@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:issue_tracker_app/google_form_webview_screen.dart';
 import 'package:issue_tracker_app/developer_info_screen.dart';
+import 'package:issue_tracker_app/ntp_time.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -450,12 +451,12 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
         imagePaths.add(localImage.path);
       }
     }
-
+    final DateTime now = await getNetworkTime();
     String entry =
         "CRM ID: $_crmId, TL Name: $_tlName, Advisor Name: $_advisorName, "
         "Organization: $_organization, Issue Explanation: $_selectedIssueExplanation, "
-        "Reason: $_selectedReason, Start Time: ${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, startTime!.hour, startTime.minute).toIso8601String()}, "
-        "End Time: ${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + (endTime!.hour < startTime.hour || (endTime.hour == startTime.hour && endTime.minute < startTime.minute) ? 1 : 0), endTime.hour, endTime.minute).toIso8601String()}, Fill Time: ${DateTime.now().toIso8601String()}, "
+        "Reason: $_selectedReason, Start Time: ${DateTime(now.year, now.month, now.day, startTime!.hour, startTime.minute).toIso8601String()}, "
+        "End Time: ${DateTime(now.year, now.month, now.day + (endTime!.hour < startTime.hour || (endTime.hour == startTime.hour && endTime.minute < startTime.minute) ? 1 : 0), endTime.hour, endTime.minute).toIso8601String()}, Fill Time: ${now.toIso8601String()}, "
         "Issue Remarks: ${_issueRemarksController.text}";
     if (imagePaths.isNotEmpty) {
       entry += ", Images: ${imagePaths.join('|')}";
@@ -507,7 +508,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
     final String endTimeMinute =
         endTime?.minute.toString().padLeft(2, '0') ?? "";
 
-    final DateTime now = DateTime.now();
+    final DateTime now = await getNetworkTime();
     final String currentYear = now.year.toString();
     final String currentMonth = now.month.toString();
     final String currentDay = now.day.toString();
@@ -1018,9 +1019,10 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                     const SizedBox(height: 4),
                     GestureDetector(
                       onTap: () async {
+                        final DateTime now = await getNetworkTime();
                         final TimeOfDay? pickedTime = await showTimePicker(
                           context: context,
-                          initialTime: TimeOfDay.now(),
+                          initialTime: TimeOfDay.fromDateTime(now),
                           initialEntryMode: TimePickerEntryMode.input,
                           builder: (BuildContext context, Widget? child) {
                             return MediaQuery(
