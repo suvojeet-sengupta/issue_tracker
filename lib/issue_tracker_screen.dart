@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -197,7 +198,13 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
           MaterialPageRoute(
             builder: (context) => ProImageEditor.file(
               File(image.path),
-              callbacks: ProImageEditorCallbacks(), // Added required callbacks parameter
+              callbacks: ProImageEditorCallbacks(
+                onImageEditingComplete: (Uint8List bytes) async {
+                  final tempDir = await getTemporaryDirectory();
+                  final file = await File('${tempDir.path}/edited_image_${DateTime.now().millisecondsSinceEpoch}.png').writeAsBytes(bytes);
+                  Navigator.pop(context, XFile(file.path));
+                },
+              ),
             ),
           ),
         );
