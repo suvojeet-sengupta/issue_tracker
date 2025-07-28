@@ -197,6 +197,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
           MaterialPageRoute(
             builder: (context) => ProImageEditor.file(
               File(image.path),
+              callbacks: ProImageEditorCallbacks(), // Added required callbacks parameter
             ),
           ),
         );
