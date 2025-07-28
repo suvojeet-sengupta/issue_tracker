@@ -71,20 +71,6 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
               await _autoFillAndSubmit();
             }
           },
-          onWebResourceError: (WebResourceError error) {
-            // Handle web resource loading errors
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Error loading page: ${error.description}'),
-                backgroundColor: Colors.redAccent,
-              ),
-            );
-            setState(() {
-              _isLoading = false;
-              _isProcessComplete = true;
-            });
-            Navigator.of(context).pop(); // Pop the screen on error
-          },
         ),
       )
       ..loadRequest(Uri.parse(widget.formUrl));
