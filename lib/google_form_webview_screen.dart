@@ -22,6 +22,7 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
   String _submissionStatus = "Initializing...";
   bool _isProcessComplete = false;
   bool _submissionHandled = false;
+  int _progress = 0; // New variable for loading progress
 
   @override
   void initState() {
@@ -46,6 +47,11 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
       )
       ..setNavigationDelegate(
         NavigationDelegate(
+          onProgress: (int progress) {
+            setState(() {
+              _progress = progress; // Update progress
+            });
+          },
           onPageFinished: (String url) async {
             if (url.contains('formResponse')) {
               final String pageBody = await _controller
@@ -64,6 +70,20 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
               // Auto-fill and submit
               await _autoFillAndSubmit();
             }
+          },
+          onWebResourceError: (WebResourceError error) {
+            // Handle web resource loading errors
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Error loading page: ${error.description}'),
+                backgroundColor: Colors.redAccent,
+              ),
+            );
+            setState(() {
+              _isLoading = false;
+              _isProcessComplete = true;
+            });
+            Navigator.of(context).pop(); // Pop the screen on error
           },
         ),
       )
@@ -255,11 +275,19 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
                   }
                 : null,
           ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(4.0), // Height of the progress bar
+            child: LinearProgressIndicator(
+              value: _progress / 100, // Convert 0-100 to 0.0-1.0
+              backgroundColor: Colors.transparent,
+              valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+          ), // New: LinearProgressIndicator
         ),
         body: Stack(
           children: [
             WebViewWidget(controller: _controller),
-            if (_isLoading)
+            if (_isLoading && _progress < 100) // Show loading overlay until page is fully loaded
               Container(
                 color: Colors.white,
                 child: Center(
@@ -269,7 +297,7 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
                       const CircularProgressIndicator(),
                       const SizedBox(height: 20),
                       Text(
-                        'Please wait, the issue is being submitted...',
+                        'Loading form...',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 16,
