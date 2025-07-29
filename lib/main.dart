@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -17,9 +19,13 @@ import 'package:issue_tracker_app/developer_info_screen.dart';
 import 'package:issue_tracker_app/theme.dart';
 import 'package:issue_tracker_app/utils/issue_parser.dart'; // New import for issue parsing utility
 import 'package:issue_tracker_app/logger_service.dart'; // New import for logging service
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await LoggerService().init();
   runApp(
     ChangeNotifierProvider(

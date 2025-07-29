@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -12,7 +13,7 @@ import 'package:issue_tracker_app/logger_service.dart';
 import 'package:pro_image_editor/pro_image_editor.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl';
 
 class IssueTrackerScreen extends StatefulWidget {
   const IssueTrackerScreen({super.key});
@@ -490,6 +491,20 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
     await prefs.setStringList("issueHistory", history);
 
     LoggerService().log('Issue submitted: $entry');
+
+    // Log Firebase Analytics event
+    final String advisorName = prefs.getString("advisorName") ?? "Unknown";
+    FirebaseAnalytics.instance.logEvent(
+      name: 'issue_submitted',
+      parameters: {
+        'advisor_name': advisorName,
+        'issue_explanation': _selectedIssueExplanation,
+        'reason': _selectedReason,
+        'fill_time': now.toIso8601String(),
+        'start_time': DateTime(now.year, now.month, now.day, startTime!.hour, startTime.minute).toIso8601String(),
+        'end_time': DateTime(now.year, now.month, now.day + (endTime!.hour < startTime.hour || (endTime.hour == startTime.hour && endTime.minute < startTime.minute) ? 1 : 0), endTime.hour, endTime.minute).toIso8601String(),
+      },
+    );
 
     _clearDraft(); // Clear draft after submission
 
