@@ -20,17 +20,16 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for iOS - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macOS - '
           'you can reconfigure this by running the FlutterFire CLI again.',
         );
-      case TargetPlatform.web:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for web - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+      
       case TargetPlatform.fuchsia:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for fuchsia - '
@@ -57,11 +56,5 @@ class DefaultFirebaseOptions {
     messagingSenderId: '488805180126',
   );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    appId: '1:488805180126:ios:6ef23f323503e3bbc2d84f', // Placeholder, replace with actual iOS App ID if needed
-    apiKey: 'AIzaSyBTWgoSpwZpG7hdNha6qjK1yeFY3NGLOmM', // Placeholder, replace with actual iOS API Key if needed
-    projectId: 'issue-tracker-7cc5a',
-    storageBucket: 'issue-tracker-7cc5a.firebasestorage.app',
-    messagingSenderId: '488805180126',
-  );
+  
 }
