@@ -1,5 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+
+class NotificationItem {
+  final String title;
+  final String body;
+  final DateTime timestamp;
+
+  NotificationItem({
+    required this.title,
+    required this.body,
+    required this.timestamp,
+  });
+
+  factory NotificationItem.fromJson(Map<String, dynamic> json) {
+    return NotificationItem(
+      title: json['title'] ?? 'No Title',
+      body: json['body'] ?? 'No Body',
+      timestamp: DateTime.parse(json['timestamp']),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'body': body,
+      'timestamp': timestamp.toIso8601String(),
+    };
+  }
+}
 
 class NotificationHistoryScreen extends StatefulWidget {
   const NotificationHistoryScreen({super.key});
@@ -9,38 +38,22 @@ class NotificationHistoryScreen extends StatefulWidget {
 }
 
 class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
-  static const platform = MethodChannel('com.suvojeet.issue_tracker_app/notifications');
-  List<String> _notificationHistory = [];
+  List<NotificationItem> _notificationHistory = [];
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
     _getNotificationHistory();
-    _markAllNotificationsAsRead();
-  }
-
-  Future<void> _markAllNotificationsAsRead() async {
-    try {
-      await platform.invokeMethod('markAllNotificationsAsRead');
-    } on PlatformException catch (e) {
-      print("Failed to mark notifications as read: '${e.message}'.");
-    }
   }
 
   Future<void> _getNotificationHistory() async {
     setState(() {
       _isLoading = true;
     });
-    List<String> history = [];
-    try {
-      final List<dynamic>? result = await platform.invokeMethod('getNotificationHistory');
-      if (result != null) {
-        history = result.cast<String>();
-      }
-    } on PlatformException catch (e) {
-      print("Failed to get notification history: '${e.message}'.");
-    }
+    final prefs = await SharedPreferences.getInstance();
+    List<String> historyStrings = prefs.getStringList('notificationHistory') ?? [];
+    List<NotificationItem> history = historyStrings.map((e) => NotificationItem.fromJson(jsonDecode(e))).toList();
 
     setState(() {
       _notificationHistory = history.reversed.toList(); // Show newest first
@@ -49,23 +62,20 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
   }
 
   Future<void> _clearAllNotifications() async {
-    try {
-      await platform.invokeMethod('clearAllNotifications');
-      _getNotificationHistory(); // Refresh the list
-    } on PlatformException catch (e) {
-      print("Failed to clear all notifications: '${e.message}'.");
-    }
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('notificationHistory');
+    _getNotificationHistory(); // Refresh the list
   }
 
   Future<void> _deleteNotification(int index) async {
-    try {
-      // Assuming the platform method can delete by index or a unique ID
-      // For now, we'll pass the notification string itself as a unique identifier
-      // You might need to adjust this if your native side uses a different identifier
-      await platform.invokeMethod('deleteNotification', {'notification': _notificationHistory[index]});
+    final prefs = await SharedPreferences.getInstance();
+    List<String> historyStrings = prefs.getStringList('notificationHistory') ?? [];
+    // Adjust index for reversed list display
+    int originalIndex = historyStrings.length - 1 - index;
+    if (originalIndex >= 0 && originalIndex < historyStrings.length) {
+      historyStrings.removeAt(originalIndex);
+      await prefs.setStringList('notificationHistory', historyStrings);
       _getNotificationHistory(); // Refresh the list
-    } on PlatformException catch (e) {
-      print("Failed to delete notification: '${e.message}'.");
     }
   }
 
@@ -164,7 +174,7 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
                             itemBuilder: (context, index) {
                               final notification = _notificationHistory[index];
                               return Dismissible(
-                                key: Key(notification), // Unique key for each dismissible item
+                                key: Key(notification.timestamp.toIso8601String()), // Unique key for each dismissible item
                                 onDismissed: (direction) {
                                   _deleteNotification(index);
                                 },
@@ -188,13 +198,37 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
                                       ),
                                     ],
                                   ),
-                                  child: Text(
-                                    notification,
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      color: Color(0xFF1E3A8A),
-                                      fontFamily: 'Poppins',
-                                    ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        notification.title,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF1E3A8A),
+                                          fontFamily: 'Poppins',
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        notification.body,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Color(0xFF1E3A8A),
+                                          fontFamily: 'Poppins',
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '${notification.timestamp.toLocal().toIso8601String().substring(0, 16).replaceFirst('T', ' ')}',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey[600],
+                                          fontFamily: 'Poppins',
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               );
@@ -208,4 +242,3 @@ class _NotificationHistoryScreenState extends State<NotificationHistoryScreen> {
       ),
     );
   }
-}

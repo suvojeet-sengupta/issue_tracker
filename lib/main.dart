@@ -1,3 +1,4 @@
+import 'dart:convert'; // Added for JSON encoding/decoding
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -22,9 +23,25 @@ import 'package:issue_tracker_app/utils/issue_parser.dart'; // New import for is
 import 'package:issue_tracker_app/logger_service.dart'; // New import for logging service
 import 'firebase_options.dart';
 
+// Helper function to save notifications to SharedPreferences
+Future<void> _saveNotificationToHistory(RemoteMessage message) async {
+  final prefs = await SharedPreferences.getInstance();
+  List<String> notificationHistory = prefs.getStringList('notificationHistory') ?? [];
+
+  final notificationData = {
+    'title': message.notification?.title ?? 'No Title',
+    'body': message.notification?.body ?? 'No Body',
+    'timestamp': DateTime.now().toIso8601String(),
+    'data': message.data, // Include data payload if any
+  };
+  notificationHistory.add(jsonEncode(notificationData));
+  await prefs.setStringList('notificationHistory', notificationHistory);
+}
+
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await _saveNotificationToHistory(message);
   print("Handling a background message: ${message.messageId}");
 }
 
@@ -54,7 +71,8 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    _initNotifications();
+    // Local Notification System (can be removed later if only FCM is desired)
+    _initNotifications(); 
     _initFirebaseMessaging();
   }
 
@@ -80,9 +98,11 @@ class _MyAppState extends State<MyApp> {
       if (message.notification != null) {
         print('Message also contained a notification: ${message.notification}');
       }
+      _saveNotificationToHistory(message); // Save foreground notifications
     });
   }
 
+  // Local Notification System (can be removed later if only FCM is desired)
   Future<void> _initNotifications() async {
     final prefs = await SharedPreferences.getInstance();
     final bool notificationsEnabled = prefs.getBool('notificationsEnabled') ?? true;
@@ -98,7 +118,7 @@ class _MyAppState extends State<MyApp> {
         await platform.invokeMethod('cancelAllNotifications');
       }
     } on PlatformException catch (e) {
-      print("Failed to schedule notifications: '${e.message}'.");
+      print("Failed to schedule notifications: ${e.message}.");
     }
   }
 
