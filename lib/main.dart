@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:issue_tracker_app/initial_setup_screen.dart';
@@ -71,8 +71,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    // Local Notification System (can be removed later if only FCM is desired)
-    _initNotifications(); 
+     
     _initFirebaseMessaging();
   }
 
@@ -102,25 +101,7 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  // Local Notification System (can be removed later if only FCM is desired)
-  Future<void> _initNotifications() async {
-    final prefs = await SharedPreferences.getInstance();
-    final bool notificationsEnabled = prefs.getBool('notificationsEnabled') ?? true;
-    final int notificationInterval = prefs.getInt('notificationInterval') ?? 24;
-
-    const platform = MethodChannel('com.suvojeet.issue_tracker_app/notifications');
-    try {
-      if (notificationsEnabled) {
-        await platform.invokeMethod('scheduleNotification', {
-          'interval': notificationInterval,
-        });
-      } else {
-        await platform.invokeMethod('cancelAllNotifications');
-      }
-    } on PlatformException catch (e) {
-      print("Failed to schedule notifications: ${e.message}.");
-    }
-  }
+  
 
   @override
   Widget build(BuildContext context) {
