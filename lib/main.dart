@@ -1,5 +1,6 @@
-import 'package:firebase_core/firebase_core.dart';
+'''import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -21,11 +22,18 @@ import 'package:issue_tracker_app/utils/issue_parser.dart'; // New import for is
 import 'package:issue_tracker_app/logger_service.dart'; // New import for logging service
 import 'firebase_options.dart';
 
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print("Handling a background message: ${message.messageId}");
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await LoggerService().init();
   runApp(
     ChangeNotifierProvider(
@@ -47,6 +55,32 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _initNotifications();
+    _initFirebaseMessaging();
+  }
+
+  Future<void> _initFirebaseMessaging() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    print('User granted permission: ${settings.authorizationStatus}');
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Got a message whilst in the foreground!');
+      print('Message data: ${message.data}');
+
+      if (message.notification != null) {
+        print('Message also contained a notification: ${message.notification}');
+      }
+    });
   }
 
   Future<void> _initNotifications() async {
@@ -66,7 +100,7 @@ class _MyAppState extends State<MyApp> {
     } on PlatformException catch (e) {
       print("Failed to schedule notifications: '${e.message}'.");
     }
-  }
+  }''
 
   @override
   Widget build(BuildContext context) {
