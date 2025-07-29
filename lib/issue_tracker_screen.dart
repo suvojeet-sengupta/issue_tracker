@@ -13,7 +13,7 @@ import 'package:issue_tracker_app/logger_service.dart';
 import 'package:pro_image_editor/pro_image_editor.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
+
 
 class IssueTrackerScreen extends StatefulWidget {
   const IssueTrackerScreen({super.key});
@@ -1079,18 +1079,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                           onMinuteChanged(pickedTime.minute);
                           onPeriodChanged(pickedTime.period == DayPeriod.am ? 'AM' : 'PM');
 
-                          // Smart Time Suggestion
-                          // Only auto-suggest end time if it hasn't been set manually yet
-                          if (_issueEndHour == null && _issueEndMinute == null) {
-                            final newStartTime = DateTime(2023, 1, 1, pickedTime.hour, pickedTime.minute);
-                            final newEndTime = newStartTime.add(const Duration(minutes: 15));
-                            setState(() {
-                              _issueEndHour = newEndTime.hour % 12 == 0 ? 12 : newEndTime.hour % 12;
-                              _issueEndMinute = newEndTime.minute;
-                              _issueEndPeriod = newEndTime.hour >= 12 ? 'PM' : 'AM';
-                            });
-                            _saveDraft();
-                          }
+                          
                         }
                       },
                       child: Container(
