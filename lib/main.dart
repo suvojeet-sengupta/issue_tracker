@@ -34,6 +34,7 @@ Future<void> _saveNotificationToHistory(RemoteMessage message) async {
     'body': message.notification?.body ?? 'No Body',
     'timestamp': DateTime.now().toIso8601String(),
     'data': message.data, // Include data payload if any
+    'isRead': false, // New notifications are unread
   };
   notificationHistory.add(jsonEncode(notificationData));
   await prefs.setStringList('notificationHistory', notificationHistory);
@@ -341,14 +342,22 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
   }
 
   Future<void> _getUnreadNotificationCount() async {
-    try {
-      final int? count = await platform.invokeMethod('getUnreadNotificationCount');
-      setState(() {
-        _unreadNotificationCount = count ?? 0;
-      });
-    } on PlatformException catch (e) {
-      print("Failed to get unread notification count: '${e.message}'.");
+    final prefs = await SharedPreferences.getInstance();
+    List<String> historyStrings = prefs.getStringList('notificationHistory') ?? [];
+    int unreadCount = 0;
+    for (String notificationJson in historyStrings) {
+      try {
+        Map<String, dynamic> notificationData = jsonDecode(notificationJson);
+        if (notificationData['isRead'] == false) {
+          unreadCount++;
+        }
+      } catch (e) {
+        print("Error decoding notification JSON: $e");
+      }
     }
+    setState(() {
+      _unreadNotificationCount = unreadCount;
+    });
   }
 
   
