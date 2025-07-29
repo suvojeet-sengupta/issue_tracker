@@ -13,7 +13,7 @@ import 'package:issue_tracker_app/logger_service.dart';
 import 'package:pro_image_editor/pro_image_editor.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl';
+import 'package:intl/intl.dart';
 
 class IssueTrackerScreen extends StatefulWidget {
   const IssueTrackerScreen({super.key});
