@@ -1060,11 +1060,17 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                     const SizedBox(height: 4),
                     GestureDetector(
                       onTap: () async {
-                        final DateTime now = await getNetworkTime();
+                        DateTime now;
+                        try {
+                          now = await getNetworkTime();
+                        } catch (e) {
+                          now = DateTime.now();
+                          LoggerService().log('Failed to get network time, using system time: $e');
+                        }
                         final TimeOfDay? pickedTime = await showTimePicker(
                           context: context,
                           initialTime: TimeOfDay.fromDateTime(now),
-                          initialEntryMode: TimePickerEntryMode.input,
+                          initialEntryMode: TimePickerEntryMode.dial,
                           builder: (BuildContext context, Widget? child) {
                             return MediaQuery(
                               data: MediaQuery.of(context).copyWith(
@@ -1078,8 +1084,6 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                           onHourChanged(pickedTime.hourOfPeriod);
                           onMinuteChanged(pickedTime.minute);
                           onPeriodChanged(pickedTime.period == DayPeriod.am ? 'AM' : 'PM');
-
-                          
                         }
                       },
                       child: Container(
