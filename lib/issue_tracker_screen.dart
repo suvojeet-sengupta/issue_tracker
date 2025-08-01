@@ -1070,7 +1070,7 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
                         final TimeOfDay? pickedTime = await showTimePicker(
                           context: context,
                           initialTime: TimeOfDay.fromDateTime(now),
-                          initialEntryMode: TimePickerEntryMode.dial,
+                          initialEntryMode: TimePickerEntryMode.input,
                           builder: (BuildContext context, Widget? child) {
                             return MediaQuery(
                               data: MediaQuery.of(context).copyWith(
