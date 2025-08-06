@@ -415,7 +415,18 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Container(
-              color: Theme.of(context).colorScheme.surface,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFF1E3A8A),
+                    Color(0xFF3B82F6),
+                    Color(0xFFF8FAFC),
+                  ],
+                  stops: [0.0, 0.3, 1.0],
+                ),
+              ),
               child: SafeArea(
                 child: FadeTransition(
                   opacity: _fadeAnimation,
@@ -434,18 +445,18 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
+                              const Text(
                                 'Issue Tracker App',
                                 style: TextStyle(
-                                  color: Theme.of(context).colorScheme.onSurface,
+                                  color: Colors.white,
                                   fontSize: 28,
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'Poppins',
                                 ),
                               ),
                               IconButton(
-                                icon: Icon(Icons.info_outline_rounded,
-                                    color: Theme.of(context).colorScheme.onSurface),
+                                icon: const Icon(Icons.info_outline_rounded,
+                                    color: Colors.white),
                                 onPressed: () {
                                   Navigator.push(
                                     context,
@@ -459,8 +470,8 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                                 children: [
                                   IconButton(
                                     key: widget.notificationIconKey,
-                                    icon: Icon(Icons.notifications_active_outlined,
-                                        color: Theme.of(context).colorScheme.onSurface),
+                                    icon: const Icon(Icons.notifications_active_outlined,
+                                        color: Colors.white),
                                     onPressed: () async {
                                       await Navigator.push(
                                         context,
@@ -507,15 +518,22 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                             width: double.infinity,
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).cardColor,
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Colors.white.withOpacity(0.95),
+                                  Colors.white.withOpacity(0.85),
+                                ],
+                              ),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Column(
                               children: [
                                 Text(
                                   'Welcome Back, ${_advisorName.split(" ").first}!',
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.onSurface,
+                                  style: const TextStyle(
+                                    color: Color(0xFF1E3A8A),
                                     fontSize: 28,
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Poppins',
@@ -523,12 +541,12 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                                   textAlign: TextAlign.center,
                                 ),
                                 const SizedBox(height: 6),
-                                Text(
+                                const Text(
                                   'Track and manage your issues with precision',
                                   style: TextStyle(
-                                    color: Theme.of(context).colorScheme.onSurface,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFF1E3A8A), // Changed to a darker blue for better visibility
+                                    fontSize: 16, // Increased font size
+                                    fontWeight: FontWeight.w600, // Made it semi-bold
                                     fontFamily: 'Poppins',
                                   ),
                                   textAlign: TextAlign.center,
@@ -542,7 +560,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                           // Advisor Information Card with Enhanced Design
                           Container(
                             decoration: BoxDecoration(
-                              color: Theme.of(context).cardColor,
+                              color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Padding(
@@ -555,10 +573,10 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                                       Container(
                                         padding: const EdgeInsets.all(10),
                                         decoration: BoxDecoration(
-                                          gradient: LinearGradient(
+                                          gradient: const LinearGradient(
                                             colors: [
-                                              Theme.of(context).primaryColor,
-                                              Theme.of(context).primaryColor.withOpacity(0.8)
+                                              Color(0xFF1E3A8A),
+                                              Color(0xFF3B82F6)
                                             ],
                                           ),
                                           borderRadius:
@@ -571,12 +589,12 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                                         ),
                                       ),
                                       const SizedBox(width: 12),
-                                      Text(
+                                      const Text(
                                         'Advisor Profile',
                                         style: TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,
-                                          color: Theme.of(context).colorScheme.onSurface,
+                                          color: Color(0xFF1E3A8A),
                                           fontFamily: 'Poppins',
                                         ),
                                       ),
@@ -616,13 +634,13 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                                         ),
                                       ),
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: Theme.of(context).primaryColor,
+                                        backgroundColor: const Color(0xFF3B82F6),
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(10),
                                         ),
                                         elevation: 3,
-                                        shadowColor: Theme.of(context).primaryColor
+                                        shadowColor: const Color(0xFF3B82F6)
                                             .withOpacity(0.2),
                                       ),
                                     ),
@@ -639,12 +657,12 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   'Your Activity',
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).colorScheme.onSurface,
+                                    color: Color(0xFF1E3A8A),
                                     fontFamily: 'Poppins',
                                   ),
                                 ),
@@ -687,10 +705,10 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: Theme.of(context).dividerColor,
+          color: const Color(0xFFE2E8F0),
           width: 1,
         ),
       ),
@@ -699,12 +717,12 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
           Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor.withOpacity(0.1),
+              color: const Color(0xFF1E3A8A).withOpacity(0.1),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Icon(
               icon,
-              color: Theme.of(context).primaryColor,
+              color: const Color(0xFF3B82F6),
               size: 18,
             ),
           ),
@@ -715,9 +733,9 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
               children: [
                 Text(
                   label,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 11,
-                    color: Colors.grey[600],
+                    color: Colors.grey,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.5,
                     fontFamily: 'Poppins',
@@ -726,10 +744,10 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                 const SizedBox(height: 2),
                 Text(
                   value.isNotEmpty ? value : 'Not set',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSurface,
+                    color: Color(0xFF1E3A8A),
                     fontFamily: 'Poppins',
                   ),
                 ),
@@ -746,7 +764,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -779,10 +797,10 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
               const SizedBox(height: 4),
               Text(
                 value,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface,
+                  color: Color(0xFF1E3A8A),
                   fontFamily: 'Poppins',
                 ),
               ),
@@ -798,18 +816,18 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Issue Type Breakdown',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSurface,
+              color: Color(0xFF1E3A8A),
               fontFamily: 'Poppins',
             ),
           ),
@@ -830,10 +848,10 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                   ),
                   Text(
                     '${entry.value}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurface,
+                      color: Color(0xFF1E3A8A),
                       fontFamily: 'Poppins',
                     ),
                   ),
