@@ -695,6 +695,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                                   crossAxisCount: 2,
                                   crossAxisSpacing: 16,
                                   mainAxisSpacing: 16,
+                                  childAspectRatio: 1.2, // Adjust aspect ratio
                                   children: [
                                     _buildAnalyticsCard(
                                       title: 'Total Issues Recorded',
