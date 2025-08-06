@@ -530,8 +530,8 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                                 end: Alignment.bottomRight,
                                 colors: theme.isDarkMode
                                     ? [
-                                        Colors.grey[800]!.withOpacity(0.95),
-                                        Colors.grey[800]!.withOpacity(0.85),
+                                        Colors.black.withOpacity(0.95),
+                                        Colors.black.withOpacity(0.85),
                                       ]
                                     : [
                                         Colors.white.withOpacity(0.95),
@@ -577,7 +577,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                           Container(
                             decoration: BoxDecoration(
                               color: theme.isDarkMode
-                                  ? Colors.grey[800]
+                                  ? Colors.black
                                   : Colors.white,
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -729,7 +729,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: theme.isDarkMode ? Colors.grey[850] : Colors.white,
+        color: theme.isDarkMode ? Colors.black : Colors.white,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color:
@@ -796,7 +796,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: theme.isDarkMode ? Colors.grey[800] : Colors.white,
+        color: theme.isDarkMode ? Colors.black : Colors.white,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -851,7 +851,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: theme.isDarkMode ? Colors.grey[800] : Colors.white,
+        color: theme.isDarkMode ? Colors.black : Colors.white,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
