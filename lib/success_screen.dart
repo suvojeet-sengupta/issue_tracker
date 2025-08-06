@@ -21,9 +21,10 @@ class SuccessScreen extends StatelessWidget {
           ),
         ),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -79,6 +80,7 @@ class SuccessScreen extends StatelessWidget {
                 ),
               ],
             ),
+          ),
           ),
         ),
       ),
