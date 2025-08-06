@@ -680,7 +680,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                                 Text(
                                   'Your Activity',
                                   style: TextStyle(
-                                    fontSize: 20,
+                                    fontSize: 22,
                                     fontWeight: FontWeight.bold,
                                     color: theme.isDarkMode
                                         ? Colors.white
@@ -689,19 +689,27 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                                   ),
                                 ),
                                 const SizedBox(height: 16),
-                                _buildAnalyticsCard(
-                                  title: 'Total Issues Recorded',
-                                  value: '$_totalIssues',
-                                  icon: Icons.task_alt_rounded,
-                                  color: const Color(0xFF059669),
-                                ),
-                                const SizedBox(height: 16),
-                                _buildAnalyticsCard(
-                                  title: 'Issues Today',
-                                  value:
-                                      '${_issuesPerDay[DateTime.now().toString().substring(0, 10)] ?? 0}',
-                                  icon: Icons.calendar_today_rounded,
-                                  color: const Color(0xFF3B82F6),
+                                GridView.count(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 16,
+                                  mainAxisSpacing: 16,
+                                  children: [
+                                    _buildAnalyticsCard(
+                                      title: 'Total Issues Recorded',
+                                      value: '$_totalIssues',
+                                      icon: Icons.task_alt_rounded,
+                                      color: const Color(0xFF059669),
+                                    ),
+                                    _buildAnalyticsCard(
+                                      title: 'Issues Today',
+                                      value:
+                                          '${_issuesPerDay[DateTime.now().toString().substring(0, 10)] ?? 0}',
+                                      icon: Icons.calendar_today_rounded,
+                                      color: const Color(0xFF3B82F6),
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(height: 16),
                                 if (_issueTypeBreakdown.isNotEmpty)
@@ -793,52 +801,51 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
       required Color color}) {
     final theme = Provider.of<ThemeNotifier>(context);
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: theme.isDarkMode ? Colors.black : Colors.white,
         borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 28,
-            ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-          const SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   color: Colors.grey[600],
                   fontWeight: FontWeight.w500,
                   fontFamily: 'Poppins',
                 ),
               ),
-              const SizedBox(height: 4),
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: theme.isDarkMode
-                      ? Colors.white
-                      : const Color(0xFF1E3A8A),
-                  fontFamily: 'Poppins',
-                ),
+              Icon(
+                icon,
+                color: color,
+                size: 24,
               ),
             ],
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 36,
+              fontWeight: FontWeight.bold,
+              color: theme.isDarkMode
+                  ? Colors.white
+                  : const Color(0xFF1E3A8A),
+              fontFamily: 'Poppins',
+            ),
           ),
         ],
       ),
@@ -853,6 +860,13 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
       decoration: BoxDecoration(
         color: theme.isDarkMode ? Colors.black : Colors.white,
         borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -871,16 +885,26 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
           const SizedBox(height: 16),
           ..._issueTypeBreakdown.entries.map((entry) {
             return Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
+              padding: const EdgeInsets.only(bottom: 12.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    entry.key,
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey[700],
-                      fontFamily: 'Poppins',
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: _getColorForIssueType(entry.key),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      entry.key,
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.grey[700],
+                        fontFamily: 'Poppins',
+                      ),
                     ),
                   ),
                   Text(
@@ -901,6 +925,32 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
         ],
       ),
     );
+  }
+
+  Color _getColorForIssueType(String issueType) {
+    // You can define a more sophisticated color mapping
+    switch (issueType) {
+      case 'Electricity Issue/Power Failure':
+        return Colors.amber;
+      case 'Head Phone Issue':
+        return Colors.blue;
+      case 'Wifi Stopped Working':
+        return Colors.green;
+      case 'System Hang / Voice Issue':
+        return Colors.red;
+      case 'Voice Issue / Cx Voice Not Audible':
+        return Colors.purple;
+      case 'Mobile Phone Hang':
+        return Colors.orange;
+      case 'Auto Call Drop':
+        return Colors.pink;
+      case 'Aspect / WDE issue':
+        return Colors.teal;
+      case 'Mobile Network Connectivity':
+        return Colors.cyan;
+      default:
+        return Colors.grey;
+    }
   }
 }
 
