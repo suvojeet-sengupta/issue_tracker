@@ -490,6 +490,16 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
     url += "&entry." + explainIssueEntryId + "=" + encodedIssueExplanation;
     url += "&entry." + reasonEntryId + "=" + encodedReason;
 
+    final Uri googleFormUri = Uri.parse(url);
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            GoogleFormWebviewScreen(formUrl: googleFormUri.toString()),
+      ),
+    );
+
     final Map<String, String> issueData = {
       'CRM ID': _crmId,
       'Team Leader': _tlName,
