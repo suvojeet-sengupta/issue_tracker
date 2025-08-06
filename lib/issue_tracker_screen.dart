@@ -11,6 +11,7 @@ import 'package:issue_tracker_app/developer_info_screen.dart';
 import 'package:issue_tracker_app/ntp_time.dart';
 import 'package:issue_tracker_app/logger_service.dart';
 import 'package:pro_image_editor/pro_image_editor.dart';
+import 'package:issue_tracker_app/success_screen.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
