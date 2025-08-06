@@ -22,6 +22,7 @@ import 'package:issue_tracker_app/developer_info_screen.dart';
 import 'package:issue_tracker_app/theme.dart';
 import 'package:issue_tracker_app/utils/issue_parser.dart'; // New import for issue parsing utility
 import 'package:issue_tracker_app/logger_service.dart'; // New import for logging service
+import 'package:issue_tracker_app/success_screen.dart';
 import 'firebase_options.dart';
 
 // Helper function to save notifications to SharedPreferences
@@ -122,6 +123,7 @@ class _MyAppState extends State<MyApp> {
             '/history': (context) => const HistoryScreen(),
             '/settings': (context) => const SettingsScreen(),
             '/edit_profile': (context) => const EditProfileScreen(),
+            '/success': (context) => const SuccessScreen(issueData: {},),
           },
         );
       },

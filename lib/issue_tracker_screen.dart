@@ -424,10 +424,10 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
       },
     );
 
-    await _openGoogleForm();
+    await _openGoogleForm(entry);
   }
 
-  _openGoogleForm() async {
+  _openGoogleForm(String entry) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String crmIdEntryId = prefs.getString('google_form_crmIdEntryId') ?? '1005447471';
     final String advisorNameEntryId = prefs.getString('google_form_advisorNameEntryId') ?? '44222229';
@@ -489,34 +489,24 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
     url += "&entry." + explainIssueEntryId + "=" + encodedIssueExplanation;
     url += "&entry." + reasonEntryId + "=" + encodedReason;
 
-    final Uri googleFormUri = Uri.parse(url);
+    final Map<String, String> issueData = {
+      'CRM ID': _crmId,
+      'Team Leader': _tlName,
+      'Advisor Name': _advisorName,
+      'Organization': _organization,
+      'Issue Explanation': _selectedIssueExplanation,
+      'Reason': _selectedReason,
+      'Start Time': _formatTime(_issueStartHour, _issueStartMinute, _issueStartPeriod),
+      'End Time': _formatTime(_issueEndHour, _issueEndMinute, _issueEndPeriod),
+      'Remarks': _issueRemarksController.text,
+    };
 
     await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                GoogleFormWebviewScreen(formUrl: googleFormUri.toString())));
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(Icons.check_circle_rounded, color: Colors.white),
-              const SizedBox(width: 12),
-              const Text(
-                "Issue Tracker filled successfully!",
-                style: TextStyle(fontFamily: 'Poppins'),
-              ),
-            ],
-          ),
-          backgroundColor: const Color(0xFF059669),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          margin: const EdgeInsets.all(16),
-        ),
-      );
+      context,
+      MaterialPageRoute(
+        builder: (context) => SuccessScreen(issueData: issueData),
+      ),
+    );
   }
 
   @override
