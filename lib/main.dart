@@ -411,20 +411,27 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
 
   @override
   Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeNotifier>(context);
     return Scaffold(
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFF1E3A8A),
-                    Color(0xFF3B82F6),
-                    Color(0xFFF8FAFC),
-                  ],
-                  stops: [0.0, 0.3, 1.0],
+                  colors: theme.isDarkMode
+                      ? [
+                          const Color(0xFF1E3A8A).withOpacity(0.5),
+                          const Color(0xFF3B82F6).withOpacity(0.5),
+                          const Color(0xFF000000),
+                        ]
+                      : [
+                          const Color(0xFF1E3A8A),
+                          const Color(0xFF3B82F6),
+                          const Color(0xFFF8FAFC),
+                        ],
+                  stops: const [0.0, 0.3, 1.0],
                 ),
               ),
               child: SafeArea(
@@ -521,10 +528,15 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                               gradient: LinearGradient(
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
-                                colors: [
-                                  Colors.white.withOpacity(0.95),
-                                  Colors.white.withOpacity(0.85),
-                                ],
+                                colors: theme.isDarkMode
+                                    ? [
+                                        Colors.grey[800]!.withOpacity(0.95),
+                                        Colors.grey[800]!.withOpacity(0.85),
+                                      ]
+                                    : [
+                                        Colors.white.withOpacity(0.95),
+                                        Colors.white.withOpacity(0.85),
+                                      ],
                               ),
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -532,8 +544,10 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                               children: [
                                 Text(
                                   'Welcome Back, ${_advisorName.split(" ").first}!',
-                                  style: const TextStyle(
-                                    color: Color(0xFF1E3A8A),
+                                  style: TextStyle(
+                                    color: theme.isDarkMode
+                                        ? Colors.white
+                                        : const Color(0xFF1E3A8A),
                                     fontSize: 28,
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Poppins',
@@ -541,12 +555,14 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                                   textAlign: TextAlign.center,
                                 ),
                                 const SizedBox(height: 6),
-                                const Text(
+                                Text(
                                   'Track and manage your issues with precision',
                                   style: TextStyle(
-                                    color: Color(0xFF1E3A8A), // Changed to a darker blue for better visibility
-                                    fontSize: 16, // Increased font size
-                                    fontWeight: FontWeight.w600, // Made it semi-bold
+                                    color: theme.isDarkMode
+                                        ? Colors.white70
+                                        : const Color(0xFF1E3A8A),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
                                     fontFamily: 'Poppins',
                                   ),
                                   textAlign: TextAlign.center,
@@ -560,7 +576,9 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                           // Advisor Information Card with Enhanced Design
                           Container(
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: theme.isDarkMode
+                                  ? Colors.grey[800]
+                                  : Colors.white,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Padding(
@@ -589,12 +607,14 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                                         ),
                                       ),
                                       const SizedBox(width: 12),
-                                      const Text(
+                                      Text(
                                         'Advisor Profile',
                                         style: TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,
-                                          color: Color(0xFF1E3A8A),
+                                          color: theme.isDarkMode
+                                              ? Colors.white
+                                              : const Color(0xFF1E3A8A),
                                           fontFamily: 'Poppins',
                                         ),
                                       ),
@@ -657,12 +677,14 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                Text(
                                   'Your Activity',
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xFF1E3A8A),
+                                    color: theme.isDarkMode
+                                        ? Colors.white
+                                        : const Color(0xFF1E3A8A),
                                     fontFamily: 'Poppins',
                                   ),
                                 ),
@@ -676,7 +698,8 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                                 const SizedBox(height: 16),
                                 _buildAnalyticsCard(
                                   title: 'Issues Today',
-                                  value: '${_issuesPerDay[DateTime.now().toString().substring(0, 10)] ?? 0}',
+                                  value:
+                                      '${_issuesPerDay[DateTime.now().toString().substring(0, 10)] ?? 0}',
                                   icon: Icons.calendar_today_rounded,
                                   color: const Color(0xFF3B82F6),
                                 ),
@@ -702,13 +725,15 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
   }
 
   Widget _buildInfoRow(IconData icon, String label, String value) {
+    final theme = Provider.of<ThemeNotifier>(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.isDarkMode ? Colors.grey[850] : Colors.white,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: const Color(0xFFE2E8F0),
+          color:
+              theme.isDarkMode ? Colors.grey[700]! : const Color(0xFFE2E8F0),
           width: 1,
         ),
       ),
@@ -744,10 +769,12 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                 const SizedBox(height: 2),
                 Text(
                   value.isNotEmpty ? value : 'Not set',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF1E3A8A),
+                    color: theme.isDarkMode
+                        ? Colors.white
+                        : const Color(0xFF1E3A8A),
                     fontFamily: 'Poppins',
                   ),
                 ),
@@ -759,12 +786,17 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
     );
   }
 
-  Widget _buildAnalyticsCard({required String title, required String value, required IconData icon, required Color color}) {
+  Widget _buildAnalyticsCard(
+      {required String title,
+      required String value,
+      required IconData icon,
+      required Color color}) {
+    final theme = Provider.of<ThemeNotifier>(context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.isDarkMode ? Colors.grey[800] : Colors.white,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -797,10 +829,12 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
               const SizedBox(height: 4),
               Text(
                 value,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF1E3A8A),
+                  color: theme.isDarkMode
+                      ? Colors.white
+                      : const Color(0xFF1E3A8A),
                   fontFamily: 'Poppins',
                 ),
               ),
@@ -812,22 +846,25 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
   }
 
   Widget _buildIssueTypeBreakdownCard() {
+    final theme = Provider.of<ThemeNotifier>(context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.isDarkMode ? Colors.grey[800] : Colors.white,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Issue Type Breakdown',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF1E3A8A),
+              color: theme.isDarkMode
+                  ? Colors.white
+                  : const Color(0xFF1E3A8A),
               fontFamily: 'Poppins',
             ),
           ),
@@ -848,10 +885,12 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                   ),
                   Text(
                     '${entry.value}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF1E3A8A),
+                      color: theme.isDarkMode
+                          ? Colors.white
+                          : const Color(0xFF1E3A8A),
                       fontFamily: 'Poppins',
                     ),
                   ),
