@@ -496,6 +496,7 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
           ),
         ),
         child: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               // Custom App Bar
