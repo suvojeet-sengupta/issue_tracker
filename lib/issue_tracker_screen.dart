@@ -537,24 +537,43 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
       ),
     );
 
-    final Map<String, String> issueData = {
-      'CRM ID': _crmId,
-      'Team Leader': _tlName,
-      'Advisor Name': _advisorName,
-      'Organization': _organization,
-      'Issue Explanation': _selectedIssueExplanation,
-      'Reason': _selectedReason,
-      'Start Time': _formatTime(_issueStartHour, _issueStartMinute, _issueStartPeriod),
-      'End Time': _formatTime(_issueEndHour, _issueEndMinute, _issueEndPeriod),
-      'Remarks': _issueRemarksController.text,
-    };
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> history = prefs.getStringList("issueHistory") ?? [];
+    String lastEntryStatus = "";
+    if (history.isNotEmpty) {
+      String lastEntry = history.last;
+      if (lastEntry.contains("<submission_status>")) {
+        lastEntryStatus = lastEntry.split("<submission_status>").last;
+      }
+    }
 
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SuccessScreen(issueData: issueData),
-      ),
-    );
+    if (lastEntryStatus == "success") {
+      final Map<String, String> issueData = {
+        'CRM ID': _crmId,
+        'Team Leader': _tlName,
+        'Advisor Name': _advisorName,
+        'Organization': _organization,
+        'Issue Explanation': _selectedIssueExplanation,
+        'Reason': _selectedReason,
+        'Start Time': _formatTime(_issueStartHour, _issueStartMinute, _issueStartPeriod),
+        'End Time': _formatTime(_issueEndHour, _issueEndMinute, _issueEndPeriod),
+        'Remarks': _issueRemarksController.text,
+      };
+
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SuccessScreen(issueData: issueData),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Google Form submission failed. Please try again.'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+    }
   }
 
   @override

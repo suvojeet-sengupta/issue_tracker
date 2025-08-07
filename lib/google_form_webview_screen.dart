@@ -22,7 +22,7 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
   String _submissionStatus = "Initializing...";
   bool _isProcessComplete = false;
   bool _submissionHandled = false;
-  int _progress = 0; // New variable for loading progress
+  int _progress = 0;
 
   @override
   void initState() {
@@ -33,6 +33,7 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
       ..addJavaScriptChannel(
         'FlutterChannel',
         onMessageReceived: (message) {
+          if (!mounted) return;
           if (message.message == 'formSubmitted') {
             setState(() {
               _isSubmitting = false;
@@ -48,32 +49,39 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (int progress) {
+            if (!mounted) return;
             setState(() {
-              _progress = progress; // Update progress
+              _progress = progress;
             });
           },
           onPageFinished: (String url) async {
             if (url.contains('formResponse')) {
-              final String pageBody = await _controller
-                  .runJavaScriptReturningResult('document.body.innerText') as String;
-              if (pageBody.contains('Your response has been recorded')) {
-                _showSuccessDialog();
-              } else {
+              try {
+                final pageBodyResult = await _controller
+                    .runJavaScriptReturningResult('document.body.innerText');
+                final String pageBody = pageBodyResult.toString();
+
+                if (pageBody.contains('Your response has been recorded')) {
+                  _showSuccessDialog();
+                } else {
+                  await _handleSubmissionError();
+                }
+              } catch (e) {
                 await _handleSubmissionError();
               }
             } else {
+              if (!mounted) return;
               setState(() {
                 _isLoading = false;
               });
-              // Delay to ensure the form is fully rendered
               await Future.delayed(const Duration(seconds: 2));
-              // Auto-fill and submit
               await _autoFillAndSubmit();
             }
           },
           onWebResourceError: (WebResourceError error) async {
-            // Handle web resource loading errors
-            await _handleSubmissionError();
+            if (error.isForMainFrame) {
+              await _handleSubmissionError();
+            }
           },
         ),
       )
@@ -81,13 +89,19 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
   }
 
   Future<void> _autoFillAndSubmit() async {
+    if (!mounted) return;
     setState(() {
       _isSubmitting = true;
       _submissionStatus = "Preparing form for submission...";
     });
 
+    Future.delayed(const Duration(seconds: 20), () {
+      if (!_submissionHandled && mounted) {
+        _handleSubmissionError();
+      }
+    });
+
     try {
-      // Scroll to show the form and then submit
       await _controller.runJavaScript('''
         (function() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -117,7 +131,7 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
   }
 
   Future<void> _handleSubmissionError() async {
-    if (_submissionHandled) return;
+    if (_submissionHandled || !mounted) return;
     _submissionHandled = true;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -127,22 +141,28 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
       history[history.length - 1] = "$lastEntry<submission_status>failure";
       await prefs.setStringList("issueHistory", history);
     }
+
+    if (!mounted) return;
+
     setState(() {
       _isSubmitting = false;
       _isProcessComplete = true;
     });
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Failed to submit the form automatically. Please try again.'),
         backgroundColor: Colors.redAccent,
       ),
     );
-    // Optionally, navigate back or show a failure dialog
-    Navigator.of(context).pop();
+
+    if (Navigator.canPop(context)) {
+      Navigator.of(context).pop();
+    }
   }
 
   void _showSuccessDialog() {
-    if (_submissionHandled) return;
+    if (_submissionHandled || !mounted) return;
     _submissionHandled = true;
 
     showDialog(
@@ -207,7 +227,8 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
     );
 
     Future.delayed(const Duration(seconds: 5), () async {
-      // Save submission status
+      if (!mounted) return;
+
       SharedPreferences prefs = await SharedPreferences.getInstance();
       List<String> history = prefs.getStringList("issueHistory") ?? [];
       if (history.isNotEmpty) {
@@ -219,7 +240,10 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
       setState(() {
         _isProcessComplete = true;
       });
-      Navigator.of(context).pop();
+
+      if (Navigator.canPop(context)) {
+        Navigator.of(context).pop(); 
+      }
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const IssueTrackerScreen()),
       );
@@ -228,12 +252,14 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
 
   Future<bool> _onWillPop() async {
     if (!_isProcessComplete) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please wait for the submission to complete.'),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please wait for the submission to complete.'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
       return false;
     }
     return true;
@@ -266,18 +292,18 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
                 : null,
           ),
           bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(4.0), // Height of the progress bar
+            preferredSize: const Size.fromHeight(4.0),
             child: LinearProgressIndicator(
-              value: _progress / 100, // Convert 0-100 to 0.0-1.0
+              value: _progress / 100,
               backgroundColor: Colors.transparent,
               valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
             ),
-          ), // New: LinearProgressIndicator
+          ),
         ),
         body: Stack(
           children: [
             WebViewWidget(controller: _controller),
-            if (_isLoading && _progress < 100) // Show loading overlay until page is fully loaded
+            if (_isLoading && _progress < 100)
               Container(
                 color: Colors.white,
                 child: Center(
@@ -310,7 +336,7 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
                       const SizedBox(height: 20),
                       Text(
                         _submissionStatus,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                           color: Colors.white,
