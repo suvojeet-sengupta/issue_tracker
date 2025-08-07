@@ -173,6 +173,43 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
 
   _submitIssue() async {
     if (_isFormValid()) {
+      TimeOfDay? startTime = _getStartTimeOfDay();
+      TimeOfDay? endTime = _getEndTimeOfDay();
+
+      if (startTime != null && endTime != null) {
+        final startMinutes = startTime.hour * 60 + startTime.minute;
+        final endMinutes = endTime.hour * 60 + endTime.minute;
+
+        if (endMinutes < startMinutes) {
+          final durationInMinutes = (24 * 60 - startMinutes) + endMinutes;
+          if (durationInMinutes > 18 * 60) { // More than 18 hours is likely an error
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Row(
+                  children: [
+                    const Icon(Icons.error_outline_rounded, color: Colors.white),
+                    const SizedBox(width: 12),
+                    const Expanded(
+                      child: Text(
+                        "End time cannot be before start time.",
+                        style: TextStyle(fontFamily: 'Poppins'),
+                      ),
+                    ),
+                  ],
+                ),
+                backgroundColor: const Color(0xFFEF4444),
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                margin: const EdgeInsets.all(16),
+              ),
+            );
+            return; // Stop the submission
+          }
+        }
+      }
+
       _buttonController.forward().then((_) {
         _buttonController.reverse();
       });
