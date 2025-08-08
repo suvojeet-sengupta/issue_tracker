@@ -79,7 +79,7 @@ class _GoogleFormWebviewScreenState extends State<GoogleFormWebviewScreen> {
             }
           },
           onWebResourceError: (WebResourceError error) async {
-            if (error.isForMainFrame) {
+            if (error.isForMainFrame == true) {
               await _handleSubmissionError();
             }
           },

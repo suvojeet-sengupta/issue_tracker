@@ -537,7 +537,6 @@ class _IssueTrackerScreenState extends State<IssueTrackerScreen>
       ),
     );
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String> history = prefs.getStringList("issueHistory") ?? [];
     String lastEntryStatus = "";
     if (history.isNotEmpty) {
